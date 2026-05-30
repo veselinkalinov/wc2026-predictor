@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+
+# VS Code
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Data - raw and processed files are not committed
+data/raw/
+data/processed/
+data/features/
+
+# Models - serialised model files are not committed
+models/registry/
+
+# OS
+Thumbs.db
+Desktop.ini
+
+# Logs
+logs/

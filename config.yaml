@@ -1,0 +1,47 @@
+# =============================================================================
+# WC 2026 Match Outcome Predictor — Central Configuration
+# =============================================================================
+# This is the single source of truth for all project parameters.
+# Never hardcode these values inside src/ files — always import from here.
+# =============================================================================
+
+project:
+  name: "wc2026-predictor"
+  version: "0.1.0"
+
+paths:
+  raw_data: "data/raw"
+  processed_data: "data/processed"
+  features: "data/features"
+  models: "models/registry"
+  visualisations: "visualisations"
+
+data:
+  matches_file: "matches.csv"
+  rankings_file: "fifa_rankings.csv"
+  date_from: "2000-01-01"
+  date_to: "2025-12-31"
+  min_matches: 10 # Minimum matches a team must have to be included
+
+features:
+  form_window: 5 # Number of recent matches used to calculate form
+  goals_window: 10 # Number of recent matches used for goals averages
+  elo_k_factor: 32 # K-factor used in Elo rating updates
+  elo_initial: 1500 # Starting Elo rating for all teams
+
+model:
+  train_cutoff: "2022-01-01" # Matches before this date = train, after = test
+  random_state: 42 # Ensures reproducible results
+  test_size: 0.2 # Fallback if not using temporal split
+  target_column: "result" # Column name for match outcome: H / D / A
+
+evaluation:
+  metrics:
+    - "accuracy"
+    - "log_loss"
+    - "brier_score"
+
+api:
+  host: "0.0.0.0"
+  port: 5000
+  debug: false
