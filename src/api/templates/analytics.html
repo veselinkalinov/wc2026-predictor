@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Team Analytics | FIFA 26 PREDICTOR</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-surface {
+            background: rgba(17, 34, 64, 0.7);
+            backdrop-filter: blur(12px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #131315;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #44474d;
+        }
+        .flag-large-emoji {
+            font-size: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#1b1b1d",
+                        "outline-variant": "#44474d",
+                        "on-surface-variant": "#c5c6cd",
+                        "on-tertiary-fixed": "#2b1701",
+                        "surface-container-highest": "#343536",
+                        "tertiary-fixed-dim": "#e7bf99",
+                        "on-primary-fixed-variant": "#39475f",
+                        "surface-bright": "#39393b",
+                        "inverse-primary": "#515f78",
+                        "on-secondary-fixed-variant": "#005226",
+                        "inverse-on-surface": "#303032",
+                        "on-secondary-fixed": "#00210b",
+                        "primary": "#b9c7e4",
+                        "on-secondary-container": "#00622e",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-tertiary-container": "#9d7b5a",
+                        "on-primary": "#233148",
+                        "on-surface": "#e4e2e4",
+                        "secondary": "#7dffa2",
+                        "on-error": "#690005",
+                        "background": "#131315",
+                        "surface-tint": "#b9c7e4",
+                        "tertiary": "#e7bf99",
+                        "secondary-fixed-dim": "#00e475",
+                        "primary-container": "#0a192f",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#003918",
+                        "primary-fixed-dim": "#b9c7e4",
+                        "surface-container-high": "#2a2a2c",
+                        "surface-dim": "#131315",
+                        "surface": "#131315",
+                        "outline": "#8f9097",
+                        "surface-variant": "#343536",
+                        "secondary-container": "#05e777",
+                        "surface-container": "#1f1f21",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#5d4124",
+                        "on-primary-fixed": "#0d1c32",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-primary-container": "#74829d",
+                        "secondary-fixed": "#62ff96",
+                        "on-tertiary": "#432b10",
+                        "on-background": "#e4e2e4",
+                        "tertiary-container": "#281400",
+                        "inverse-surface": "#e4e2e4",
+                        "primary-fixed": "#d6e3ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Montserrat"],
+                        "stat-value": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-mono": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "stat-value": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+    <!-- Top Navigation Bar -->
+    <header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
+        <div class="flex items-center gap-8">
+            <span class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</span>
+            <nav class="hidden md:flex items-center gap-6">
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/predict">Predict</a>
+                <a class="text-secondary border-b-2 border-secondary font-bold pb-1 font-body-md" href="/analytics">Analytics</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/insights">Insights</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/about">About</a>
+            </nav>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="bg-primary-container text-on-primary-container px-4 py-2 text-label-mono uppercase tracking-wider rounded-lg hover:bg-surface-container-high transition-all" onclick="location.href='/predict'">Live Predictor</button>
+            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface">settings</span>
+            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface">account_circle</span>
+        </div>
+    </header>
+
+    <!-- Side Navigation Bar -->
+    <aside class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-20 pb-8 bg-surface-container-lowest border-r border-outline-variant w-64 z-40">
+        <div class="px-6 mb-8 flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary-container rounded flex items-center justify-center">
+                <span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">sports_soccer</span>
+            </div>
+            <div>
+                <div class="text-secondary font-headline-md text-headline-md leading-none">WC2026 AI</div>
+                <div class="text-label-mono text-on-surface-variant text-[10px]">Mission Control</div>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/predict">
+                <span class="material-symbols-outlined">query_stats</span>
+                <span class="text-label-mono">Prediction</span>
+            </a>
+            <a class="bg-primary-container text-secondary border-l-4 border-secondary px-4 py-3 flex items-center gap-3 translate-x-1 transition-transform" href="/analytics">
+                <span class="material-symbols-outlined">analytics</span>
+                <span class="text-label-mono font-bold">Team Analytics</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/insights">
+                <span class="material-symbols-outlined">troubleshoot</span>
+                <span class="text-label-mono">Model Insights</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/about">
+                <span class="material-symbols-outlined">info</span>
+                <span class="text-label-mono">About Project</span>
+            </a>
+        </nav>
+        <div class="mt-auto px-4 space-y-4">
+            <button class="w-full bg-secondary text-on-secondary font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-95 transition-all" onclick="location.href='/simulate'">
+                <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                <span class="text-label-mono">Run Simulation</span>
+            </button>
+            <div class="border-t border-outline-variant pt-4 space-y-2">
+                <a class="text-on-surface-variant hover:text-on-surface flex items-center gap-3 px-2 py-1 transition-colors" href="/about">
+                    <span class="material-symbols-outlined text-[20px]">description</span>
+                    <span class="text-label-mono text-xs">Documentation</span>
+                </a>
+                <a class="text-on-surface-variant hover:text-on-surface flex items-center gap-3 px-2 py-1 transition-colors" href="#">
+                    <span class="material-symbols-outlined text-[20px]">help_outline</span>
+                    <span class="text-label-mono text-xs">Support</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="lg:ml-64 pt-24 pb-12 px-margin-mobile md:px-margin-desktop min-h-screen">
+        <div class="max-w-container-max mx-auto">
+            
+            <!-- Selection Dropdown -->
+            <div class="mb-8 flex flex-col sm:flex-row items-center gap-4 bg-surface-container-low p-4 border border-outline-variant/30 rounded-lg">
+                <label class="text-label-mono text-xs uppercase text-outline">Select Team for Analytics:</label>
+                <select id="selectTeam" class="bg-surface-container-lowest border border-outline-variant text-on-surface text-sm w-full sm:w-64 py-2 px-4 focus:ring-1 focus:ring-secondary focus:border-secondary rounded appearance-none cursor-pointer">
+                    <!-- Populated dynamically -->
+                </select>
+            </div>
+
+            <!-- Hero / Header Section -->
+            <section class="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div class="flex items-center gap-6">
+                    <div class="w-24 h-16 bg-surface-container-high border border-outline-variant flex items-center justify-center overflow-hidden rounded-lg">
+                        <div class="flag-large-emoji" id="teamFlagEmoji">🇧🇷</div>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-1">
+                            <h1 class="text-headline-lg font-headline-lg text-on-surface" id="teamNameHeading">LOADING...</h1>
+                            <span class="bg-secondary/10 border border-secondary/30 text-secondary px-3 py-0.5 text-label-mono text-xs rounded-full" id="teamConfederationTag">CONMEBOL</span>
+                        </div>
+                        <p class="text-body-md text-on-surface-variant" id="teamSubtitle">Qualified Country • World Cup 2026</p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-end gap-2">
+                    <span class="text-label-mono text-outline uppercase tracking-widest text-[10px]">World ELO Rating</span>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-stat-value font-stat-value text-secondary" id="eloValue">0000.0</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Bento Grid Dashboard -->
+            <div class="grid grid-cols-12 gap-6">
+                <!-- Performance Metrics Grid (6 cols) -->
+                <div class="col-span-12 lg:col-span-7 space-y-6">
+                    <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg">
+                        <div class="flex items-center justify-between mb-6 border-b border-outline-variant pb-3">
+                            <h2 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">query_stats</span> Performance Metrics
+                            </h2>
+                            <span class="text-xs text-outline font-label-mono">ROUNDS PROCESSED</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Stat 1 -->
+                            <div class="p-4 bg-surface-container-low border border-outline-variant rounded hover:border-secondary transition-colors group">
+                                <span class="text-label-mono text-[10px] text-outline uppercase group-hover:text-secondary">Avg Goals Scored</span>
+                                <div class="text-stat-value font-stat-value text-on-surface mt-1" id="goalsScoredAvg">1.2</div>
+                                <div class="w-full h-1 bg-surface-container-highest mt-3 rounded-full overflow-hidden">
+                                    <div class="h-full bg-secondary shadow-[0_0_8px_rgba(125,255,162,0.5)]" id="goalsBar" style="width: 40%"></div>
+                                </div>
+                            </div>
+                            <!-- Stat 2 -->
+                            <div class="p-4 bg-surface-container-low border border-outline-variant rounded hover:border-secondary transition-colors group">
+                                <span class="text-label-mono text-[10px] text-outline uppercase group-hover:text-secondary">FIFA Rank</span>
+                                <div class="text-stat-value font-stat-value text-on-surface mt-1" id="fifaRank">#211</div>
+                                <div class="w-full h-1 bg-surface-container-highest mt-3 rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary shadow-[0_0_8px_rgba(185,199,228,0.5)]" id="rankBar" style="width: 5%"></div>
+                                </div>
+                            </div>
+                            <!-- Stat 3 -->
+                            <div class="p-4 bg-surface-container-low border border-outline-variant rounded hover:border-secondary transition-colors group">
+                                <span class="text-label-mono text-[10px] text-outline uppercase group-hover:text-secondary">Recent Form</span>
+                                <div class="flex gap-2 mt-2" id="formIndicators">
+                                    <!-- Populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Matches Table -->
+                    <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg">
+                        <div class="flex items-center justify-between mb-6 border-b border-outline-variant pb-3">
+                            <h2 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">history</span> Recent Matches
+                            </h2>
+                            <span class="text-xs text-outline font-label-mono">LAST 5 MATCHES</span>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left font-body-md border-collapse">
+                                <thead>
+                                    <tr class="text-label-mono text-[11px] text-outline border-b border-outline-variant">
+                                        <th class="py-3 px-4 uppercase font-medium">Date</th>
+                                        <th class="py-3 px-4 uppercase font-medium">Opponent</th>
+                                        <th class="py-3 px-4 uppercase font-medium">Competition</th>
+                                        <th class="py-3 px-4 uppercase font-medium text-right">Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm" id="matchesTableBody">
+                                    <!-- Matches populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Insights Column (5 cols) -->
+                <div class="col-span-12 lg:col-span-5 flex flex-col gap-6">
+                    <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg flex-1">
+                        <div class="flex items-center justify-between mb-6 border-b border-outline-variant pb-3">
+                            <h2 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">hub</span> Tactical Radar Profiling
+                            </h2>
+                        </div>
+                        <div class="flex flex-col items-center justify-center h-full min-h-[300px] relative">
+                            <!-- Radar Chart -->
+                            <div class="relative w-full aspect-square max-w-[280px]">
+                                <!-- Geometric Grid SVG -->
+                                <svg class="w-full h-full stroke-outline-variant/30 fill-none opacity-50" viewbox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="10"></circle>
+                                    <circle cx="50" cy="50" r="20"></circle>
+                                    <circle cx="50" cy="50" r="30"></circle>
+                                    <circle cx="50" cy="50" r="40"></circle>
+                                    <circle cx="50" cy="50" r="47"></circle>
+                                    <line x1="50" x2="50" y1="0" y2="100"></line>
+                                    <line x1="0" x2="100" y1="50" y2="50"></line>
+                                </svg>
+                                <!-- Radar Shape -->
+                                <svg class="absolute inset-0 w-full h-full" viewbox="0 0 100 100" id="radarSVG">
+                                    <polygon id="radarPolygon" class="fill-secondary/20 stroke-secondary stroke-[1.5] transition-all duration-700" points="50,50 50,50 50,50 50,50"></polygon>
+                                    <circle id="radarPointAtt" class="fill-secondary" cx="50" cy="50" r="2.5"></circle>
+                                    <circle id="radarPointDef" class="fill-secondary" cx="50" cy="50" r="2.5"></circle>
+                                    <circle id="radarPointTac" class="fill-secondary" cx="50" cy="50" r="2.5"></circle>
+                                    <circle id="radarPointFit" class="fill-secondary" cx="50" cy="50" r="2.5"></circle>
+                                </svg>
+                            </div>
+                            <!-- Legend -->
+                            <div class="grid grid-cols-2 gap-x-12 gap-y-3 mt-6">
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] text-outline uppercase font-label-mono">Attack Score</span>
+                                    <span class="text-md font-stat-value text-secondary" id="radarAttVal">0.0</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] text-outline uppercase font-label-mono">Defense Score</span>
+                                    <span class="text-md font-stat-value text-on-surface" id="radarDefVal">0.0</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] text-outline uppercase font-label-mono">Tactics Rating</span>
+                                    <span class="text-md font-stat-value text-on-surface" id="radarTacVal">0.0</span>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[10px] text-outline uppercase font-label-mono">Fitness Index</span>
+                                    <span class="text-md font-stat-value text-on-surface" id="radarFitVal">0.0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- AI Insights Card -->
+                    <div class="bg-primary-container border border-secondary/30 p-6 rounded-lg relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-4 opacity-10">
+                            <span class="material-symbols-outlined text-[120px]" data-weight="fill">lightbulb</span>
+                        </div>
+                        <h3 class="text-label-mono text-secondary text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">auto_awesome</span> AI Scout Summary
+                        </h3>
+                        <p class="text-on-primary-container text-body-md relative z-10 leading-relaxed font-medium" id="aiTacticalAdvice">
+                            Loading tactical advice from analysis engine...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low border-t border-outline-variant mt-12">
+        <div class="flex flex-col items-center md:items-start gap-1">
+            <span class="text-label-mono font-label-mono uppercase tracking-widest text-outline">FIFA 26 PREDICTOR</span>
+            <p class="text-body-md font-body-md text-on-surface-variant text-xs">© 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.</p>
+        </div>
+        <div class="flex gap-6">
+            <a class="text-label-mono text-xs text-on-surface-variant hover:text-secondary transition-colors" href="/about">Data Sources</a>
+            <a class="text-label-mono text-xs text-on-surface-variant hover:text-secondary transition-colors" href="/insights">ML Pipeline</a>
+            <a class="text-label-mono text-xs text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+            <a class="text-label-mono text-xs text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+        </div>
+    </footer>
+
+    <script>
+        // Flag emoji mapping dictionary
+        const flagEmojis = {
+            "France": "🇫🇷", "Brazil": "🇧🇷", "Argentina": "🇦🇷", "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", 
+            "Spain": "🇪🇸", "Germany": "🇩🇪", "Italy": "🇮🇹", "Croatia": "🇭🇷", 
+            "United States": "🇺🇸", "Canada": "🇨🇦", "Mexico": "🇲🇽", "Portugal": "🇵🇹", 
+            "Netherlands": "🇳🇱", "Belgium": "🇧🇪", "Uruguay": "🇺🇾", "Colombia": "🇨🇴", 
+            "Japan": "🇯🇵", "Morocco": "🇲🇦", "Senegal": "🇸🇳", "Switzerland": "🇨🇭",
+            "Denmark": "🇩🇰", "Ecuador": "🇪🇨", "Ukraine": "🇺🇦", "Sweden": "🇸🇪",
+            "Poland": "🇵🇱", "Wales": "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "Australia": "🇦🇺", "South Korea": "🇰🇷",
+            "Iran": "🇮🇷", "Tunisia": "🇹🇳", "Saudi Arabia": "🇸🇦", "Ghana": "🇬🇭",
+            "Cameroon": "🇨🇲", "Costa Rica": "🇨🇷", "Peru": "🇵🇪", "Chile": "🇨🇱",
+            "Austria": "🇦🇹", "Turkey": "🇹🇷", "Scotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "Nigeria": "🇳🇬",
+            "Algeria": "🇩🇿", "Egypt": "🇪🇬", "Ivory Coast": "🇨🇮", "Norway": "🇳🇴",
+            "Czech Republic": "🇨🇿", "Hungary": "🇭🇺", "Serbia": "🇷🇸", "Greece": "🇬🇷",
+            "Jamaica": "🇯🇲", "South Africa": "🇿🇦", "New Zealand": "🇳🇿", "Gambia": "🇬🇲"
+        };
+
+        function getFlagEmoji(country) {
+            return flagEmojis[country] || "⚽";
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadTeamsDropdown();
+            
+            const select = document.getElementById('selectTeam');
+            if (select.options.length > 0) {
+                // Set default to Brazil if available, otherwise first
+                const brazilIdx = Array.from(select.options).findIndex(o => o.value === "Brazil");
+                select.selectedIndex = brazilIdx !== -1 ? brazilIdx : 0;
+                
+                loadTeamAnalytics(select.value);
+            }
+
+            select.addEventListener('change', (e) => {
+                loadTeamAnalytics(e.target.value);
+            });
+        });
+
+        async function loadTeamsDropdown() {
+            try {
+                const res = await fetch('/api/teams');
+                const data = await res.json();
+                const select = document.getElementById('selectTeam');
+                select.innerHTML = '';
+                
+                data.teams.forEach(team => {
+                    const opt = document.createElement('option');
+                    opt.value = team;
+                    opt.innerText = team;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error("Failed to load teams dropdown:", err);
+            }
+        }
+
+        async function loadTeamAnalytics(team) {
+            document.getElementById('teamNameHeading').innerText = team.toUpperCase();
+            document.getElementById('teamFlagEmoji').innerText = getFlagEmoji(team);
+            
+            try {
+                // 1. Fetch details
+                const resDetails = await fetch(`/api/team-details/${encodeURIComponent(team)}`);
+                const dataDetails = await resDetails.json();
+                
+                const state = dataDetails.state;
+                document.getElementById('eloValue').innerText = state.elo.toFixed(1);
+                document.getElementById('fifaRank').innerText = `#${state.rank}`;
+                document.getElementById('goalsScoredAvg').innerText = state.goals_scored_avg.toFixed(2);
+                
+                // Set confederation tag based on team names / continent mapping
+                let confederation = "UEFA";
+                const isConmebol = ["Brazil", "Argentina", "Uruguay", "Colombia", "Chile", "Ecuador", "Peru", "Paraguay", "Bolivia", "Venezuela"].includes(team);
+                const isConcacaf = ["United States", "Canada", "Mexico", "Costa Rica", "Jamaica", "Honduras", "Panama", "El Salvador"].includes(team);
+                const isCaf = ["Senegal", "Morocco", "Tunisia", "Cameroon", "Ghana", "Nigeria", "Egypt", "Algeria", "Ivory Coast", "South Africa"].includes(team);
+                const isAfc = ["Japan", "South Korea", "Iran", "Saudi Arabia", "Australia", "China PR", "Qatar"].includes(team);
+                
+                if (isConmebol) confederation = "CONMEBOL";
+                else if (isConcacaf) confederation = "CONCACAF";
+                else if (isCaf) confederation = "CAF";
+                else if (isAfc) confederation = "AFC";
+                
+                document.getElementById('teamConfederationTag').innerText = confederation;
+                document.getElementById('teamSubtitle').innerText = `${confederation} Qualified • World Cup 2026 Target Group`;
+                
+                // Adjust progress bar widths
+                // Max goals 4.0
+                const goalsPercent = Math.min(100, Math.round((state.goals_scored_avg / 3.0) * 100));
+                document.getElementById('goalsBar').style.width = `${goalsPercent}%`;
+                
+                // Max rank 211 (lower rank is better, so 1st is 100%)
+                const rankPercent = Math.round(((212 - state.rank) / 211) * 100);
+                document.getElementById('rankBar').style.width = `${rankPercent}%`;
+                
+                // Update Radar Chart Metrics
+                const radar = dataDetails.radar;
+                document.getElementById('radarAttVal').innerText = radar.attack;
+                document.getElementById('radarDefVal').innerText = radar.defense;
+                document.getElementById('radarTacVal').innerText = radar.tactics;
+                document.getElementById('radarFitVal').innerText = radar.fitness;
+                
+                // Draw Radar Polygon (centered at 50,50 with max radius ~45)
+                // Coordinates mapping:
+                // Point 1 (Attack): up (50, 50 - att * 0.45)
+                // Point 2 (Defense): right (50 + def * 0.45, 50)
+                // Point 3 (Tactics): down (50, 50 + tac * 0.45)
+                // Point 4 (Fitness): left (50 - fit * 0.45, 50)
+                const attRadius = (radar.attack / 100) * 45;
+                const defRadius = (radar.defense / 100) * 45;
+                const tacRadius = (radar.tactics / 100) * 45;
+                const fitRadius = (radar.fitness / 100) * 45;
+                
+                const attY = 50 - attRadius;
+                const defX = 50 + defRadius;
+                const tacY = 50 + tacRadius;
+                const fitX = 50 - fitRadius;
+                
+                document.getElementById('radarPolygon').setAttribute('points', `50,${attY} ${defX},50 50,${tacY} ${fitX},50`);
+                
+                document.getElementById('radarPointAtt').setAttribute('cx', "50");
+                document.getElementById('radarPointAtt').setAttribute('cy', attY.toString());
+                
+                document.getElementById('radarPointDef').setAttribute('cx', defX.toString());
+                document.getElementById('radarPointDef').setAttribute('cy', "50");
+                
+                document.getElementById('radarPointTac').setAttribute('cx', "50");
+                document.getElementById('radarPointTac').setAttribute('cy', tacY.toString());
+                
+                document.getElementById('radarPointFit').setAttribute('cx', fitX.toString());
+                document.getElementById('radarPointFit').setAttribute('cy', "50");
+                
+                // Update AI Scout Summary card
+                let summaryText = "";
+                if (state.elo > 1900) {
+                    summaryText = `<span class="text-secondary font-bold">${team}</span> displays elite ELO parameters (${Math.round(state.elo)}) and is projected to be a major World Cup contender. The squad combines aggressive attacking stats (${state.goals_scored_avg.toFixed(2)} goals/match) with solid structural tactility. Recommended setup: High-block transition.`;
+                } else if (state.elo > 1650) {
+                    summaryText = `<span class="text-secondary font-bold">${team}</span> is a highly competitive mid-tier nation. Their ELO profile (${Math.round(state.elo)}) suggests they can comfortably pressure top seeds, especially utilizing their form index (${state.form.toFixed(2)}). Recommend low-risk counter setups.`;
+                } else {
+                    summaryText = `<span class="text-secondary font-bold">${team}</span> enters as an underdog seed. With an ELO of ${Math.round(state.elo)}, the model advises focusing on clean sheet preservation (ranked #${state.rank}) and compact defensive systems during group stages.`;
+                }
+                document.getElementById('aiTacticalAdvice').innerHTML = summaryText;
+
+                // 2. Fetch matches
+                const resMatches = await fetch(`/api/team-matches/${encodeURIComponent(team)}`);
+                const dataMatches = await resMatches.json();
+                
+                const tableBody = document.getElementById('matchesTableBody');
+                tableBody.innerHTML = '';
+                
+                if (dataMatches.matches && dataMatches.matches.length > 0) {
+                    dataMatches.matches.forEach(m => {
+                        const tr = document.createElement('tr');
+                        tr.className = "border-b border-outline-variant/30 hover:bg-surface-container-low transition-colors";
+                        
+                        let outcomeClass = "bg-surface-container-high text-on-surface-variant";
+                        if (m.outcome === "W") outcomeClass = "bg-secondary/10 text-secondary";
+                        else if (m.outcome === "L") outcomeClass = "bg-error-container/20 text-error";
+                        
+                        tr.innerHTML = `
+                            <td class="py-4 px-4 font-label-mono text-on-surface-variant">${m.date}</td>
+                            <td class="py-4 px-4 flex items-center gap-3">
+                                <span class="text-lg">${getFlagEmoji(m.opponent)}</span>
+                                <span class="font-bold">${m.opponent}</span>
+                            </td>
+                            <td class="py-4 px-4 text-on-surface-variant">${m.tournament}</td>
+                            <td class="py-4 px-4 text-right">
+                                <span class="${outcomeClass} px-2 py-1 rounded text-xs font-bold">${m.score_text} ${m.outcome}</span>
+                            </td>
+                        `;
+                        tableBody.appendChild(tr);
+                    });
+                    
+                    // Render form circles in the metrics card based on these recent outcomes
+                    const formIndicators = document.getElementById('formIndicators');
+                    formIndicators.innerHTML = '';
+                    dataMatches.matches.forEach(m => {
+                        const span = document.createElement('span');
+                        let circleClass = "bg-outline-variant/20 text-outline-variant border-outline-variant/30";
+                        if (m.outcome === "W") circleClass = "bg-secondary/20 text-secondary border-secondary/30";
+                        else if (m.outcome === "L") circleClass = "bg-error-container/20 text-error border-error/30";
+                        
+                        span.className = `w-6 h-6 flex items-center justify-center rounded-full text-[10px] font-bold border ${circleClass}`;
+                        span.innerText = m.outcome;
+                        formIndicators.appendChild(span);
+                    });
+                } else {
+                    tableBody.innerHTML = `<tr><td colspan="4" class="py-8 text-center text-on-surface-variant">No recent matches found for this team.</td></tr>`;
+                    document.getElementById('formIndicators').innerHTML = '<span class="text-xs text-outline font-label-mono">N/A</span>';
+                }
+            } catch (err) {
+                console.error("Failed to load team analytics:", err);
+            }
+        }
+    </script>
+</body>
+</html>

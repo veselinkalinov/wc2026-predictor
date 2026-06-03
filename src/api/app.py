@@ -29,8 +29,9 @@ def create_app() -> Flask:
         return response
 
     # Register blueprints (routes will be defined in routes.py)
-    from src.api.routes import api_bp
+    from src.api.routes import api_bp, pages_bp
     app.register_blueprint(api_bp, url_prefix="/api")
+    app.register_blueprint(pages_bp, url_prefix="")
 
     logger.info("Flask application created and configured.")
     return app

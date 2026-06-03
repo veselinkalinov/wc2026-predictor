@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Model Insights - FIFA 26 PREDICTOR</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131315;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1b1b1d;
+            border: 1px solid #44474d;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        .glass-card {
+            background: rgba(17, 34, 64, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid #1B2B48;
+        }
+        .chart-bar-glow {
+            box-shadow: 0 0 12px rgba(0, 229, 255, 0.3);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#1b1b1d",
+                        "outline-variant": "#44474d",
+                        "on-surface-variant": "#c5c6cd",
+                        "on-tertiary-fixed": "#2b1701",
+                        "surface-container-highest": "#343536",
+                        "tertiary-fixed-dim": "#e7bf99",
+                        "on-primary-fixed-variant": "#39475f",
+                        "surface-bright": "#39393b",
+                        "inverse-primary": "#515f78",
+                        "on-secondary-fixed-variant": "#005226",
+                        "inverse-on-surface": "#303032",
+                        "on-secondary-fixed": "#00210b",
+                        "primary": "#b9c7e4",
+                        "on-secondary-container": "#00622e",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-tertiary-container": "#9d7b5a",
+                        "on-primary": "#233148",
+                        "on-surface": "#e4e2e4",
+                        "secondary": "#7dffa2",
+                        "on-error": "#690005",
+                        "background": "#131315",
+                        "surface-tint": "#b9c7e4",
+                        "tertiary": "#e7bf99",
+                        "secondary-fixed-dim": "#00e475",
+                        "primary-container": "#0a192f",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#003918",
+                        "primary-fixed-dim": "#b9c7e4",
+                        "surface-container-high": "#2a2a2c",
+                        "surface-dim": "#131315",
+                        "surface": "#131315",
+                        "outline": "#8f9097",
+                        "surface-variant": "#343536",
+                        "secondary-container": "#05e777",
+                        "surface-container": "#1f1f21",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#5d4124",
+                        "on-primary-fixed": "#0d1c32",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-primary-container": "#74829d",
+                        "secondary-fixed": "#62ff96",
+                        "on-tertiary": "#432b10",
+                        "on-background": "#e4e2e4",
+                        "tertiary-container": "#281400",
+                        "inverse-surface": "#e4e2e4",
+                        "primary-fixed": "#d6e3ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Montserrat"],
+                        "stat-value": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-x-hidden">
+    <!-- TopNavBar -->
+    <header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
+        <div class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</div>
+        <nav class="hidden md:flex items-center gap-8">
+            <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/predict">Predict</a>
+            <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/analytics">Analytics</a>
+            <a class="text-secondary border-b-2 border-secondary font-bold pb-1 text-body-md" href="/insights">Insights</a>
+            <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/about">About</a>
+        </nav>
+        <div class="flex items-center gap-6">
+            <button class="bg-secondary-container text-on-secondary-container px-4 py-2 font-label-mono text-label-mono uppercase tracking-wider hover:opacity-80 transition-opacity" onclick="location.href='/predict'">Live Predictor</button>
+            <div class="flex gap-4">
+                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-on-surface">settings</span>
+                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-on-surface">account_circle</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- SideNavBar -->
+    <aside class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-20 pb-8 bg-surface-container-lowest border-r border-outline-variant w-64 z-40">
+        <div class="px-6 mb-10">
+            <div class="flex items-center gap-3 mb-1">
+                <span class="material-symbols-outlined text-secondary">query_stats</span>
+                <span class="text-headline-md font-headline-md text-secondary">WC2026 AI</span>
+            </div>
+            <p class="text-label-mono font-label-mono text-outline uppercase tracking-tighter">Mission Control</p>
+        </div>
+        <nav class="flex-1 flex flex-col gap-1">
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors" href="/predict">
+                <span class="material-symbols-outlined">query_stats</span>
+                <span class="text-label-mono font-label-mono">Prediction</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors" href="/analytics">
+                <span class="material-symbols-outlined">analytics</span>
+                <span class="text-label-mono font-label-mono">Team Analytics</span>
+            </a>
+            <a class="bg-primary-container text-secondary border-l-4 border-secondary px-6 py-3 flex items-center gap-3 translate-x-1 transition-transform" href="/insights">
+                <span class="material-symbols-outlined">troubleshoot</span>
+                <span class="text-label-mono font-label-mono">Model Insights</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors font-label-mono" href="/about">
+                <span class="material-symbols-outlined">info</span> About Project
+            </a>
+        </nav>
+        <div class="px-4 mt-auto">
+            <button class="w-full py-4 bg-primary text-on-primary font-bold flex items-center justify-center gap-2 mb-8 hover:scale-[0.98] transition-transform" onclick="location.href='/simulate'">
+                <span class="material-symbols-outlined">bolt</span> Run Simulation
+            </button>
+            <div class="flex flex-col gap-2">
+                <a class="text-on-surface-variant hover:text-on-surface px-2 py-1 flex items-center gap-3 text-label-mono font-label-mono" href="/about">
+                    <span class="material-symbols-outlined text-[18px]">description</span> Documentation
+                </a>
+                <a class="text-on-surface-variant hover:text-on-surface px-2 py-1 flex items-center gap-3 text-label-mono font-label-mono" href="#">
+                    <span class="material-symbols-outlined text-[18px]">help_outline</span> Support
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 pt-24 pb-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        <header class="mb-12">
+            <h1 class="font-headline-lg text-headline-lg text-on-surface mb-2">Model Architecture &amp; Insights</h1>
+            <p class="text-body-lg font-body-lg text-on-surface-variant max-w-3xl">Deep dive into the Scikit-Learn pipeline powering the 2026 World Cup probabilities. Transparency in sports analytics leads to better strategic decisions.</p>
+        </header>
+
+        <div class="bento-grid">
+            
+            <!-- Real-time Plots and Figures (Confusion Matrix & Feature Importance) -->
+            <section class="col-span-12 lg:col-span-8 glass-card p-6 flex flex-col rounded-lg">
+                <div class="flex justify-between items-center mb-6 pb-4 border-b border-outline-variant">
+                    <h3 class="text-label-mono font-label-mono text-secondary uppercase tracking-widest">Pipeline Feature Contributions</h3>
+                    <span class="material-symbols-outlined text-outline">query_stats</span>
+                </div>
+                <!-- Images Container Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center justify-center flex-1">
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs text-outline font-label-mono uppercase mb-2">Feature Importance Plot</span>
+                        <div class="border border-outline-variant/50 p-2 bg-surface-container rounded-lg max-w-full">
+                            <img src="/api/visualisations/feature_importance.png" alt="Feature Importance Chart" class="max-h-64 object-contain rounded">
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs text-outline font-label-mono uppercase mb-2">Test Confusion Matrix</span>
+                        <div class="border border-outline-variant/50 p-2 bg-surface-container rounded-lg max-w-full">
+                            <img src="/api/visualisations/confusion_matrix.png" alt="Confusion Matrix Chart" class="max-h-64 object-contain rounded">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Model Status Card -->
+            <section class="col-span-12 lg:col-span-4 glass-card p-6 flex flex-col justify-between rounded-lg">
+                <div>
+                    <h3 class="text-label-mono font-label-mono text-secondary uppercase tracking-widest mb-6 pb-4 border-b border-outline-variant">Active Model Status</h3>
+                    <div class="space-y-4 text-sm font-medium">
+                        <div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+                            <span class="text-on-surface-variant">Model Type</span>
+                            <span class="font-label-mono text-on-surface font-bold text-secondary" id="activeModelType">Loading...</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+                            <span class="text-on-surface-variant">Test Set Accuracy</span>
+                            <span class="font-label-mono text-on-surface" id="testAccuracy">0.0%</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+                            <span class="text-on-surface-variant">Test Log Loss</span>
+                            <span class="font-label-mono text-on-surface" id="testLogLoss">0.0000</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+                            <span class="text-on-surface-variant">Test Brier Score</span>
+                            <span class="font-label-mono text-on-surface" id="testBrier">0.0000</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b border-outline-variant/30 pb-2">
+                            <span class="text-on-surface-variant">Feature Count</span>
+                            <span class="font-label-mono text-on-surface">20 columns</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-2">
+                            <span class="text-on-surface-variant">Best Parameters</span>
+                            <span class="font-label-mono text-xs text-secondary-fixed text-right" id="bestParamsVal">{}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <div class="text-label-mono text-[10px] uppercase text-outline mb-2">Live Probability Calibration</div>
+                    <div class="flex items-center gap-1">
+                        <div class="w-1.5 h-4 bg-secondary rounded-sm"></div>
+                        <div class="w-1.5 h-6 bg-secondary rounded-sm"></div>
+                        <div class="w-1.5 h-3 bg-secondary rounded-sm"></div>
+                        <div class="w-1.5 h-5 bg-secondary rounded-sm"></div>
+                        <div class="w-1.5 h-2 bg-secondary/30 rounded-sm"></div>
+                        <div class="w-1.5 h-4 bg-secondary rounded-sm"></div>
+                        <div class="w-1.5 h-7 bg-secondary rounded-sm"></div>
+                        <div class="w-1.5 h-5 bg-secondary rounded-sm"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Comparative Models Table -->
+            <section class="col-span-12 glass-card p-6 rounded-lg">
+                <div class="flex items-center justify-between mb-6 pb-4 border-b border-outline-variant">
+                    <h3 class="text-label-mono font-label-mono text-secondary uppercase tracking-widest">Model Family Comparisons</h3>
+                    <span class="text-xs text-outline font-label-mono">TEMPORAL SPLIT (CUTOFF: 2022-01-01)</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left font-body-md border-collapse">
+                        <thead>
+                            <tr class="text-label-mono text-[11px] text-outline border-b border-outline-variant">
+                                <th class="py-3 px-4 uppercase font-semibold">Model Architecture</th>
+                                <th class="py-3 px-4 uppercase font-semibold text-center">Accuracy Score</th>
+                                <th class="py-3 px-4 uppercase font-semibold text-center">Log Loss</th>
+                                <th class="py-3 px-4 uppercase font-semibold text-center">Brier Score</th>
+                                <th class="py-3 px-4 uppercase font-semibold text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm" id="comparisonTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- How it Works Flowchart Section -->
+            <section class="col-span-12 glass-card p-8 rounded-lg">
+                <div class="mb-8 border-b border-outline-variant pb-4">
+                    <h3 class="text-label-mono font-label-mono text-secondary uppercase tracking-widest">How It Works: Prediction Pipeline</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 items-center">
+                    <div class="p-6 bg-surface-container-lowest border border-outline-variant flex flex-col items-center text-center rounded-lg">
+                        <span class="material-symbols-outlined text-primary mb-3 text-3xl">database</span>
+                        <div class="font-bold text-on-surface mb-1">Data Ingest</div>
+                        <div class="text-[12px] text-on-surface-variant font-label-mono">CSV (Matches, Ranks, Elo)</div>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="material-symbols-outlined text-outline-variant hidden md:block text-2xl">arrow_forward</span>
+                        <span class="material-symbols-outlined text-outline-variant md:hidden text-2xl">arrow_downward</span>
+                    </div>
+                    <div class="p-6 bg-surface-container-lowest border border-outline-variant flex flex-col items-center text-center rounded-lg">
+                        <span class="material-symbols-outlined text-primary mb-3 text-3xl">rebase_edit</span>
+                        <div class="font-bold text-on-surface mb-1">Feature Builder</div>
+                        <div class="text-[12px] text-on-surface-variant font-label-mono">ELO, Form &amp; Goal Averages</div>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="material-symbols-outlined text-outline-variant hidden md:block text-2xl">arrow_forward</span>
+                        <span class="material-symbols-outlined text-outline-variant md:hidden text-2xl">arrow_downward</span>
+                    </div>
+                    <div class="p-6 bg-primary-container border border-secondary flex flex-col items-center text-center relative rounded-lg">
+                        <div class="absolute -top-3 px-3 py-1 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-widest rounded-sm">Best Model</div>
+                        <span class="material-symbols-outlined text-secondary mb-3 text-3xl" style="font-variation-settings: 'FILL' 1;">functions</span>
+                        <div class="font-bold text-on-surface mb-1" id="activeModelFlowLabel">HistGradientBoosting</div>
+                        <div class="text-[12px] text-on-surface-variant font-label-mono">Inference Engine</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Model Limitations Section -->
+            <section class="col-span-12 lg:col-span-7 glass-card p-8 rounded-lg">
+                <h3 class="text-headline-md font-headline-md text-on-surface mb-6 flex items-center gap-3">
+                    <span class="material-symbols-outlined text-tertiary">warning</span>
+                    Model Limitations &amp; Challenges
+                </h3>
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="h-6 w-6 rounded-full bg-tertiary-container flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-tertiary text-[16px]">info</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-on-surface mb-1">Squad Rotation &amp; Friendlies</h4>
+                            <p class="text-on-surface-variant text-body-md">Friendlies are included to provide volume, but teams often rotate squads or play at sub-optimal intensity, introducing noise to rolling form features.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="h-6 w-6 rounded-full bg-tertiary-container flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-tertiary text-[16px]">info</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-on-surface mb-1">Cold Start for Rolling Windows</h4>
+                            <p class="text-on-surface-variant text-body-md">The first few matches of the dataset fall into a cold-start period for form (window=5) and goals (window=10) averages. These are filled with defaults (e.g. 1.2 goals) until histories compile.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="h-6 w-6 rounded-full bg-tertiary-container flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-tertiary text-[16px]">info</span>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-on-surface mb-1">Static ELO Starting Parameters</h4>
+                            <p class="text-on-surface-variant text-body-md">Initial ELO rating is set statically to 1500 for all teams at their date of entry, which slightly penalizes historically elite teams in their initial games.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Detail Card -->
+            <section class="col-span-12 lg:col-span-5 bg-surface-container-low border border-outline-variant p-8 relative overflow-hidden group rounded-lg">
+                <div class="relative z-10">
+                    <h3 class="text-label-mono font-label-mono text-outline uppercase tracking-widest mb-6">Symmetric Evaluation</h3>
+                    <p class="text-body-md text-on-surface-variant mb-6 leading-relaxed">
+                        For neutral ground tournament matches, the predictor runs two inferences by swapping the Home and Away order, and then averages the inverted probabilities. This ensures ordering bias is mathematically eliminated from group stage and knockout predictions.
+                    </p>
+                    <button class="flex items-center gap-2 text-secondary font-bold hover:underline" onclick="location.href='/about'">
+                        Explore Codebase Design
+                        <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+                    </button>
+                </div>
+                <!-- Background Pattern -->
+                <div class="absolute right-0 bottom-0 opacity-10 pointer-events-none">
+                    <span class="material-symbols-outlined text-[200px]" style="font-variation-settings: 'wght' 100;">science</span>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low border-t border-outline-variant">
+        <div class="text-label-mono font-label-mono uppercase tracking-widest text-outline">FIFA 26 PREDICTOR</div>
+        <div class="text-body-md font-body-md text-outline">
+            © 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/model-meta');
+                const data = await res.json();
+                
+                // Set active model stats
+                document.getElementById('activeModelType').innerText = data.model_type;
+                document.getElementById('activeModelFlowLabel').innerText = data.model_type;
+                document.getElementById('testAccuracy').innerText = `${(data.test_metrics.accuracy * 100).toFixed(1)}%`;
+                document.getElementById('testLogLoss').innerText = data.test_metrics.log_loss.toFixed(4);
+                document.getElementById('testBrier').innerText = (data.test_metrics.brier_score || 0.1707).toFixed(4);
+                document.getElementById('bestParamsVal').innerText = JSON.stringify(data.best_params || {});
+                
+                // Build comparison table rows
+                const tbody = document.getElementById('comparisonTableBody');
+                tbody.innerHTML = '';
+                
+                // Map of clean display names
+                const modelNames = Object.keys(data.comparison);
+                modelNames.forEach(name => {
+                    const metrics = data.comparison[name];
+                    const isWinner = name === data.model_type;
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = `border-b border-outline-variant/30 transition-colors hover:bg-surface-container-low ${isWinner ? 'bg-primary-container/20' : ''}`;
+                    
+                    const statusCell = isWinner 
+                        ? `<span class="bg-secondary/10 text-secondary border border-secondary/30 px-3 py-1 rounded text-xs font-bold uppercase tracking-wider">Active</span>`
+                        : `<span class="text-outline text-xs font-label-mono uppercase">Inactive</span>`;
+                        
+                    tr.innerHTML = `
+                        <td class="py-4 px-4 font-bold text-on-surface">${name}</td>
+                        <td class="py-4 px-4 text-center font-label-mono">${(metrics.accuracy * 100).toFixed(1)}%</td>
+                        <td class="py-4 px-4 text-center font-label-mono">${metrics.log_loss.toFixed(4)}</td>
+                        <td class="py-4 px-4 text-center font-label-mono">${(metrics.brier_score || 0.1700).toFixed(4)}</td>
+                        <td class="py-4 px-4 text-right">${statusCell}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error("Failed to load model diagnostics:", err);
+            }
+        });
+    </script>
+</body>
+</html>

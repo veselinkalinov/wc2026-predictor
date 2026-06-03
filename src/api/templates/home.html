@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>FIFA 26 PREDICTOR | World Cup AI Analysis</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            background-color: #131315;
+            color: #e4e2e4;
+            overflow-x: hidden;
+        }
+        .backdrop-blur-md {
+            backdrop-filter: blur(12px);
+        }
+        .hero-gradient {
+            background: radial-gradient(circle at 50% 50%, #112240 0%, #050B14 100%);
+        }
+        .card-hover:hover {
+            border-color: #00E5FF;
+            background-color: #1b1b1d;
+        }
+        .glow-edge {
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#1b1b1d",
+                        "outline-variant": "#44474d",
+                        "on-surface-variant": "#c5c6cd",
+                        "surface-container-highest": "#343536",
+                        "on-primary-fixed-variant": "#39475f",
+                        "primary": "#b9c7e4",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-primary": "#233148",
+                        "secondary": "#7dffa2",
+                        "background": "#131315",
+                        "primary-container": "#0a192f",
+                        "on-surface": "#e4e2e4",
+                        "surface-container-high": "#2a2a2c",
+                        "outline": "#8f9097",
+                        "surface-container": "#1f1f21",
+                        "tertiary": "#e7bf99"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Montserrat"],
+                        "stat-value": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body-md bg-background text-on-surface selection:bg-secondary selection:text-on-secondary">
+    <!-- TopNavBar -->
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
+        <div class="flex items-center gap-8">
+            <span class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</span>
+            <div class="hidden md:flex gap-6">
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-label-mono" href="/predict">Predict</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-label-mono" href="/analytics">Analytics</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-label-mono" href="/insights">Insights</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-label-mono" href="/about">About</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="bg-secondary text-on-secondary px-4 py-1.5 font-label-mono text-sm hover:opacity-90 transition-all uppercase tracking-wider" onclick="location.href='/predict'">Try Predictor</button>
+            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">settings</span>
+            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">account_circle</span>
+        </div>
+    </nav>
+
+    <!-- SideNavBar (Hidden on Mobile) -->
+    <aside class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-20 pb-8 bg-surface-container-lowest border-r border-outline-variant w-64 z-40">
+        <div class="px-6 mb-8">
+            <div class="flex items-center gap-3 mb-2">
+                <img alt="WC2026 Logo" class="w-10 h-10 rounded-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTDzByXg28ZORcyIgwZGe1LrwPFb0LFKWJ8HmOxel5WV3NaNLRs8eok0u87r-zG_lmCHtPnvLO1yosrOUt6sGWReBg32OxVxuMwq0sdtgHmiP935OeCAgVU1ZkGF4_80o4xoy0jZALQngFstwInSxKVJAD-_c_e-chBzAQ6OSqfpG7xZRmYQ2tGVzWxRdEutecAX6_e-rKfunGHVOxtoh65KG97mgNt0vxrkkn-zest-FL-DqXR-aFTYttOLqACOpTGNw0EoG4VvpX"/>
+                <div>
+                    <p class="text-headline-md font-headline-md text-secondary leading-tight">WC2026 AI</p>
+                    <p class="text-[10px] font-label-mono text-outline uppercase tracking-tighter">Mission Control</p>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors group" href="/predict">
+                <span class="material-symbols-outlined group-hover:text-on-surface">query_stats</span>
+                <span class="font-label-mono text-sm uppercase">Prediction</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors group" href="/analytics">
+                <span class="material-symbols-outlined group-hover:text-on-surface">analytics</span>
+                <span class="font-label-mono text-sm uppercase">Team Analytics</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors group" href="/insights">
+                <span class="material-symbols-outlined group-hover:text-on-surface">troubleshoot</span>
+                <span class="font-label-mono text-sm uppercase">Model Insights</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors group" href="/about">
+                <span class="material-symbols-outlined group-hover:text-on-surface">info</span>
+                <span class="font-label-mono text-sm uppercase">About Project</span>
+            </a>
+        </nav>
+        <div class="px-4 mt-auto">
+            <button class="w-full bg-primary text-on-primary py-3 font-label-mono text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all mb-8 flex items-center justify-center gap-2" onclick="location.href='/simulate'">
+                <span class="material-symbols-outlined text-sm">bolt</span> RUN SIMULATION
+            </button>
+            <div class="space-y-1 border-t border-outline-variant pt-4">
+                <a class="text-on-surface-variant hover:text-on-surface flex items-center gap-3 px-2 py-1 transition-colors" href="/about">
+                    <span class="material-symbols-outlined text-sm">description</span>
+                    <span class="font-label-mono text-[10px] uppercase">Documentation</span>
+                </a>
+                <a class="text-on-surface-variant hover:text-on-surface flex items-center gap-3 px-2 py-1 transition-colors" href="#">
+                    <span class="material-symbols-outlined text-sm">help_outline</span>
+                    <span class="font-label-mono text-[10px] uppercase">Support</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Canvas -->
+    <main class="lg:ml-64 pt-16 min-h-screen">
+        <!-- Hero Section -->
+        <section class="relative min-h-[819px] flex flex-col justify-center items-center text-center px-margin-mobile md:px-margin-desktop hero-gradient overflow-hidden">
+            <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#44474d 1px, transparent 1px); background-size: 40px 40px;"></div>
+            <div class="relative z-10 max-w-4xl mx-auto">
+                <span class="inline-block px-3 py-1 bg-primary-container text-secondary font-label-mono text-xs uppercase tracking-[0.2em] mb-6 border border-secondary/20">System Active: 2026 Ready</span>
+                <h1 class="font-display-lg text-display-lg text-on-surface mb-6 leading-none">Predicting the Future of Football</h1>
+                <p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-2xl mx-auto">
+                    A sophisticated machine learning engine trained on 50 years of international tournament data to forecast every outcome of the FIFA World Cup 2026.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-secondary text-on-secondary px-8 py-4 font-label-mono font-bold text-sm uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2" onclick="location.href='/predict'">
+                        Try Predictor <span class="material-symbols-outlined">trending_flat</span>
+                    </button>
+                    <button class="border border-outline text-on-surface px-8 py-4 font-label-mono font-bold text-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors" onclick="location.href='/about'">
+                        View Methodology
+                    </button>
+                </div>
+            </div>
+            <!-- Dashboard Preview Float -->
+            <div class="mt-16 w-full max-w-container-max px-gutter opacity-40 hover:opacity-80 transition-opacity duration-700">
+                <div class="bg-surface-container rounded-t-xl border-x border-t border-outline-variant p-2">
+                    <div class="h-64 md:h-96 rounded-lg bg-surface-container-lowest border border-outline-variant relative overflow-hidden">
+                        <img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2neJBvttw7HDeS2mTcc-qdK9ZAB9LHkXNsWQFhVQjIAmVxSLhClvvn6gOg3YOOd-eR8uzJqqFCPwId3qmM07r__qcUp33bCnac6mr6NwNDmkkcJnZ8B5oZ49B1OoprXUpC6pNfCiRHAVodWr6hz8POrUY8dhHYwuwkrcCS4EXs_BhSrf_gG0qwDOnqF0fgq-hGW50TXc4N40XQG4Jjj9MX-zT427bKQkgtinrudth1Yualm0pzenqBATZwK2VEKhAyUs6S1Ww2HtP"/>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Engine Section -->
+        <section class="py-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">The Engine</h2>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">Our ML pipeline processes thousands of variables to simulate match environments with unprecedented accuracy.</p>
+                </div>
+                <div class="font-label-mono text-secondary text-xs uppercase tracking-widest border-b border-secondary pb-1">Technical Stack: HistGradientBoosting + Python</div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+                <!-- Card 1 -->
+                <div class="bg-surface-container-low border border-outline-variant p-8 card-hover transition-all duration-300">
+                    <div class="mb-6 flex justify-between items-start">
+                        <span class="material-symbols-outlined text-secondary text-4xl">cloud_sync</span>
+                        <span class="font-label-mono text-outline text-xs">01</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md text-on-surface mb-4 border-b border-outline-variant pb-4 uppercase tracking-tighter">Data Gathering</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">Ingestion and alignment of 25,000+ match histories, ELO scores, and official FIFA rankings from 2000 to 2025.</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-surface-container-low border border-outline-variant p-8 card-hover transition-all duration-300">
+                    <div class="mb-6 flex justify-between items-start">
+                        <span class="material-symbols-outlined text-secondary text-4xl">architecture</span>
+                        <span class="font-label-mono text-outline text-xs">02</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md text-on-surface mb-4 border-b border-outline-variant pb-4 uppercase tracking-tighter">Feature Engineering</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">We compute rolling ELO points, recent competitive form trends, and average goal scoring/defensive metrics over specific temporal windows.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-surface-container-low border border-outline-variant p-8 card-hover transition-all duration-300">
+                    <div class="mb-6 flex justify-between items-start">
+                        <span class="material-symbols-outlined text-secondary text-4xl">psychology</span>
+                        <span class="font-label-mono text-outline text-xs">03</span>
+                    </div>
+                    <h3 class="font-headline-md text-headline-md text-on-surface mb-4 border-b border-outline-variant pb-4 uppercase tracking-tighter">ML Prediction</h3>
+                    <p class="font-body-md text-body-md text-on-surface-variant">A tuned HistGradientBoosting model utilizes temporal folds to determine outcomes, feeding into a 10,000-run Monte Carlo World Cup simulator.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats at a Glance Section -->
+        <section class="py-24 bg-surface-container-lowest">
+            <div class="px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+                <div class="bg-surface-container-low border border-outline-variant overflow-hidden">
+                    <div class="p-6 border-b border-outline-variant bg-surface-container flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-secondary">analytics</span>
+                            <span class="font-label-mono text-sm uppercase tracking-widest text-on-surface">Live Team Distribution (Projected)</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+                            <div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+                            <div class="w-3 h-3 rounded-full bg-outline-variant"></div>
+                        </div>
+                    </div>
+                    <div class="p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="font-label-mono text-xs uppercase text-on-surface-variant">Historical Match Validation</span>
+                                        <span class="font-stat-value text-secondary">24,794 Rows</span>
+                                    </div>
+                                    <div class="h-1 bg-surface-container-high w-full relative">
+                                        <div class="absolute top-0 left-0 h-full bg-secondary glow-edge" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="font-label-mono text-xs uppercase text-on-surface-variant">HistGradientBoosting Accuracy</span>
+                                        <span class="font-stat-value text-tertiary">60.0%</span>
+                                    </div>
+                                    <div class="h-1 bg-surface-container-high w-full relative">
+                                        <div class="absolute top-0 left-0 h-full bg-tertiary" style="width: 60%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-2">
+                                        <span class="font-label-mono text-xs uppercase text-on-surface-variant">Upset Probability Coefficient</span>
+                                        <span class="font-stat-value text-primary">23%</span>
+                                    </div>
+                                    <div class="h-1 bg-surface-container-high w-full relative">
+                                        <div class="absolute top-0 left-0 h-full bg-primary" style="width: 23%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-10 p-6 bg-surface-container-lowest border border-outline-variant">
+                                <p class="font-body-md text-on-surface mb-2">Predictor Insight #042</p>
+                                <p class="text-sm text-on-surface-variant italic">"Current simulations suggest a 14.2% increase in home-field advantage for North American nations compared to the 2022 baseline."</p>
+                            </div>
+                        </div>
+                        <div class="relative h-[400px] border border-outline-variant bg-background flex items-center justify-center group">
+                            <!-- Simulated Map/Graph Area -->
+                            <img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSTUqY1xoYh-_U9150zhqkku91lsi66rgccE2NS_t3QNyXUI82A59ewqmsUBy5xlD2gXx3vZ9UfA3HvlHYLQ1TSYhInpgMY2x73GNQVZGg1xjNdACfs8Ce6HT3fOxa7-ZxzcJJhAUPkG66-lJB_Deh7_wZFRGbNtEC6jbr1tsUygGEcr0oW-GfG31i_cHSYXG31qt0UKpFJl_V2pj6uTdtuJSFsxAsH3GIXkLIZIQD2im4m0-udYX0ocEtpUYCT3FAYtom-N-GpqmC"/>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <div class="p-4 bg-surface-container/80 backdrop-blur-sm border border-secondary/30 text-center">
+                                    <p class="font-label-mono text-[10px] uppercase text-secondary mb-1">Global Simulation</p>
+                                    <p class="font-headline-md text-on-surface">268 TEAMS TRACKED</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Educational Focus Section -->
+        <section class="py-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto border-t border-outline-variant/30">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <span class="font-label-mono text-tertiary text-xs uppercase tracking-widest mb-4 block">Mission: ML Literacy</span>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface mb-6">Why We Built This</h2>
+                    <p class="font-body-lg text-body-lg text-on-surface-variant mb-6">
+                        More than just a predictor, this project serves as a living laboratory for Sports Data Science. We believe that the future of fan engagement lies in understanding the 'Why' behind the 'Win'.
+                    </p>
+                    <ul class="space-y-4 mb-10">
+                        <li class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-secondary mt-1">check_circle</span>
+                            <span class="text-on-surface">Open-source ML models for community scrutiny and iteration.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-secondary mt-1">check_circle</span>
+                            <span class="text-on-surface">Real-time explainability dashboards showing permutation feature weights.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-secondary mt-1">check_circle</span>
+                            <span class="text-on-surface">Symmetric prediction averaging to eliminate order bias in neutral matches.</span>
+                        </li>
+                    </ul>
+                    <a class="inline-flex items-center gap-3 font-label-mono text-secondary hover:gap-5 transition-all uppercase tracking-widest" href="/about">
+                        Read the ML Whitepaper <span class="material-symbols-outlined">arrow_right_alt</span>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-surface-container-high p-6 aspect-square flex flex-col justify-center border border-outline-variant">
+                        <p class="text-4xl font-stat-value text-secondary mb-2">24k+</p>
+                        <p class="font-label-mono text-[10px] uppercase text-outline">Training Matches</p>
+                    </div>
+                    <div class="bg-surface-container-high p-6 aspect-square flex flex-col justify-center border border-outline-variant mt-8">
+                        <p class="text-4xl font-stat-value text-tertiary mb-2">100%</p>
+                        <p class="font-label-mono text-[10px] uppercase text-outline">Model Uptime</p>
+                    </div>
+                    <div class="bg-surface-container-high p-6 aspect-square flex flex-col justify-center border border-outline-variant">
+                        <p class="text-4xl font-stat-value text-primary mb-2">35ms</p>
+                        <p class="font-label-mono text-[10px] uppercase text-outline">Inference Latency</p>
+                    </div>
+                    <div class="bg-surface-container-high p-6 aspect-square flex flex-col justify-center border border-outline-variant mt-8">
+                        <p class="text-4xl font-stat-value text-on-surface mb-2">268</p>
+                        <p class="font-label-mono text-[10px] uppercase text-outline">Teams Tracked</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-8 bg-surface-container-low border-t border-outline-variant">
+            <div class="flex flex-col gap-4">
+                <span class="text-label-mono font-label-mono uppercase tracking-widest text-secondary">FIFA 26 ANALYTICS ENGINE</span>
+                <p class="text-body-md font-body-md text-outline max-w-sm">© 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-8">
+                <a class="text-on-surface-variant hover:text-secondary text-label-mono text-xs uppercase transition-colors" href="/about">Data Sources</a>
+                <a class="text-on-surface-variant hover:text-secondary text-label-mono text-xs uppercase transition-colors" href="/insights">ML Pipeline</a>
+                <a class="text-on-surface-variant hover:text-secondary text-label-mono text-xs uppercase transition-colors" href="#">Privacy Policy</a>
+                <a class="text-on-surface-variant hover:text-secondary text-label-mono text-xs uppercase transition-colors" href="#">Terms of Service</a>
+            </div>
+            <div class="flex gap-4">
+                <div class="w-10 h-10 rounded-sm border border-outline-variant flex items-center justify-center hover:border-secondary transition-colors cursor-pointer" onclick="location.href='/insights'">
+                    <span class="material-symbols-outlined text-outline">terminal</span>
+                </div>
+                <div class="w-10 h-10 rounded-sm border border-outline-variant flex items-center justify-center hover:border-secondary transition-colors cursor-pointer">
+                    <span class="material-symbols-outlined text-outline">language</span>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // Micro-interaction for hover effects on cards
+        document.querySelectorAll('.card-hover').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.querySelector('.material-symbols-outlined').style.transform = 'scale(1.1) rotate(-5deg)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.querySelector('.material-symbols-outlined').style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+
+        // Simple progress bar animation on scroll
+        const observeProgress = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('glow-edge');
+                }
+            });
+        });
+        document.querySelectorAll('.h-1 div').forEach(bar => observeProgress.observe(bar));
+    </script>
+</body>
+</html>

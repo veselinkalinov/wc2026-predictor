@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Tournament Simulation | FIFA 26 PREDICTOR</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        .pitch-green { color: #05e777; }
+        .bg-pitch-green { background-color: #05e777; }
+        .glow-border:hover { border-color: #7dffa2; box-shadow: 0 0 15px rgba(125, 255, 162, 0.1); }
+        .animate-grow { transition: width 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        
+        /* Scanning and Pulse Animations */
+        @keyframes scan {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+        .scanning::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to bottom, transparent, rgba(125, 255, 162, 0.2), transparent);
+            animation: scan 1.5s linear infinite;
+        }
+        .pulse-container {
+            animation: pulse-glow 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+        
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #131315;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #44474d;
+            border-radius: 3px;
+        }
+        
+        /* Bar chart styling */
+        .bar-glow {
+            box-shadow: 0 0 8px rgba(125, 255, 162, 0.3);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#1b1b1d",
+                        "outline-variant": "#44474d",
+                        "on-surface-variant": "#c5c6cd",
+                        "on-tertiary-fixed": "#2b1701",
+                        "surface-container-highest": "#343536",
+                        "tertiary-fixed-dim": "#e7bf99",
+                        "on-primary-fixed-variant": "#39475f",
+                        "surface-bright": "#39393b",
+                        "inverse-primary": "#515f78",
+                        "on-secondary-fixed-variant": "#005226",
+                        "inverse-on-surface": "#303032",
+                        "on-secondary-fixed": "#00210b",
+                        "primary": "#b9c7e4",
+                        "on-secondary-container": "#00622e",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-tertiary-container": "#9d7b5a",
+                        "on-primary": "#233148",
+                        "on-surface": "#e4e2e4",
+                        "secondary": "#7dffa2",
+                        "on-error": "#690005",
+                        "background": "#131315",
+                        "surface-tint": "#b9c7e4",
+                        "tertiary": "#e7bf99",
+                        "secondary-fixed-dim": "#00e475",
+                        "primary-container": "#0a192f",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#003918",
+                        "primary-fixed-dim": "#b9c7e4",
+                        "surface-container-high": "#2a2a2c",
+                        "surface-dim": "#131315",
+                        "surface": "#131315",
+                        "outline": "#8f9097",
+                        "surface-variant": "#343536",
+                        "secondary-container": "#05e777",
+                        "surface-container": "#1f1f21",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#5d4124",
+                        "on-primary-fixed": "#0d1c32",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-primary-container": "#74829d",
+                        "secondary-fixed": "#62ff96",
+                        "on-tertiary": "#432b10",
+                        "on-background": "#e4e2e4",
+                        "tertiary-container": "#281400",
+                        "inverse-surface": "#e4e2e4",
+                        "primary-fixed": "#d6e3ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Montserrat"],
+                        "stat-value": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md min-h-screen">
+    <!-- TopNavBar -->
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
+        <div class="flex items-center gap-8">
+            <span class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</span>
+            <div class="hidden md:flex gap-6">
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-body-md font-body-md" href="/predict">Predict</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-body-md font-body-md" href="/analytics">Analytics</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-body-md font-body-md" href="/insights">Insights</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-body-md font-body-md" href="/about">About</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="px-4 py-2 bg-primary-container text-primary text-label-mono font-label-mono uppercase tracking-wider hover:bg-surface-container-high transition-all" onclick="location.href='/predict'">Live Predictor</button>
+            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">settings</span>
+            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">account_circle</span>
+        </div>
+    </nav>
+
+    <!-- SideNavBar (Desktop Only) -->
+    <aside class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-20 pb-8 bg-surface-container-lowest border-r border-outline-variant w-64 z-40">
+        <div class="px-6 mb-8 flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary-container flex items-center justify-center rounded">
+                <img alt="WC Logo" class="w-6 h-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgBX5QzCE0F8tIOZX7Vcyq8M3P9-noQLJqYSYOXpxZflvJ1d8kXgPbMLawop2mu3ihBuGMMc2vt4YE8GfaWUIAe6OnRXP5c4cUMaIN1BAk5oUDdyeSsSJ-i09gEakAZWibqZzoqryt1oKdG4fIfvIbYVLCqancYEa_UUKO67TR3uN4vd1mdwWctZoWI3azmcgl6n5CB4oHX_ZCAB9eYVTEhzrdAjE_6TjWdXTjT9-C8HVoc6D7bq7Lgr5TobYxLUeRqyVsnok9xurj"/>
+            </div>
+            <div>
+                <p class="text-secondary font-headline-md text-headline-md leading-none">WC2026 AI</p>
+                <p class="text-label-mono font-label-mono text-[10px] text-outline">MISSION CONTROL</p>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/predict">
+                <span class="material-symbols-outlined">query_stats</span>
+                <span class="text-label-mono font-label-mono">Prediction</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/analytics">
+                <span class="material-symbols-outlined">analytics</span>
+                <span class="text-label-mono font-label-mono">Team Analytics</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/insights">
+                <span class="material-symbols-outlined">troubleshoot</span>
+                <span class="text-label-mono font-label-mono">Model Insights</span>
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/about">
+                <span class="material-symbols-outlined">info</span>
+                <span class="text-label-mono font-label-mono">About Project</span>
+            </a>
+        </nav>
+        <div class="px-4 mt-auto space-y-4">
+            <button class="w-full py-3 bg-secondary text-on-secondary font-bold text-label-mono uppercase tracking-widest hover:opacity-90 transition-all border border-secondary shadow-[0_0_15px_rgba(125,255,162,0.2)]" onclick="location.href='/simulate'">
+                Run Simulation
+            </button>
+            <div class="pt-4 border-t border-outline-variant">
+                <a class="text-on-surface-variant hover:text-on-surface px-4 py-2 flex items-center gap-3 text-label-mono font-label-mono" href="/about">
+                    <span class="material-symbols-outlined text-sm">description</span> Documentation
+                </a>
+                <a class="text-on-surface-variant hover:text-on-surface px-4 py-2 flex items-center gap-3 text-label-mono font-label-mono" href="#">
+                    <span class="material-symbols-outlined text-sm">help_outline</span> Support
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 pt-24 px-margin-mobile md:px-margin-desktop pb-16">
+        <div class="max-w-container-max mx-auto">
+            <!-- Header Section -->
+            <header class="mb-12 border-b border-outline-variant pb-6">
+                <p class="text-label-mono font-label-mono text-secondary mb-2 uppercase tracking-[0.2em]">Monte Carlo Simulator v5.0</p>
+                <h1 class="text-display-lg font-display-lg text-on-surface">Tournament Simulator</h1>
+            </header>
+
+            <!-- Description Card -->
+            <section class="mb-12 bg-surface-container-low border border-outline-variant p-6 rounded-lg">
+                <div class="flex items-start gap-4">
+                    <div class="p-3 bg-primary-container text-secondary rounded">
+                        <span class="material-symbols-outlined text-2xl">science</span>
+                    </div>
+                    <div>
+                        <h2 class="text-headline-md font-headline-md text-on-surface mb-2">Simulate the World Cup 2026</h2>
+                        <p class="text-body-md text-on-surface-variant leading-relaxed">
+                            Run thousands of end-to-end tournament simulations. Our simulator models the group stage and the knockout brackets, calculating goals via Poisson distributions and updating ELO rating and form scores dynamically after every single match.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Control Card & Status Panel Grid -->
+            <section class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
+                <!-- Control Panel -->
+                <div class="md:col-span-6 bg-surface-container-low border border-outline-variant p-8 rounded-lg flex flex-col justify-between" id="controlPanel">
+                    <div>
+                        <h3 class="text-label-mono font-label-mono text-outline uppercase mb-6 pb-2 border-b border-outline-variant/30">Simulation Parameters</h3>
+                        
+                        <div class="mb-8">
+                            <div class="flex justify-between items-center mb-3">
+                                <label for="simSlider" class="text-body-md font-bold text-on-surface">Number of Tournaments</label>
+                                <span class="text-stat-value font-stat-value text-secondary" id="simCountLabel">250</span>
+                            </div>
+                            <input type="range" id="simSlider" min="10" max="1000" step="10" value="250" class="w-full h-1.5 bg-surface-container-lowest rounded-lg appearance-none cursor-pointer accent-secondary">
+                            <div class="flex justify-between text-[10px] font-label-mono text-outline mt-2">
+                                <span>10 Sims (Fast)</span>
+                                <span>1,000 Sims (Thorough)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-5 bg-secondary text-on-secondary font-bold text-headline-md uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(125,255,162,0.2)] rounded" id="runSimulationBtn">
+                        Execute Monte Carlo
+                    </button>
+                </div>
+
+                <!-- Simulation Progress / Active States -->
+                <div class="md:col-span-6 bg-surface-container-low border border-outline-variant p-8 rounded-lg flex flex-col justify-center items-center text-center relative overflow-hidden" id="statusPanel">
+                    <!-- Default Screen (Idle) -->
+                    <div id="idleState" class="space-y-4">
+                        <span class="material-symbols-outlined text-6xl text-outline-variant">memory</span>
+                        <p class="text-label-mono font-label-mono text-outline">CALIBRATION ENGINE IDLE</p>
+                        <p class="text-xs text-on-surface-variant max-w-xs">Select the number of simulation runs and press execute to start the model calculations.</p>
+                    </div>
+
+                    <!-- Processing Screen (Running) -->
+                    <div id="runningState" class="hidden w-full space-y-6">
+                        <span class="material-symbols-outlined text-6xl text-secondary animate-spin">sync</span>
+                        <div class="space-y-2">
+                            <p class="text-label-mono font-label-mono text-secondary tracking-widest uppercase" id="runningPhaseLabel">Ingesting Baseline States...</p>
+                            <p class="text-stat-value font-stat-value text-on-surface" id="runningCountLabel">0 / 250</p>
+                        </div>
+                        <div class="w-full h-1 bg-surface-container-lowest overflow-hidden rounded-full max-w-md mx-auto relative">
+                            <div class="h-full bg-secondary bar-glow" id="progressBar" style="width: 0%"></div>
+                        </div>
+                        <p class="text-xs text-on-surface-variant italic">Dynamically recalculating team form and ELO rating indexes...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section (Hidden by Default) -->
+            <section class="hidden opacity-0 translate-y-8 transition-all duration-700 space-y-12" id="resultsSection">
+                <div class="border-t border-outline-variant pt-12">
+                    <!-- Title Row -->
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-8">
+                        <div>
+                            <h2 class="text-headline-lg font-headline-lg text-on-surface">Monte Carlo Outputs</h2>
+                            <p class="text-body-md text-on-surface-variant" id="simOverviewLabel">Compiled over 250 simulated tournaments</p>
+                        </div>
+                        <div class="bg-primary-container/20 border border-secondary/20 px-6 py-3 rounded-lg text-right">
+                            <span class="text-label-mono font-label-mono text-outline uppercase text-[10px]">Projected Winner</span>
+                            <div class="text-headline-md font-headline-md text-secondary" id="projectedWinnerLabel">Argentina</div>
+                        </div>
+                    </div>
+
+                    <!-- Bento Grid for Results Details -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                        <!-- Top Contenders Bar Chart (7 cols) -->
+                        <div class="lg:col-span-7 bg-surface-container-low border border-outline-variant p-6 rounded-lg flex flex-col">
+                            <div class="flex items-center justify-between mb-6 border-b border-outline-variant/30 pb-3">
+                                <h3 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px]">bar_chart</span> Top Contenders Win Probs
+                                </h3>
+                                <span class="text-xs text-outline font-label-mono">CHAMPIONSHIP ODDS</span>
+                            </div>
+                            <!-- Bar Chart Area -->
+                            <div class="space-y-4 flex-1 flex flex-col justify-center" id="topContendersChart">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Side Summary & AI analysis (5 cols) -->
+                        <div class="lg:col-span-5 flex flex-col gap-6">
+                            <!-- AI simulation summary -->
+                            <div class="bg-primary-container border border-secondary/30 p-6 rounded-lg relative overflow-hidden flex-1 flex flex-col justify-center">
+                                <div class="absolute -right-4 -bottom-4 opacity-10">
+                                    <span class="material-symbols-outlined text-[120px]" data-weight="fill">auto_awesome</span>
+                                </div>
+                                <h3 class="text-label-mono text-secondary text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">auto_awesome</span> AI Simulation Summary
+                                </h3>
+                                <p class="text-on-primary-container text-body-md relative z-10 leading-relaxed font-medium" id="aiSimSummary">
+                                    The model projects that Argentina is the overall favorite to lift the World Cup trophy. Host nations (USA, Mexico, Canada) benefit from severe continental crowd bonuses, yielding a combined win index of 18.4%.
+                                </p>
+                            </div>
+
+                            <!-- Fast stats -->
+                            <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg">
+                                <h4 class="text-label-mono font-label-mono text-outline uppercase tracking-wider text-xs mb-4">Simulation Analytics</h4>
+                                <ul class="space-y-3 text-sm">
+                                    <li class="flex justify-between border-b border-outline-variant/20 pb-2">
+                                        <span class="text-on-surface-variant">Symmetric Matchups</span>
+                                        <span class="font-label-mono text-on-surface font-bold">104 matches per run</span>
+                                    </li>
+                                    <li class="flex justify-between border-b border-outline-variant/20 pb-2">
+                                        <span class="text-on-surface-variant">Host Venue Advantage</span>
+                                        <span class="font-label-mono text-on-surface font-bold">Active</span>
+                                    </li>
+                                    <li class="flex justify-between pb-1">
+                                        <span class="text-on-surface-variant">Dynamic ELO Re-rating</span>
+                                        <span class="font-label-mono text-on-surface font-bold">Smoothing K=10</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Searchable Data Grid of all Teams -->
+                    <div class="bg-surface-container-low border border-outline-variant p-6 rounded-lg">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-outline-variant/30 pb-4">
+                            <h3 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">table_rows</span> Complete Probabilities Table
+                            </h3>
+                            <!-- Search Bar -->
+                            <div class="relative w-full sm:w-64">
+                                <input type="text" id="teamSearchInput" placeholder="Search team..." class="bg-surface-container-lowest border border-outline-variant text-on-surface text-sm w-full py-2 pl-10 pr-4 focus:ring-1 focus:ring-secondary focus:border-secondary rounded appearance-none cursor-text">
+                                <span class="material-symbols-outlined text-outline-variant absolute left-3 top-2.5 text-sm">search</span>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto custom-scrollbar max-h-96">
+                            <table class="w-full text-left font-body-md border-collapse">
+                                <thead>
+                                    <tr class="text-label-mono text-[11px] text-outline border-b border-outline-variant sticky top-0 bg-surface-container-low z-10">
+                                        <th class="py-3 px-4 uppercase font-semibold">Rank</th>
+                                        <th class="py-3 px-4 uppercase font-semibold">Team</th>
+                                        <th class="py-3 px-4 uppercase font-semibold text-right">Championship Probability</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm divide-y divide-outline-variant/20" id="probabilitiesTableBody">
+                                    <!-- Populated dynamically by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low border-t border-outline-variant">
+        <div class="text-label-mono font-label-mono uppercase tracking-widest text-outline">
+            © 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.
+        </div>
+        <div class="flex gap-6">
+            <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors" href="/about">Data Sources</a>
+            <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors" href="/insights">ML Pipeline</a>
+            <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
+            <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+        </div>
+    </footer>
+
+    <!-- JS Logic -->
+    <script>
+        // Flag emoji mapping dictionary
+        const flagEmojis = {
+            "France": "🇫🇷", "Brazil": "🇧🇷", "Argentina": "🇦🇷", "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", 
+            "Spain": "🇪🇸", "Germany": "🇩🇪", "Italy": "🇮🇹", "Croatia": "🇭🇷", 
+            "United States": "🇺🇸", "Canada": "🇨🇦", "Mexico": "🇲🇽", "Portugal": "🇵🇹", 
+            "Netherlands": "🇳🇱", "Belgium": "🇧🇪", "Uruguay": "🇺🇾", "Colombia": "🇨🇴", 
+            "Japan": "🇯🇵", "Morocco": "🇲🇦", "Senegal": "🇸🇳", "Switzerland": "🇨🇭",
+            "Denmark": "🇩🇰", "Ecuador": "🇪🇨", "Ukraine": "🇺🇦", "Sweden": "🇸🇪",
+            "Poland": "🇵🇱", "Wales": "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "Australia": "🇦🇺", "South Korea": "🇰🇷",
+            "Iran": "🇮🇷", "Tunisia": "🇹🇳", "Saudi Arabia": "🇸🇦", "Ghana": "🇬🇭",
+            "Cameroon": "🇨🇲", "Costa Rica": "🇨🇷", "Peru": "🇵🇪", "Chile": "🇨🇱",
+            "Austria": "🇦🇹", "Turkey": "🇹🇷", "Scotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "Nigeria": "🇳🇬",
+            "Algeria": "🇩🇿", "Egypt": "🇪🇬", "Ivory Coast": "🇨🇮", "Norway": "🇳🇴",
+            "Czech Republic": "🇨🇿", "Hungary": "🇭🇺", "Serbia": "🇷🇸", "Greece": "🇬🇷",
+            "Jamaica": "🇯🇲", "South Africa": "🇿🇦", "New Zealand": "🇳🇿", "Gambia": "🇬🇲"
+        };
+
+        function getFlagEmoji(country) {
+            return flagEmojis[country] || "⚽";
+        }
+
+        // Global states
+        let allTeams = [];
+        let winProbabilities = {};
+        
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load list of all teams so we can handle 0% probabilities properly
+            try {
+                const res = await fetch('/api/teams');
+                const data = await res.json();
+                allTeams = data.teams;
+            } catch (err) {
+                console.error("Failed to fetch teams list:", err);
+            }
+            
+            // Link slider and label
+            const slider = document.getElementById('simSlider');
+            const label = document.getElementById('simCountLabel');
+            slider.addEventListener('input', (e) => {
+                label.innerText = e.target.value;
+            });
+            
+            // Search filter functionality
+            const searchInput = document.getElementById('teamSearchInput');
+            searchInput.addEventListener('input', (e) => {
+                filterTable(e.target.value);
+            });
+        });
+
+        document.getElementById('runSimulationBtn').addEventListener('click', async function() {
+            const btn = this;
+            const nSims = parseInt(document.getElementById('simSlider').value);
+            
+            const idleState = document.getElementById('idleState');
+            const runningState = document.getElementById('runningState');
+            const resultsSection = document.getElementById('resultsSection');
+            const runningPhaseLabel = document.getElementById('runningPhaseLabel');
+            const runningCountLabel = document.getElementById('runningCountLabel');
+            const progressBar = document.getElementById('progressBar');
+            const runBtn = document.getElementById('runSimulationBtn');
+            const slider = document.getElementById('simSlider');
+            
+            // 1. Enter Loading State
+            runBtn.disabled = true;
+            runBtn.innerText = 'Calculating...';
+            runBtn.classList.replace('bg-secondary', 'bg-surface-container-highest');
+            runBtn.classList.replace('text-on-secondary', 'text-outline');
+            slider.disabled = true;
+            
+            idleState.classList.add('hidden');
+            runningState.classList.remove('hidden');
+            resultsSection.classList.add('hidden');
+            resultsSection.classList.add('opacity-0', 'translate-y-8');
+            
+            // Dramatic Progress Steps Simulation in Parallel
+            progressBar.style.width = '0%';
+            runningCountLabel.innerText = `0 / ${nSims}`;
+            
+            const phases = [
+                { name: "Ingesting Baseline States...", duration: 300, progress: 10 },
+                { name: "Simulating Group Stages...", duration: 600, progress: 40 },
+                { name: "Executing Round of 32 Pairing brackets...", duration: 500, progress: 65 },
+                { name: "Recalibrating ELO weights post-bracket...", duration: 400, progress: 85 },
+                { name: "Compiling Probability Aggregates...", duration: 300, progress: 95 }
+            ];
+            
+            let phaseIndex = 0;
+            const updatePhase = () => {
+                if (phaseIndex < phases.length) {
+                    const phase = phases[phaseIndex];
+                    runningPhaseLabel.innerText = phase.name;
+                    progressBar.style.width = `${phase.progress}%`;
+                    animateCount(runningCountLabel, Math.floor((phase.progress / 100) * nSims), nSims);
+                    phaseIndex++;
+                    setTimeout(updatePhase, phase.duration);
+                }
+            };
+            
+            updatePhase();
+            
+            try {
+                // Call actual Simulation API
+                const startTime = Date.now();
+                const res = await fetch('/api/simulate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ n_sims: nSims })
+                });
+                
+                const simData = await res.json();
+                
+                // Align timing of transition so dramatic progress bar looks seamless
+                const elapsedTime = Date.now() - startTime;
+                const remainingDelay = Math.max(0, 2200 - elapsedTime);
+                
+                setTimeout(() => {
+                    // 2. Finalise Progress display
+                    progressBar.style.width = '100%';
+                    runningCountLabel.innerText = `${nSims} / ${nSims}`;
+                    runningPhaseLabel.innerText = "Simulation Complete!";
+                    
+                    setTimeout(() => {
+                        // 3. Clear loading states and render results
+                        runBtn.disabled = false;
+                        runBtn.innerText = 'Execute Monte Carlo';
+                        runBtn.classList.replace('bg-surface-container-highest', 'bg-secondary');
+                        runBtn.classList.replace('text-outline', 'text-on-secondary');
+                        slider.disabled = false;
+                        
+                        idleState.classList.remove('hidden');
+                        runningState.classList.add('hidden');
+                        
+                        // Populate results
+                        winProbabilities = simData.win_probabilities;
+                        renderOutputs(nSims);
+                        
+                        // Reveal section
+                        resultsSection.classList.remove('hidden');
+                        setTimeout(() => {
+                            resultsSection.classList.remove('opacity-0', 'translate-y-8');
+                        }, 50);
+                    }, 500);
+                }, remainingDelay);
+                
+            } catch (err) {
+                console.error("Simulation request failed:", err);
+                alert("Failed to execute tournament simulation. Make sure the backend server is running.");
+                
+                runBtn.disabled = false;
+                runBtn.innerText = 'Execute Monte Carlo';
+                runBtn.classList.replace('bg-surface-container-highest', 'bg-secondary');
+                runBtn.classList.replace('text-outline', 'text-on-secondary');
+                slider.disabled = false;
+                
+                idleState.classList.remove('hidden');
+                runningState.classList.add('hidden');
+            }
+        });
+
+        function animateCount(element, target, total) {
+            const start = parseInt(element.innerText.split(' / ')[0]) || 0;
+            const duration = 300;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const val = Math.floor(progress * (target - start) + start);
+                element.innerText = `${val} / ${total}`;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function renderOutputs(nSims) {
+            document.getElementById('simOverviewLabel').innerText = `Compiled over ${nSims} simulated tournaments`;
+            
+            // Process probabilities and sort
+            const sortedResults = [];
+            
+            // Map known results
+            allTeams.forEach(team => {
+                const prob = winProbabilities[team] || 0.0;
+                sortedResults.push({ team: team, probability: prob });
+            });
+            
+            // Sort descending by probability, then alphabetically
+            sortedResults.sort((a, b) => b.probability - a.probability || a.team.localeCompare(b.team));
+            
+            // Set Projected Winner Label (first item)
+            const projectedWinner = sortedResults[0];
+            document.getElementById('projectedWinnerLabel').innerText = projectedWinner.team;
+            
+            // Draw horizontal bar chart for top contenders (up to 8)
+            const chartArea = document.getElementById('topContendersChart');
+            chartArea.innerHTML = '';
+            
+            // Scale weights based on top probability to make bars relative
+            const maxProb = projectedWinner.probability > 0 ? projectedWinner.probability : 1.0;
+            
+            const topContendersCount = Math.min(8, sortedResults.length);
+            for (let i = 0; i < topContendersCount; i++) {
+                const item = sortedResults[i];
+                const displayPercent = (item.probability * 100).toFixed(1);
+                const widthPercent = (item.probability / maxProb * 100).toFixed(0);
+                
+                const barRow = document.createElement('div');
+                barRow.className = "space-y-1.5";
+                barRow.innerHTML = `
+                    <div class="flex justify-between items-center text-sm">
+                        <div class="flex items-center gap-2 font-bold">
+                            <span class="text-outline-variant font-label-mono w-4">#${i + 1}</span>
+                            <span class="text-lg leading-none">${getFlagEmoji(item.team)}</span>
+                            <span class="text-on-surface">${item.team}</span>
+                        </div>
+                        <span class="font-label-mono text-secondary font-bold">${displayPercent}%</span>
+                    </div>
+                    <div class="h-2 w-full bg-surface-container-lowest rounded-full overflow-hidden">
+                        <div class="h-full bg-secondary bar-glow rounded-full transition-all duration-1000 ease-out" style="width: 0%" data-width="${widthPercent}%"></div>
+                    </div>
+                `;
+                chartArea.appendChild(barRow);
+            }
+            
+            // Animate top contender bars after rendering
+            setTimeout(() => {
+                document.querySelectorAll('#topContendersChart [data-width]').forEach(bar => {
+                    bar.style.width = bar.getAttribute('data-width');
+                });
+            }, 100);
+            
+            // Populate complete probabilities table
+            const tableBody = document.getElementById('probabilitiesTableBody');
+            tableBody.innerHTML = '';
+            
+            sortedResults.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-surface-container-lowest/50 transition-colors";
+                tr.setAttribute('data-team', item.team.toLowerCase());
+                
+                const displayPercent = (item.probability * 100).toFixed(2);
+                
+                tr.innerHTML = `
+                    <td class="py-3.5 px-4 font-label-mono text-on-surface-variant font-bold">${index + 1}</td>
+                    <td class="py-3.5 px-4 flex items-center gap-3">
+                        <span class="text-lg leading-none">${getFlagEmoji(item.team)}</span>
+                        <span class="font-bold text-on-surface">${item.team}</span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right font-label-mono text-secondary font-bold">${displayPercent}%</td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            
+            // Generate dynamic AI Simulation Summary text
+            const topTwoStr = `${sortedResults[0].team} (${(sortedResults[0].probability * 100).toFixed(1)}%) and ${sortedResults[1].team} (${(sortedResults[1].probability * 100).toFixed(1)}%)`;
+            const hostUsa = winProbabilities["United States"] || 0.0;
+            const hostMex = winProbabilities["Mexico"] || 0.0;
+            const hostCan = winProbabilities["Canada"] || 0.0;
+            const combinedHosts = ((hostUsa + hostMex + hostCan) * 100).toFixed(1);
+            
+            document.getElementById('aiSimSummary').innerHTML = `
+                Our Monte Carlo simulation pipeline identifies <span class="text-secondary font-bold">${sortedResults[0].team}</span> as the most likely champion with a <span class="text-secondary font-bold">${(sortedResults[0].probability * 100).toFixed(1)}%</span> success index. The top bracket configurations features a dominant coefficient for ${topTwoStr}. Additionally, host nations USA, Mexico, and Canada show a combined win likelihood of <span class="text-primary font-bold">${combinedHosts}%</span>, benefiting from critical geographic parameters in the temporal model.
+            `;
+        }
+
+        function filterTable(query) {
+            const cleanQuery = query.toLowerCase().trim();
+            const rows = document.querySelectorAll('#probabilitiesTableBody tr');
+            
+            rows.forEach(row => {
+                const teamName = row.getAttribute('data-team');
+                if (teamName.includes(cleanQuery)) {
+                    row.classList.remove('hidden');
+                } else {
+                    row.classList.add('hidden');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

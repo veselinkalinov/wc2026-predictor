@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>FIFA 26 PREDICTOR | About Project</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            background-color: #131315;
+            color: #e4e2e4;
+            scroll-behavior: smooth;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(27, 27, 29, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #44474d;
+        }
+        .glow-accent {
+            box-shadow: 0 0 15px rgba(125, 255, 162, 0.1);
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-low": "#1b1b1d",
+                        "outline-variant": "#44474d",
+                        "on-surface-variant": "#c5c6cd",
+                        "on-tertiary-fixed": "#2b1701",
+                        "surface-container-highest": "#343536",
+                        "tertiary-fixed-dim": "#e7bf99",
+                        "on-primary-fixed-variant": "#39475f",
+                        "surface-bright": "#39393b",
+                        "inverse-primary": "#515f78",
+                        "on-secondary-fixed-variant": "#005226",
+                        "inverse-on-surface": "#303032",
+                        "on-secondary-fixed": "#00210b",
+                        "primary": "#b9c7e4",
+                        "on-secondary-container": "#00622e",
+                        "error-container": "#93000a",
+                        "surface-container-lowest": "#0e0e10",
+                        "on-tertiary-container": "#9d7b5a",
+                        "on-primary": "#233148",
+                        "on-surface": "#e4e2e4",
+                        "secondary": "#7dffa2",
+                        "on-error": "#690005",
+                        "background": "#131315",
+                        "surface-tint": "#b9c7e4",
+                        "tertiary": "#e7bf99",
+                        "secondary-fixed-dim": "#00e475",
+                        "primary-container": "#0a192f",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary": "#003918",
+                        "primary-fixed-dim": "#b9c7e4",
+                        "surface-container-high": "#2a2a2c",
+                        "surface-dim": "#131315",
+                        "surface": "#131315",
+                        "outline": "#8f9097",
+                        "surface-variant": "#343536",
+                        "secondary-container": "#05e777",
+                        "surface-container": "#1f1f21",
+                        "error": "#ffb4ab",
+                        "on-tertiary-fixed-variant": "#5d4124",
+                        "on-primary-fixed": "#0d1c32",
+                        "tertiary-fixed": "#ffdcbd",
+                        "on-primary-container": "#74829d",
+                        "secondary-fixed": "#62ff96",
+                        "on-tertiary": "#432b10",
+                        "on-background": "#e4e2e4",
+                        "tertiary-container": "#281400",
+                        "inverse-surface": "#e4e2e4",
+                        "primary-fixed": "#d6e3ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "gutter": "24px",
+                        "margin-desktop": "48px",
+                        "margin-mobile": "16px",
+                        "container-max": "1440px",
+                        "unit": "4px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Montserrat"],
+                        "headline-lg": ["Montserrat"],
+                        "headline-lg-mobile": ["Montserrat"],
+                        "body-lg": ["Inter"],
+                        "label-mono": ["JetBrains Mono"],
+                        "body-md": ["Inter"],
+                        "headline-md": ["Montserrat"],
+                        "stat-value": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-mono": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "stat-value": ["24px", {"lineHeight": "32px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body-md overflow-x-hidden bg-background text-on-surface">
+    <!-- TopNavBar -->
+    <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
+        <div class="flex items-center gap-8">
+            <span class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</span>
+            <div class="hidden md:flex items-center gap-6">
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/predict">Predict</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/analytics">Analytics</a>
+                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/insights">Insights</a>
+                <a class="text-secondary border-b-2 border-secondary font-bold pb-1 font-body-md" href="/about">About</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <button class="bg-primary-container text-primary px-4 py-1.5 rounded-sm font-label-mono text-sm uppercase tracking-wider border border-primary/20 hover:bg-surface-container-high transition-all" onclick="location.href='/predict'">
+                Live Predictor
+            </button>
+            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">settings</span>
+            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">account_circle</span>
+        </div>
+    </nav>
+
+    <!-- SideNavBar (Hidden on Mobile) -->
+    <aside class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-20 pb-8 w-64 bg-surface-container-lowest border-r border-outline-variant z-40">
+        <div class="px-6 mb-8 flex items-center gap-3">
+            <div class="w-10 h-10 bg-secondary/10 border border-secondary/20 flex items-center justify-center rounded">
+                <span class="material-symbols-outlined text-secondary">sports_soccer</span>
+            </div>
+            <div>
+                <h3 class="text-label-mono font-label-mono text-secondary">WC2026 AI</h3>
+                <p class="text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">Mission Control</p>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors font-label-mono" href="/predict">
+                <span class="material-symbols-outlined">query_stats</span> Prediction
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors font-label-mono" href="/analytics">
+                <span class="material-symbols-outlined">analytics</span> Team Analytics
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors font-label-mono" href="/insights">
+                <span class="material-symbols-outlined">troubleshoot</span> Model Insights
+            </a>
+            <a class="bg-primary-container text-secondary border-l-4 border-secondary px-6 py-3 flex items-center gap-3 font-label-mono" href="/about">
+                <span class="material-symbols-outlined">info</span> About Project
+            </a>
+        </nav>
+        <div class="px-6 mt-auto space-y-4">
+            <button class="w-full py-3 bg-secondary text-primary-container font-bold text-sm uppercase tracking-widest rounded-sm hover:opacity-90 active:scale-95 transition-all" onclick="location.href='/simulate'">
+                Run Simulation
+            </button>
+            <div class="pt-4 border-t border-outline-variant space-y-2">
+                <a class="text-on-surface-variant hover:text-on-surface flex items-center gap-2 text-xs font-label-mono" href="/about">
+                    <span class="material-symbols-outlined text-sm">description</span> Documentation
+                </a>
+                <a class="text-on-surface-variant hover:text-on-surface flex items-center gap-2 text-xs font-label-mono" href="#">
+                    <span class="material-symbols-outlined text-sm">help_outline</span> Support
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64 pt-24 pb-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+        <!-- Hero Header -->
+        <header class="mb-12">
+            <p class="text-label-mono font-label-mono text-secondary mb-2">PROJECT DOCUMENTATION v1.0.4</p>
+            <h1 class="font-display-lg text-display-lg mb-4" id="typingHeroHeading">Engineering the Future of Football.</h1>
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">
+                The FIFA 26 Predictor leverages advanced gradient boosting architectures and historical match dynamics to forecast tournament outcomes with surgical precision.
+            </p>
+        </header>
+
+        <!-- Bento Grid Sections -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <!-- Tech Stack Section -->
+            <section class="md:col-span-8 glass-card p-8 rounded-lg">
+                <div class="flex items-center justify-between mb-8 border-b border-outline-variant pb-4">
+                    <h2 class="font-headline-md text-headline-md flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary">terminal</span> Tech Stack
+                    </h2>
+                    <span class="text-label-mono text-xs text-outline">CORE ENVIRONMENT</span>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 text-center">
+                    <div class="flex flex-col items-center gap-4 group cursor-default">
+                        <div class="w-16 h-16 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center group-hover:border-secondary transition-colors">
+                            <span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-secondary">code</span>
+                        </div>
+                        <span class="font-label-mono text-xs uppercase tracking-widest">Python 3.12</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-4 group cursor-default">
+                        <div class="w-16 h-16 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center group-hover:border-secondary transition-colors">
+                            <span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-secondary">grid_view</span>
+                        </div>
+                        <span class="font-label-mono text-xs uppercase tracking-widest">Pandas &amp; Numpy</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-4 group cursor-default">
+                        <div class="w-16 h-16 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center group-hover:border-secondary transition-colors">
+                            <span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-secondary">neurology</span>
+                        </div>
+                        <span class="font-label-mono text-xs uppercase tracking-widest">Scikit-Learn</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-4 group cursor-default">
+                        <div class="w-16 h-16 rounded bg-surface-container-high border border-outline-variant flex items-center justify-center group-hover:border-secondary transition-colors">
+                            <span class="material-symbols-outlined text-4xl text-on-surface-variant group-hover:text-secondary">data_object</span>
+                        </div>
+                        <span class="font-label-mono text-xs uppercase tracking-widest">Tailwind &amp; JS</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Sources Section -->
+            <section class="md:col-span-4 glass-card p-8 rounded-lg overflow-hidden relative">
+                <div class="flex items-center justify-between mb-6 border-b border-outline-variant pb-4">
+                    <h2 class="font-headline-md text-headline-md">Data Sources</h2>
+                </div>
+                <ul class="space-y-4">
+                    <li class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+                        <div>
+                            <p class="font-bold text-on-surface text-sm">FIFA World Rankings</p>
+                            <p class="text-xs text-on-surface-variant">Historical points &amp; semantic semesters (1992-2024).</p>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-secondary text-lg">check_circle</span>
+                        <div>
+                            <p class="font-bold text-on-surface text-sm">Clean Match Records</p>
+                            <p class="text-xs text-on-surface-variant">24,000+ competitive results tracked chronologically (2000-2025).</p>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- ML Pipeline Section -->
+            <section class="md:col-span-12 glass-card p-8 rounded-lg">
+                <div class="flex items-center justify-between mb-8 border-b border-outline-variant pb-4">
+                    <h2 class="font-headline-md text-headline-md flex items-center gap-2">
+                        <span class="material-symbols-outlined text-secondary">account_tree</span> ML Pipeline Flow
+                    </h2>
+                    <span class="text-label-mono text-xs text-outline">END-TO-END FLOW</span>
+                </div>
+                <div class="flex flex-col md:flex-row justify-between items-center gap-12 relative px-4 text-center">
+                    <!-- Data Ingestion -->
+                    <div class="flex-1 group">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-surface-container-high border border-outline-variant rounded-full mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl text-secondary">cloud_download</span>
+                        </div>
+                        <h4 class="font-bold text-on-surface mb-2">Ingestion</h4>
+                        <p class="text-xs text-on-surface-variant font-label-mono">FETCH &amp; CLEAN</p>
+                    </div>
+                    <span class="hidden md:block material-symbols-outlined text-outline">arrow_forward</span>
+                    <!-- Data Prep -->
+                    <div class="flex-1 group">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-surface-container-high border border-outline-variant rounded-full mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl text-secondary">cleaning_services</span>
+                        </div>
+                        <h4 class="font-bold text-on-surface mb-2">Feature Engineering</h4>
+                        <p class="text-xs text-on-surface-variant font-label-mono">ELO, FORM &amp; GOALS</p>
+                    </div>
+                    <span class="hidden md:block material-symbols-outlined text-outline">arrow_forward</span>
+                    <!-- Training -->
+                    <div class="flex-1 group">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-surface-container-high border border-outline-variant rounded-full mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl text-secondary">model_training</span>
+                        </div>
+                        <h4 class="font-bold text-on-surface mb-2">Grid Search CV</h4>
+                        <p class="text-xs text-on-surface-variant font-label-mono">TEMPORAL SPLIT</p>
+                    </div>
+                    <span class="hidden md:block material-symbols-outlined text-outline">arrow_forward</span>
+                    <!-- Prediction -->
+                    <div class="flex-1 group">
+                        <div class="inline-flex items-center justify-center w-20 h-20 bg-primary-container border border-secondary/40 rounded-full mb-4 glow-accent group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined text-3xl text-secondary">query_stats</span>
+                        </div>
+                        <h4 class="font-bold text-secondary mb-2">Inference</h4>
+                        <p class="text-xs text-secondary/70 font-label-mono">HISTGB WIN PROBS</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About the Author -->
+            <section class="md:col-span-12 glass-card rounded-lg overflow-hidden flex flex-col md:flex-row">
+                <div class="md:w-1/3 bg-surface-container-high p-8 flex flex-col items-center justify-center text-center border-b md:border-b-0 md:border-r border-outline-variant">
+                    <img alt="Author Portrait" class="w-32 h-32 rounded-full border-2 border-secondary mb-4 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgJi7d3CxwiwPrBo5IHpKvMj1TGtYtPnicHonb81gEu-Fenlci809B8xH6h_jd69SEGiSLx796HeviySJmMMLN69PGqNtqyra9mffwfJMKlq6yxAy0o8SVhEo_b1ZJs4tK2osvCkmB_8IqgB7vvdOeAdPM8fpqXdVRFex5cdDq6B2UwBm9ftyS_bgaW7MnyvJ13U8UlVmgJsx_lzMUN84uUPala1HKLCygYFDL3L3mi3C_txog9E7AApmeEZuTLfO3xLEXxi5YL9GX"/>
+                    <h3 class="font-headline-md text-headline-md text-on-surface">Elias Thorne</h3>
+                    <p class="text-label-mono text-xs text-secondary">Lead Data Architect</p>
+                </div>
+                <div class="md:w-2/3 p-8 flex flex-col justify-center">
+                    <h4 class="font-bold text-on-surface mb-4">Engineering Vision</h4>
+                    <p class="text-on-surface-variant mb-6 leading-relaxed">
+                        With a decade of experience in predictive modeling and sports analytics, I built this engine to challenge traditional sports forecasting models. The goal is to provide deep, explainable, and objective insights using state-of-the-art temporal cross-validation.
+                    </p>
+                    <div class="flex gap-4">
+                        <a class="flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-sm border border-outline-variant hover:border-secondary transition-colors text-sm font-label-mono" href="https://github.com">
+                            <span class="material-symbols-outlined text-sm">link</span> GITHUB
+                        </a>
+                        <a class="flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-sm border border-outline-variant hover:border-secondary transition-colors text-sm font-label-mono" href="#">
+                            <span class="material-symbols-outlined text-sm">share</span> PORTFOLIO
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low border-t border-outline-variant">
+        <div class="flex flex-col items-center md:items-start">
+            <span class="text-label-mono font-label-mono uppercase tracking-widest text-secondary text-xs">FIFA 26 ANALYTICS</span>
+            <p class="text-body-md font-body-md text-outline text-xs mt-1">© 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Atmospheric Micro-interactions
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('glow-accent');
+                card.style.borderColor = '#7dffa2';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('glow-accent');
+                card.style.borderColor = '#44474d';
+            });
+        });
+
+        // Simple typing effect for hero
+        const text = "Engineering the Future of Football.";
+        const heroH1 = document.getElementById('typingHeroHeading');
+        if(heroH1) {
+            heroH1.innerHTML = '';
+            let i = 0;
+            const type = () => {
+                if(i < text.length) {
+                    heroH1.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, 50);
+                }
+            }
+            type();
+        }
+    </script>
+</body>
+</html>
