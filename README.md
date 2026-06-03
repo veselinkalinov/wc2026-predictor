@@ -78,6 +78,7 @@ It processes **25+ years of international match history** (2000–2025) from Kag
 | **Trained ML Model** | Multinomial Logistic Regression with StandardScaler, serialised via joblib |
 | **Symmetric Prediction** | Neutral-venue matches use Symmetric Prediction Averaging to eliminate home/away ordering bias |
 | **Monte Carlo Simulation** | Full tournament simulation with dynamic Elo/form/goals updates after every simulated match |
+| **Interactive Dashboard** | Complete Web UI with Predictor, Analytics, SVG radar polygon drawing, and Monte Carlo tournament runs (served via templates) |
 | **REST API** | Flask API with endpoints for health checks, team listings, match predictions, and tournament simulations |
 | **Data Validation** | Structural checks on raw files — column presence, minimum row counts, known-team assertions |
 | **Centralised Config** | Single `config.yaml` file as the source of truth for all parameters |
@@ -118,9 +119,10 @@ wc2026-predictor/
 │   │   ├── predict.py       #   → MatchPredictor with symmetric averaging
 │   │   └── simulate.py      #   → Monte Carlo World Cup simulation
 │   │
-│   ├── api/                 # Flask REST API
+│   ├── api/                 # Flask Web Dashboard & API
 │   │   ├── app.py           #   → Flask app factory with CORS
-│   │   └── routes.py        #   → /health, /teams, /predict, /simulate
+│   │   ├── routes.py        #   → Pages blueprint and API endpoints
+│   │   └── templates/       #   → Web UI dashboard pages (home, predict, analytics, simulate, about, insights)
 │   │
 │   └── utils/               # Shared utilities
 │       ├── config.py        #   → YAML config loader
@@ -374,19 +376,29 @@ Additional derived features:
 
 ---
 
-## 🌐 REST API
+## 🌐 Web UI & REST API
 
-### Starting the Server
+### Starting the Dashboard and Server
+
+Start the Flask server locally:
 
 ```bash
 python -m src.api.app
 ```
 
-The API starts on `http://0.0.0.0:5000` by default.
+Once started, open **`http://127.0.0.1:5000/`** in your web browser to access the complete interactive analytics dashboard!
 
-### Endpoints
+### Dashboard Views
 
-All endpoints are prefixed with `/api`.
+- **`/` (Home)**: Portal home screen detailing training metrics, latency rates, and the ML methodology.
+- **`/predict` (Match Predictor)**: Interactive head-to-head prediction engine with radial certainty gauges, ELO strength stats, and custom AI scout summaries.
+- **`/analytics` (Team Analytics)**: Dynamic diagnostic panels displaying rolling form points, match histories, and a JS-rendered SVG radar chart.
+- **`/insights` (Model Insights)**: Model parameters display, confusion matrices, and feature contributions charts.
+- **`/simulate` (Tournament Simulator)**: Configurable Monte Carlo bracket runs displaying aggregate contenders and searchable grids of all 48 teams.
+
+### REST API Endpoints
+
+All REST API endpoints are prefixed with `/api`.
 
 #### `GET /api/health`
 
@@ -475,12 +487,14 @@ Run Monte Carlo tournament simulations.
 
 ## 📊 Model Performance
 
-Performance of the trained Logistic Regression model on the test set (matches from 2022 onwards):
+Comparative performance of trained model architectures on the test set (matches from 2022 onwards) after hyperparameter tuning:
 
-| Metric | Logistic Regression | Elo Heuristic Baseline |
-|---|---|---|
-| **Accuracy** | **0.5991** | 0.5922 |
-| **Log Loss** | **0.8784** | 0.9589 |
+| Model / Baseline | Test Accuracy | Test Log Loss | Test Brier Score | Status |
+|---|---|---|---|---|
+| **HistGradientBoosting (Tuned)** | **60.02%** | **0.8692** | **0.1707** | 🏆 **Active Best** |
+| Logistic Regression | 59.91% | 0.8782 | 0.1722 | Inactive |
+| Elo Heuristic Baseline | 59.22% | 0.9589 | 0.1887 | Baseline Floor |
+| Random Forest | 58.41% | 0.8826 | 0.1735 | Inactive |
 
 The model achieves higher accuracy and significantly better calibrated probabilities (lower log loss) compared to the best heuristic baseline.
 
@@ -586,9 +600,9 @@ jupyter notebook notebooks/
 - [x] Flask REST API (health, teams, predict, simulate)
 - [x] End-to-end pipeline runner
 - [x] Quick retraining script
-- [ ] Multi-model training (Random Forest, XGBoost)
-- [ ] Hyperparameter tuning (GridSearch / Optuna)
-- [ ] Interactive frontend dashboard
+- [x] Multi-model training (Random Forest, XGBoost, HistGradientBoosting)
+- [x] Hyperparameter tuning (GridSearch)
+- [x] Interactive frontend dashboard
 - [ ] Deployment (Docker + cloud hosting)
 
 ---
