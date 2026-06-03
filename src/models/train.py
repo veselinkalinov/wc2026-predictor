@@ -17,14 +17,9 @@ from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from src.utils.config import config
 from src.utils.logger import get_logger
 
+import importlib
 try:
-    from xgboost import XGBClassifier
-    XGBOOST_AVAILABLE = True
-except ImportError:
-    XGBOOST_AVAILABLE = False
-
-try:
-    from xgboost import XGBClassifier
+    importlib.import_module("xgboost")
     XGBOOST_AVAILABLE = True
 except ImportError:
     XGBOOST_AVAILABLE = False
@@ -120,7 +115,8 @@ def train_model() -> None:
 
     if XGBOOST_AVAILABLE:
         logger.info("XGBoost is available. Adding to comparison...")
-        base_models["XGBoost"] = XGBClassifier(
+        xgb_module = importlib.import_module("xgboost")
+        base_models["XGBoost"] = xgb_module.XGBClassifier(
             objective="multi:softprob",
             num_class=3,
             random_state=config["model"]["random_state"],
