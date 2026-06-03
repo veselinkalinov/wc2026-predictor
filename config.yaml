@@ -34,6 +34,12 @@ model:
   random_state: 42 # Ensures reproducible results
   test_size: 0.2 # Fallback if not using temporal split
   target_column: "result" # Column name for match outcome: H / D / A
+  random_forest:
+    n_estimators: 100
+    max_depth: 10
+  hist_gradient_boosting:
+    max_iter: 100
+    learning_rate: 0.1
 
 evaluation:
   metrics:

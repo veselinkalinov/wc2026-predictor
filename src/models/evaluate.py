@@ -13,6 +13,7 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import classification_report, confusion_matrix, brier_score_loss, log_loss, accuracy_score
+from sklearn.inspection import permutation_importance
 from src.utils.config import config
 from src.utils.logger import get_logger
 
@@ -111,18 +112,43 @@ def generate_evaluation_report() -> None:
     plt.close()
     logger.info(f"Saved confusion matrix plot to {cm_path}")
 
-    # 7. Plot and Save Feature Coefficients (Feature Importance)
+    # 7. Plot and Save Feature Importance (Model-Agnostic / Model-Specific)
     logger.info("Generating Feature Importance plot...")
-    # Logistic Regression has coefficients for each of the 3 classes.
-    # We will average the absolute values of the coefficients across all classes to find overall feature importance.
-    importances = np.mean(np.abs(model.coef_), axis=0)
+    model_type = meta.get("model_type", "Unknown Model")
+    
+    if hasattr(model, "coef_"):
+        # Linear models like Logistic Regression
+        logger.info(f"Extracting coefficients for {model_type}...")
+        importances = np.mean(np.abs(model.coef_), axis=0)
+        title = f"Feature Importance ({model_type} Absolute Coefficients)"
+        xlabel = "Average Absolute Coefficient Weight"
+    elif hasattr(model, "feature_importances_"):
+        # Tree models like Random Forest, XGBoost
+        logger.info(f"Extracting Gini/Gain feature importances for {model_type}...")
+        importances = model.feature_importances_
+        title = f"Feature Importance ({model_type} Gini Importance)"
+        xlabel = "Relative Importance"
+    else:
+        # Falling back to Permutation Importance (e.g. HistGradientBoosting)
+        logger.info(f"Computing permutation importance on the test set for {model_type}...")
+        result = permutation_importance(
+            model,
+            X_test_scaled,
+            y_test,
+            n_repeats=10,
+            random_state=config["model"]["random_state"]
+        )
+        importances = result.importances_mean
+        title = f"Feature Importance ({model_type} Permutation Importance)"
+        xlabel = "Mean Accuracy Decrease"
+
     feat_imp = pd.Series(
         importances, index=feature_cols).sort_values(ascending=True)
 
     plt.figure(figsize=(10, 6))
     feat_imp.plot(kind="barh", color="skyblue")
-    plt.title("Feature Importance (Logistic Regression Absolute Coefficients)")
-    plt.xlabel("Average Absolute Weight")
+    plt.title(title)
+    plt.xlabel(xlabel)
     plt.ylabel("Features")
     plt.tight_layout()
 
