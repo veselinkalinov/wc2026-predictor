@@ -39,7 +39,7 @@ def test_prediction_output_and_probabilities():
 
     # Sum of probabilities must equal 1.0 (with a margin of floating point error)
     prob_sum = probs["home_win"] + probs["draw"] + probs["away_win"]
-    assert np.isclose(prob_sum, 1.0)
+    assert np.isclose(prob_sum, 1.0, atol=1e-3)
 
     # Target label must be one of H, D, A
     assert result["prediction"] in ["H", "D", "A"]

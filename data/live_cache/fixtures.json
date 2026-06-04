@@ -1,0 +1,4902 @@
+{
+    "response": [
+        {
+            "fixture": {
+                "id": 200000,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-11T18:00:00+00:00",
+                "timestamp": 1781197200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 100,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group A"
+            },
+            "teams": {
+                "home": {
+                    "id": 1152,
+                    "name": "Mexico",
+                    "logo": "https://media.api-sports.io/football/teams/1152.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1599,
+                    "name": "South Africa",
+                    "logo": "https://media.api-sports.io/football/teams/1599.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200001,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-11T18:00:00+00:00",
+                "timestamp": 1781197200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 101,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group A"
+            },
+            "teams": {
+                "home": {
+                    "id": 1053,
+                    "name": "South Korea",
+                    "logo": "https://media.api-sports.io/football/teams/1053.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1816,
+                    "name": "Czech Republic",
+                    "logo": "https://media.api-sports.io/football/teams/1816.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200002,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-15T18:00:00+00:00",
+                "timestamp": 1781542800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 102,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group A"
+            },
+            "teams": {
+                "home": {
+                    "id": 1152,
+                    "name": "Mexico",
+                    "logo": "https://media.api-sports.io/football/teams/1152.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1053,
+                    "name": "South Korea",
+                    "logo": "https://media.api-sports.io/football/teams/1053.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200003,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-15T18:00:00+00:00",
+                "timestamp": 1781542800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 103,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group A"
+            },
+            "teams": {
+                "home": {
+                    "id": 1816,
+                    "name": "Czech Republic",
+                    "logo": "https://media.api-sports.io/football/teams/1816.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1599,
+                    "name": "South Africa",
+                    "logo": "https://media.api-sports.io/football/teams/1599.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200004,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-19T18:00:00+00:00",
+                "timestamp": 1781888400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 104,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group A"
+            },
+            "teams": {
+                "home": {
+                    "id": 1816,
+                    "name": "Czech Republic",
+                    "logo": "https://media.api-sports.io/football/teams/1816.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1152,
+                    "name": "Mexico",
+                    "logo": "https://media.api-sports.io/football/teams/1152.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200005,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-19T18:00:00+00:00",
+                "timestamp": 1781888400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 105,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group A"
+            },
+            "teams": {
+                "home": {
+                    "id": 1599,
+                    "name": "South Africa",
+                    "logo": "https://media.api-sports.io/football/teams/1599.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1053,
+                    "name": "South Korea",
+                    "logo": "https://media.api-sports.io/football/teams/1053.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200006,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-12T18:00:00+00:00",
+                "timestamp": 1781283600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 106,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group B"
+            },
+            "teams": {
+                "home": {
+                    "id": 1861,
+                    "name": "Canada",
+                    "logo": "https://media.api-sports.io/football/teams/1861.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1015,
+                    "name": "Bosnia and Herzegovina",
+                    "logo": "https://media.api-sports.io/football/teams/1015.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200007,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-12T18:00:00+00:00",
+                "timestamp": 1781283600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 107,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group B"
+            },
+            "teams": {
+                "home": {
+                    "id": 1458,
+                    "name": "Qatar",
+                    "logo": "https://media.api-sports.io/football/teams/1458.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1576,
+                    "name": "Switzerland",
+                    "logo": "https://media.api-sports.io/football/teams/1576.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200008,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-16T18:00:00+00:00",
+                "timestamp": 1781629200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 108,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group B"
+            },
+            "teams": {
+                "home": {
+                    "id": 1861,
+                    "name": "Canada",
+                    "logo": "https://media.api-sports.io/football/teams/1861.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1458,
+                    "name": "Qatar",
+                    "logo": "https://media.api-sports.io/football/teams/1458.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200009,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-16T18:00:00+00:00",
+                "timestamp": 1781629200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 109,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group B"
+            },
+            "teams": {
+                "home": {
+                    "id": 1576,
+                    "name": "Switzerland",
+                    "logo": "https://media.api-sports.io/football/teams/1576.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1015,
+                    "name": "Bosnia and Herzegovina",
+                    "logo": "https://media.api-sports.io/football/teams/1015.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200010,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-20T18:00:00+00:00",
+                "timestamp": 1781974800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 100,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group B"
+            },
+            "teams": {
+                "home": {
+                    "id": 1576,
+                    "name": "Switzerland",
+                    "logo": "https://media.api-sports.io/football/teams/1576.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1861,
+                    "name": "Canada",
+                    "logo": "https://media.api-sports.io/football/teams/1861.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200011,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-20T18:00:00+00:00",
+                "timestamp": 1781974800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 101,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group B"
+            },
+            "teams": {
+                "home": {
+                    "id": 1015,
+                    "name": "Bosnia and Herzegovina",
+                    "logo": "https://media.api-sports.io/football/teams/1015.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1458,
+                    "name": "Qatar",
+                    "logo": "https://media.api-sports.io/football/teams/1458.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200012,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-13T18:00:00+00:00",
+                "timestamp": 1781370000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 102,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group C"
+            },
+            "teams": {
+                "home": {
+                    "id": 1636,
+                    "name": "Brazil",
+                    "logo": "https://media.api-sports.io/football/teams/1636.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1202,
+                    "name": "Morocco",
+                    "logo": "https://media.api-sports.io/football/teams/1202.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200013,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-13T18:00:00+00:00",
+                "timestamp": 1781370000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 103,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group C"
+            },
+            "teams": {
+                "home": {
+                    "id": 1794,
+                    "name": "Haiti",
+                    "logo": "https://media.api-sports.io/football/teams/1794.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1920,
+                    "name": "Scotland",
+                    "logo": "https://media.api-sports.io/football/teams/1920.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200014,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-17T18:00:00+00:00",
+                "timestamp": 1781715600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 104,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group C"
+            },
+            "teams": {
+                "home": {
+                    "id": 1636,
+                    "name": "Brazil",
+                    "logo": "https://media.api-sports.io/football/teams/1636.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1794,
+                    "name": "Haiti",
+                    "logo": "https://media.api-sports.io/football/teams/1794.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200015,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-17T18:00:00+00:00",
+                "timestamp": 1781715600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 105,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group C"
+            },
+            "teams": {
+                "home": {
+                    "id": 1920,
+                    "name": "Scotland",
+                    "logo": "https://media.api-sports.io/football/teams/1920.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1202,
+                    "name": "Morocco",
+                    "logo": "https://media.api-sports.io/football/teams/1202.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200016,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-21T18:00:00+00:00",
+                "timestamp": 1782061200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 106,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group C"
+            },
+            "teams": {
+                "home": {
+                    "id": 1920,
+                    "name": "Scotland",
+                    "logo": "https://media.api-sports.io/football/teams/1920.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1636,
+                    "name": "Brazil",
+                    "logo": "https://media.api-sports.io/football/teams/1636.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200017,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-21T18:00:00+00:00",
+                "timestamp": 1782061200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 107,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group C"
+            },
+            "teams": {
+                "home": {
+                    "id": 1202,
+                    "name": "Morocco",
+                    "logo": "https://media.api-sports.io/football/teams/1202.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1794,
+                    "name": "Haiti",
+                    "logo": "https://media.api-sports.io/football/teams/1794.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200018,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-14T18:00:00+00:00",
+                "timestamp": 1781456400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 108,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group D"
+            },
+            "teams": {
+                "home": {
+                    "id": 1846,
+                    "name": "United States",
+                    "logo": "https://media.api-sports.io/football/teams/1846.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1760,
+                    "name": "Paraguay",
+                    "logo": "https://media.api-sports.io/football/teams/1760.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200019,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-14T18:00:00+00:00",
+                "timestamp": 1781456400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 109,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group D"
+            },
+            "teams": {
+                "home": {
+                    "id": 1019,
+                    "name": "Australia",
+                    "logo": "https://media.api-sports.io/football/teams/1019.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1257,
+                    "name": "Turkey",
+                    "logo": "https://media.api-sports.io/football/teams/1257.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200020,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-18T18:00:00+00:00",
+                "timestamp": 1781802000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 100,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group D"
+            },
+            "teams": {
+                "home": {
+                    "id": 1846,
+                    "name": "United States",
+                    "logo": "https://media.api-sports.io/football/teams/1846.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1019,
+                    "name": "Australia",
+                    "logo": "https://media.api-sports.io/football/teams/1019.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200021,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-18T18:00:00+00:00",
+                "timestamp": 1781802000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 101,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group D"
+            },
+            "teams": {
+                "home": {
+                    "id": 1257,
+                    "name": "Turkey",
+                    "logo": "https://media.api-sports.io/football/teams/1257.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1760,
+                    "name": "Paraguay",
+                    "logo": "https://media.api-sports.io/football/teams/1760.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200022,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-22T18:00:00+00:00",
+                "timestamp": 1782147600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 102,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group D"
+            },
+            "teams": {
+                "home": {
+                    "id": 1257,
+                    "name": "Turkey",
+                    "logo": "https://media.api-sports.io/football/teams/1257.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1846,
+                    "name": "United States",
+                    "logo": "https://media.api-sports.io/football/teams/1846.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200023,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-22T18:00:00+00:00",
+                "timestamp": 1782147600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 103,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group D"
+            },
+            "teams": {
+                "home": {
+                    "id": 1760,
+                    "name": "Paraguay",
+                    "logo": "https://media.api-sports.io/football/teams/1760.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1019,
+                    "name": "Australia",
+                    "logo": "https://media.api-sports.io/football/teams/1019.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200024,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-11T18:00:00+00:00",
+                "timestamp": 1781197200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 104,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group E"
+            },
+            "teams": {
+                "home": {
+                    "id": 1527,
+                    "name": "Germany",
+                    "logo": "https://media.api-sports.io/football/teams/1527.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1529,
+                    "name": "Cura\u00e7ao",
+                    "logo": "https://media.api-sports.io/football/teams/1529.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200025,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-11T18:00:00+00:00",
+                "timestamp": 1781197200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 105,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group E"
+            },
+            "teams": {
+                "home": {
+                    "id": 1771,
+                    "name": "Ivory Coast",
+                    "logo": "https://media.api-sports.io/football/teams/1771.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1962,
+                    "name": "Ecuador",
+                    "logo": "https://media.api-sports.io/football/teams/1962.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200026,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-15T18:00:00+00:00",
+                "timestamp": 1781542800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 106,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group E"
+            },
+            "teams": {
+                "home": {
+                    "id": 1527,
+                    "name": "Germany",
+                    "logo": "https://media.api-sports.io/football/teams/1527.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1771,
+                    "name": "Ivory Coast",
+                    "logo": "https://media.api-sports.io/football/teams/1771.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200027,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-15T18:00:00+00:00",
+                "timestamp": 1781542800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 107,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group E"
+            },
+            "teams": {
+                "home": {
+                    "id": 1962,
+                    "name": "Ecuador",
+                    "logo": "https://media.api-sports.io/football/teams/1962.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1529,
+                    "name": "Cura\u00e7ao",
+                    "logo": "https://media.api-sports.io/football/teams/1529.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200028,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-19T18:00:00+00:00",
+                "timestamp": 1781888400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 108,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group E"
+            },
+            "teams": {
+                "home": {
+                    "id": 1962,
+                    "name": "Ecuador",
+                    "logo": "https://media.api-sports.io/football/teams/1962.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1527,
+                    "name": "Germany",
+                    "logo": "https://media.api-sports.io/football/teams/1527.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200029,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-19T18:00:00+00:00",
+                "timestamp": 1781888400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 109,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group E"
+            },
+            "teams": {
+                "home": {
+                    "id": 1529,
+                    "name": "Cura\u00e7ao",
+                    "logo": "https://media.api-sports.io/football/teams/1529.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1771,
+                    "name": "Ivory Coast",
+                    "logo": "https://media.api-sports.io/football/teams/1771.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200030,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-12T18:00:00+00:00",
+                "timestamp": 1781283600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 100,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group F"
+            },
+            "teams": {
+                "home": {
+                    "id": 1469,
+                    "name": "Netherlands",
+                    "logo": "https://media.api-sports.io/football/teams/1469.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1977,
+                    "name": "Japan",
+                    "logo": "https://media.api-sports.io/football/teams/1977.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200031,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-12T18:00:00+00:00",
+                "timestamp": 1781283600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 101,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group F"
+            },
+            "teams": {
+                "home": {
+                    "id": 1356,
+                    "name": "Sweden",
+                    "logo": "https://media.api-sports.io/football/teams/1356.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1976,
+                    "name": "Tunisia",
+                    "logo": "https://media.api-sports.io/football/teams/1976.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200032,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-16T18:00:00+00:00",
+                "timestamp": 1781629200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 102,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group F"
+            },
+            "teams": {
+                "home": {
+                    "id": 1469,
+                    "name": "Netherlands",
+                    "logo": "https://media.api-sports.io/football/teams/1469.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1356,
+                    "name": "Sweden",
+                    "logo": "https://media.api-sports.io/football/teams/1356.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200033,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-16T18:00:00+00:00",
+                "timestamp": 1781629200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 103,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group F"
+            },
+            "teams": {
+                "home": {
+                    "id": 1976,
+                    "name": "Tunisia",
+                    "logo": "https://media.api-sports.io/football/teams/1976.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1977,
+                    "name": "Japan",
+                    "logo": "https://media.api-sports.io/football/teams/1977.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200034,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-20T18:00:00+00:00",
+                "timestamp": 1781974800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 104,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group F"
+            },
+            "teams": {
+                "home": {
+                    "id": 1976,
+                    "name": "Tunisia",
+                    "logo": "https://media.api-sports.io/football/teams/1976.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1469,
+                    "name": "Netherlands",
+                    "logo": "https://media.api-sports.io/football/teams/1469.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200035,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-20T18:00:00+00:00",
+                "timestamp": 1781974800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 105,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group F"
+            },
+            "teams": {
+                "home": {
+                    "id": 1977,
+                    "name": "Japan",
+                    "logo": "https://media.api-sports.io/football/teams/1977.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1356,
+                    "name": "Sweden",
+                    "logo": "https://media.api-sports.io/football/teams/1356.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200036,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-13T18:00:00+00:00",
+                "timestamp": 1781370000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 106,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group G"
+            },
+            "teams": {
+                "home": {
+                    "id": 1189,
+                    "name": "Belgium",
+                    "logo": "https://media.api-sports.io/football/teams/1189.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1244,
+                    "name": "Egypt",
+                    "logo": "https://media.api-sports.io/football/teams/1244.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200037,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-13T18:00:00+00:00",
+                "timestamp": 1781370000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 107,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group G"
+            },
+            "teams": {
+                "home": {
+                    "id": 1621,
+                    "name": "Iran",
+                    "logo": "https://media.api-sports.io/football/teams/1621.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1882,
+                    "name": "New Zealand",
+                    "logo": "https://media.api-sports.io/football/teams/1882.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200038,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-17T18:00:00+00:00",
+                "timestamp": 1781715600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 108,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group G"
+            },
+            "teams": {
+                "home": {
+                    "id": 1189,
+                    "name": "Belgium",
+                    "logo": "https://media.api-sports.io/football/teams/1189.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1621,
+                    "name": "Iran",
+                    "logo": "https://media.api-sports.io/football/teams/1621.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200039,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-17T18:00:00+00:00",
+                "timestamp": 1781715600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 109,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group G"
+            },
+            "teams": {
+                "home": {
+                    "id": 1882,
+                    "name": "New Zealand",
+                    "logo": "https://media.api-sports.io/football/teams/1882.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1244,
+                    "name": "Egypt",
+                    "logo": "https://media.api-sports.io/football/teams/1244.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200040,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-21T18:00:00+00:00",
+                "timestamp": 1782061200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 100,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group G"
+            },
+            "teams": {
+                "home": {
+                    "id": 1882,
+                    "name": "New Zealand",
+                    "logo": "https://media.api-sports.io/football/teams/1882.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1189,
+                    "name": "Belgium",
+                    "logo": "https://media.api-sports.io/football/teams/1189.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200041,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-21T18:00:00+00:00",
+                "timestamp": 1782061200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 101,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group G"
+            },
+            "teams": {
+                "home": {
+                    "id": 1244,
+                    "name": "Egypt",
+                    "logo": "https://media.api-sports.io/football/teams/1244.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1621,
+                    "name": "Iran",
+                    "logo": "https://media.api-sports.io/football/teams/1621.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200042,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-14T18:00:00+00:00",
+                "timestamp": 1781456400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 102,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group H"
+            },
+            "teams": {
+                "home": {
+                    "id": 1887,
+                    "name": "Spain",
+                    "logo": "https://media.api-sports.io/football/teams/1887.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1385,
+                    "name": "Cape Verde",
+                    "logo": "https://media.api-sports.io/football/teams/1385.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200043,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-14T18:00:00+00:00",
+                "timestamp": 1781456400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 103,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group H"
+            },
+            "teams": {
+                "home": {
+                    "id": 1208,
+                    "name": "Saudi Arabia",
+                    "logo": "https://media.api-sports.io/football/teams/1208.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1270,
+                    "name": "Uruguay",
+                    "logo": "https://media.api-sports.io/football/teams/1270.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200044,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-18T18:00:00+00:00",
+                "timestamp": 1781802000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 104,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group H"
+            },
+            "teams": {
+                "home": {
+                    "id": 1887,
+                    "name": "Spain",
+                    "logo": "https://media.api-sports.io/football/teams/1887.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1208,
+                    "name": "Saudi Arabia",
+                    "logo": "https://media.api-sports.io/football/teams/1208.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200045,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-18T18:00:00+00:00",
+                "timestamp": 1781802000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 105,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group H"
+            },
+            "teams": {
+                "home": {
+                    "id": 1270,
+                    "name": "Uruguay",
+                    "logo": "https://media.api-sports.io/football/teams/1270.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1385,
+                    "name": "Cape Verde",
+                    "logo": "https://media.api-sports.io/football/teams/1385.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200046,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-22T18:00:00+00:00",
+                "timestamp": 1782147600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 106,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group H"
+            },
+            "teams": {
+                "home": {
+                    "id": 1270,
+                    "name": "Uruguay",
+                    "logo": "https://media.api-sports.io/football/teams/1270.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1887,
+                    "name": "Spain",
+                    "logo": "https://media.api-sports.io/football/teams/1887.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200047,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-22T18:00:00+00:00",
+                "timestamp": 1782147600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 107,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group H"
+            },
+            "teams": {
+                "home": {
+                    "id": 1385,
+                    "name": "Cape Verde",
+                    "logo": "https://media.api-sports.io/football/teams/1385.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1208,
+                    "name": "Saudi Arabia",
+                    "logo": "https://media.api-sports.io/football/teams/1208.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200048,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-11T18:00:00+00:00",
+                "timestamp": 1781197200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 108,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group I"
+            },
+            "teams": {
+                "home": {
+                    "id": 1904,
+                    "name": "France",
+                    "logo": "https://media.api-sports.io/football/teams/1904.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1756,
+                    "name": "Senegal",
+                    "logo": "https://media.api-sports.io/football/teams/1756.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200049,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-11T18:00:00+00:00",
+                "timestamp": 1781197200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 109,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group I"
+            },
+            "teams": {
+                "home": {
+                    "id": 1780,
+                    "name": "Iraq",
+                    "logo": "https://media.api-sports.io/football/teams/1780.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1881,
+                    "name": "Norway",
+                    "logo": "https://media.api-sports.io/football/teams/1881.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200050,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-15T18:00:00+00:00",
+                "timestamp": 1781542800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 100,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group I"
+            },
+            "teams": {
+                "home": {
+                    "id": 1904,
+                    "name": "France",
+                    "logo": "https://media.api-sports.io/football/teams/1904.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1780,
+                    "name": "Iraq",
+                    "logo": "https://media.api-sports.io/football/teams/1780.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200051,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-15T18:00:00+00:00",
+                "timestamp": 1781542800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 101,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group I"
+            },
+            "teams": {
+                "home": {
+                    "id": 1881,
+                    "name": "Norway",
+                    "logo": "https://media.api-sports.io/football/teams/1881.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1756,
+                    "name": "Senegal",
+                    "logo": "https://media.api-sports.io/football/teams/1756.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200052,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-19T18:00:00+00:00",
+                "timestamp": 1781888400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 102,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group I"
+            },
+            "teams": {
+                "home": {
+                    "id": 1881,
+                    "name": "Norway",
+                    "logo": "https://media.api-sports.io/football/teams/1881.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1904,
+                    "name": "France",
+                    "logo": "https://media.api-sports.io/football/teams/1904.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200053,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-19T18:00:00+00:00",
+                "timestamp": 1781888400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 103,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group I"
+            },
+            "teams": {
+                "home": {
+                    "id": 1756,
+                    "name": "Senegal",
+                    "logo": "https://media.api-sports.io/football/teams/1756.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1780,
+                    "name": "Iraq",
+                    "logo": "https://media.api-sports.io/football/teams/1780.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200054,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-12T18:00:00+00:00",
+                "timestamp": 1781283600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 104,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group J"
+            },
+            "teams": {
+                "home": {
+                    "id": 1903,
+                    "name": "Argentina",
+                    "logo": "https://media.api-sports.io/football/teams/1903.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1699,
+                    "name": "Algeria",
+                    "logo": "https://media.api-sports.io/football/teams/1699.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200055,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-12T18:00:00+00:00",
+                "timestamp": 1781283600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 105,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group J"
+            },
+            "teams": {
+                "home": {
+                    "id": 1600,
+                    "name": "Austria",
+                    "logo": "https://media.api-sports.io/football/teams/1600.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1394,
+                    "name": "Jordan",
+                    "logo": "https://media.api-sports.io/football/teams/1394.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200056,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-16T18:00:00+00:00",
+                "timestamp": 1781629200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 106,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group J"
+            },
+            "teams": {
+                "home": {
+                    "id": 1903,
+                    "name": "Argentina",
+                    "logo": "https://media.api-sports.io/football/teams/1903.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1600,
+                    "name": "Austria",
+                    "logo": "https://media.api-sports.io/football/teams/1600.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200057,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-16T18:00:00+00:00",
+                "timestamp": 1781629200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 107,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group J"
+            },
+            "teams": {
+                "home": {
+                    "id": 1394,
+                    "name": "Jordan",
+                    "logo": "https://media.api-sports.io/football/teams/1394.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1699,
+                    "name": "Algeria",
+                    "logo": "https://media.api-sports.io/football/teams/1699.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200058,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-20T18:00:00+00:00",
+                "timestamp": 1781974800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 108,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group J"
+            },
+            "teams": {
+                "home": {
+                    "id": 1394,
+                    "name": "Jordan",
+                    "logo": "https://media.api-sports.io/football/teams/1394.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1903,
+                    "name": "Argentina",
+                    "logo": "https://media.api-sports.io/football/teams/1903.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200059,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-20T18:00:00+00:00",
+                "timestamp": 1781974800,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 109,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group J"
+            },
+            "teams": {
+                "home": {
+                    "id": 1699,
+                    "name": "Algeria",
+                    "logo": "https://media.api-sports.io/football/teams/1699.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1600,
+                    "name": "Austria",
+                    "logo": "https://media.api-sports.io/football/teams/1600.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200060,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-13T18:00:00+00:00",
+                "timestamp": 1781370000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 100,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group K"
+            },
+            "teams": {
+                "home": {
+                    "id": 1762,
+                    "name": "Portugal",
+                    "logo": "https://media.api-sports.io/football/teams/1762.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1864,
+                    "name": "DR Congo",
+                    "logo": "https://media.api-sports.io/football/teams/1864.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200061,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-13T18:00:00+00:00",
+                "timestamp": 1781370000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 101,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group K"
+            },
+            "teams": {
+                "home": {
+                    "id": 1398,
+                    "name": "Uzbekistan",
+                    "logo": "https://media.api-sports.io/football/teams/1398.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1531,
+                    "name": "Colombia",
+                    "logo": "https://media.api-sports.io/football/teams/1531.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200062,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-17T18:00:00+00:00",
+                "timestamp": 1781715600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 102,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group K"
+            },
+            "teams": {
+                "home": {
+                    "id": 1762,
+                    "name": "Portugal",
+                    "logo": "https://media.api-sports.io/football/teams/1762.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1398,
+                    "name": "Uzbekistan",
+                    "logo": "https://media.api-sports.io/football/teams/1398.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200063,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-17T18:00:00+00:00",
+                "timestamp": 1781715600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 103,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group K"
+            },
+            "teams": {
+                "home": {
+                    "id": 1531,
+                    "name": "Colombia",
+                    "logo": "https://media.api-sports.io/football/teams/1531.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1864,
+                    "name": "DR Congo",
+                    "logo": "https://media.api-sports.io/football/teams/1864.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200064,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-21T18:00:00+00:00",
+                "timestamp": 1782061200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 104,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group K"
+            },
+            "teams": {
+                "home": {
+                    "id": 1531,
+                    "name": "Colombia",
+                    "logo": "https://media.api-sports.io/football/teams/1531.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1762,
+                    "name": "Portugal",
+                    "logo": "https://media.api-sports.io/football/teams/1762.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200065,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-21T18:00:00+00:00",
+                "timestamp": 1782061200,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 105,
+                    "name": "Azteca Stadium",
+                    "city": "Mexico City"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group K"
+            },
+            "teams": {
+                "home": {
+                    "id": 1864,
+                    "name": "DR Congo",
+                    "logo": "https://media.api-sports.io/football/teams/1864.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1398,
+                    "name": "Uzbekistan",
+                    "logo": "https://media.api-sports.io/football/teams/1398.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200066,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-14T18:00:00+00:00",
+                "timestamp": 1781456400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 106,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group L"
+            },
+            "teams": {
+                "home": {
+                    "id": 1157,
+                    "name": "England",
+                    "logo": "https://media.api-sports.io/football/teams/1157.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1277,
+                    "name": "Croatia",
+                    "logo": "https://media.api-sports.io/football/teams/1277.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200067,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-14T18:00:00+00:00",
+                "timestamp": 1781456400,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 107,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group L"
+            },
+            "teams": {
+                "home": {
+                    "id": 1038,
+                    "name": "Ghana",
+                    "logo": "https://media.api-sports.io/football/teams/1038.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1152,
+                    "name": "Panama",
+                    "logo": "https://media.api-sports.io/football/teams/1152.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200068,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-18T18:00:00+00:00",
+                "timestamp": 1781802000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 108,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group L"
+            },
+            "teams": {
+                "home": {
+                    "id": 1157,
+                    "name": "England",
+                    "logo": "https://media.api-sports.io/football/teams/1157.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1038,
+                    "name": "Ghana",
+                    "logo": "https://media.api-sports.io/football/teams/1038.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200069,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-18T18:00:00+00:00",
+                "timestamp": 1781802000,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 109,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group L"
+            },
+            "teams": {
+                "home": {
+                    "id": 1152,
+                    "name": "Panama",
+                    "logo": "https://media.api-sports.io/football/teams/1152.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1277,
+                    "name": "Croatia",
+                    "logo": "https://media.api-sports.io/football/teams/1277.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200070,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-22T18:00:00+00:00",
+                "timestamp": 1782147600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 100,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group L"
+            },
+            "teams": {
+                "home": {
+                    "id": 1152,
+                    "name": "Panama",
+                    "logo": "https://media.api-sports.io/football/teams/1152.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1157,
+                    "name": "England",
+                    "logo": "https://media.api-sports.io/football/teams/1157.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        },
+        {
+            "fixture": {
+                "id": 200071,
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": "2026-06-22T18:00:00+00:00",
+                "timestamp": 1782147600,
+                "periods": {
+                    "first": null,
+                    "second": null
+                },
+                "venue": {
+                    "id": 101,
+                    "name": "MetLife Stadium",
+                    "city": "East Rutherford"
+                },
+                "status": {
+                    "long": "Not Started",
+                    "short": "NS",
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": null,
+                "season": 2026,
+                "round": "Group Stage - Group L"
+            },
+            "teams": {
+                "home": {
+                    "id": 1277,
+                    "name": "Croatia",
+                    "logo": "https://media.api-sports.io/football/teams/1277.png",
+                    "winner": null
+                },
+                "away": {
+                    "id": 1038,
+                    "name": "Ghana",
+                    "logo": "https://media.api-sports.io/football/teams/1038.png",
+                    "winner": null
+                }
+            },
+            "goals": {
+                "home": null,
+                "away": null
+            },
+            "score": {
+                "halftime": {
+                    "home": null,
+                    "away": null
+                },
+                "fulltime": {
+                    "home": null,
+                    "away": null
+                },
+                "extratime": {
+                    "home": null,
+                    "away": null
+                },
+                "penalty": {
+                    "home": null,
+                    "away": null
+                }
+            }
+        }
+    ],
+    "errors": [],
+    "results": 72
+}

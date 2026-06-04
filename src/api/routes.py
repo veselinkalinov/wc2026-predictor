@@ -13,6 +13,7 @@ from src.models.predict import MatchPredictor
 from src.models.simulate import TournamentSimulator
 from src.utils.config import config, PROJECT_ROOT
 from src.utils.logger import get_logger
+from src.utils.api_football import get_standings, get_fixtures
 
 logger = get_logger(__name__)
 
@@ -90,7 +91,6 @@ def simulate_tournament():
       - n_sims (int, optional, default: 100)
     """
     data = request.get_json() or {}
-    # Defaulting to 100 in API for quick responses
     n_sims = data.get("n_sims", 100)
 
     if not isinstance(n_sims, int) or n_sims <= 0:
@@ -102,7 +102,6 @@ def simulate_tournament():
 
     try:
         champs = simulator.run_monte_carlo(n_sims=n_sims)
-        # Convert pandas Series output to JSON dictionary mapping
         results_dict = champs.to_dict()
         return jsonify({
             "simulations_run": n_sims,
@@ -148,6 +147,10 @@ def get_team_details(team_name):
                 wins += 1
             elif row["result"] == "A" and not is_home:
                 wins += 1
+            elif row["result"] == "A" and is_home:
+                pass
+            elif row["result"] == "H" and not is_home:
+                pass
         win_ratio = round((wins / total_matches) * 100)
     else:
         win_ratio = 50
@@ -188,7 +191,6 @@ def get_team_matches(team_name):
         else:
             outcome = "D"
             
-        # Try to parse scores, fallback if missing
         h_score = int(row["home_score"]) if "home_score" in row and not pd.isna(row["home_score"]) else 0
         a_score = int(row["away_score"]) if "away_score" in row and not pd.isna(row["away_score"]) else 0
             
@@ -228,6 +230,32 @@ def get_model_meta():
     return jsonify(meta)
 
 
+@api_bp.route("/live/standings", methods=["GET"])
+def get_live_standings():
+    """
+    Get current World Cup 2026 group standings from cached file or API.
+    """
+    try:
+        standings_data = get_standings()
+        return jsonify(standings_data)
+    except Exception as e:
+        logger.error(f"Failed to load live standings: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
+@api_bp.route("/live/fixtures", methods=["GET"])
+def get_live_fixtures():
+    """
+    Get World Cup 2026 fixture schedule and results from cached file or API.
+    """
+    try:
+        fixtures_data = get_fixtures()
+        return jsonify(fixtures_data)
+    except Exception as e:
+        logger.error(f"Failed to load live fixtures: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+
 # Page Rendering Handlers
 @pages_bp.route("/")
 def render_home_page():
@@ -257,6 +285,11 @@ def render_about_page():
 @pages_bp.route("/simulate")
 def render_simulate_page():
     return render_template("simulate.html")
+
+
+@pages_bp.route("/live")
+def render_live_page():
+    return render_template("live.html")
 
 
 @pages_bp.route("/privacy")
