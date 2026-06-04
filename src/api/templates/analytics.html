@@ -32,6 +32,21 @@
             width: 100%;
             height: 100%;
         }
+        /* Combobox */
+        .team-combobox-wrapper{position:relative;width:100%;}
+        input.team-search-input{width:100%;background:#ffffff !important;border:1px solid #44474d;color:#000000 !important;font-family:'Montserrat',sans-serif;font-weight:700;font-size:1.1rem;padding:.75rem 2.5rem .75rem 1rem;text-align:center;outline:none;border-radius:.25rem;transition:border-color .2s,box-shadow .2s;cursor:pointer;letter-spacing:.02em;}
+        input.team-search-input:focus,input.team-search-input.open{border-color:#7dffa2;box-shadow:0 0 0 2px rgba(125,255,162,.15),0 0 18px rgba(125,255,162,.08);background:#ffffff !important;color:#000000 !important;}
+        input.team-search-input::placeholder{color:#55555c;font-weight:500;}
+        .team-search-arrow{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);pointer-events:none;color:#7dffa2;font-size:1.1rem;transition:transform .2s;}
+        .team-search-arrow.rotated{transform:translateY(-50%) rotate(180deg);}
+        .team-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#1b1b1d;border:1px solid #7dffa2;border-top:none;border-radius:0 0 .25rem .25rem;max-height:260px;overflow-y:auto;z-index:999;display:none;box-shadow:0 8px 32px rgba(0,0,0,.5),0 0 20px rgba(125,255,162,.05);}
+        .team-dropdown.open{display:block;animation:dropIn .15s ease;}
+        @keyframes dropIn{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+        .team-dropdown-item{padding:.6rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;color:#c5c6cd;cursor:pointer;transition:background .12s,color .12s;}
+        .team-dropdown-item:hover,.team-dropdown-item.highlighted{background:rgba(125,255,162,.1);color:#7dffa2;}
+        .team-dropdown-item.selected{color:#7dffa2;font-weight:700;}
+        .team-dropdown-empty{padding:.8rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#8f9097;text-align:center;}
+        .team-dropdown::-webkit-scrollbar{width:4px;} .team-dropdown::-webkit-scrollbar-track{background:#131315;} .team-dropdown::-webkit-scrollbar-thumb{background:#44474d;border-radius:2px;} .team-dropdown::-webkit-scrollbar-thumb:hover{background:#7dffa2;}
     </style>
     <script id="tailwind-config">
         tailwind.config = {
@@ -130,17 +145,6 @@
     <header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
         <div class="flex items-center gap-8">
             <span class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</span>
-            <nav class="hidden md:flex items-center gap-6">
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/predict">Predict</a>
-                <a class="text-secondary border-b-2 border-secondary font-bold pb-1 font-body-md" href="/analytics">Analytics</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/insights">Insights</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/about">About</a>
-            </nav>
-        </div>
-        <div class="flex items-center gap-4">
-            <button class="bg-primary-container text-on-primary-container px-4 py-2 text-label-mono uppercase tracking-wider rounded-lg hover:bg-surface-container-high transition-all" onclick="location.href='/predict'">Live Predictor</button>
-            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface">settings</span>
-            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface">account_circle</span>
         </div>
     </header>
 
@@ -198,9 +202,12 @@
             <!-- Selection Dropdown -->
             <div class="mb-8 flex flex-col sm:flex-row items-center gap-4 bg-surface-container-low p-4 border border-outline-variant/30 rounded-lg">
                 <label class="text-label-mono text-xs uppercase text-outline">Select Team for Analytics:</label>
-                <select id="selectTeam" class="bg-surface-container-lowest border border-outline-variant text-on-surface text-sm w-full sm:w-64 py-2 px-4 focus:ring-1 focus:ring-secondary focus:border-secondary rounded appearance-none cursor-pointer">
-                    <!-- Populated dynamically -->
-                </select>
+                <select id="selectTeam" style="display:none"></select>
+                <div class="team-combobox-wrapper" id="comboboxTeam" style="width: 256px; max-width: 100%;">
+                    <input type="text" class="team-search-input" id="searchTeam" placeholder="Search team..." autocomplete="off" spellcheck="false">
+                    <span class="material-symbols-outlined team-search-arrow" id="arrowTeam">expand_more</span>
+                    <div class="team-dropdown" id="dropdownTeam"></div>
+                </div>
             </div>
 
             <!-- Hero / Header Section -->
@@ -358,16 +365,17 @@
     </main>
 
     <!-- Footer -->
-    <footer class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low border-t border-outline-variant mt-12">
-        <div class="flex flex-col items-center md:items-start gap-1">
-            <span class="text-label-mono font-label-mono uppercase tracking-widest text-outline">FIFA 26 PREDICTOR</span>
-            <p class="text-body-md font-body-md text-on-surface-variant text-xs">© 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.</p>
-        </div>
-        <div class="flex gap-6">
-            <a class="text-label-mono text-xs text-on-surface-variant hover:text-secondary transition-colors" href="/about">Data Sources</a>
-            <a class="text-label-mono text-xs text-on-surface-variant hover:text-secondary transition-colors" href="/insights">ML Pipeline</a>
-            <a class="text-label-mono text-xs text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
-            <a class="text-label-mono text-xs text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+    <footer class="lg:ml-64 w-full lg:w-[calc(100%-16rem)] py-5 px-8 bg-surface-container-low border-t border-outline-variant">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-3 max-w-screen-xl mx-auto">
+            <span class="text-label-mono font-label-mono text-xs uppercase tracking-widest text-outline whitespace-nowrap">
+                &copy; 2026 FIFA WC Analytics Engine &middot; Scikit-Learn
+            </span>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/about">Data Sources</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/insights">ML Pipeline</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/privacy">Privacy Policy</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/terms">Terms of Service</a>
+            </div>
         </div>
     </footer>
 
@@ -409,6 +417,9 @@
             select.addEventListener('change', (e) => {
                 loadTeamAnalytics(e.target.value);
             });
+
+            // Initialize combobox
+            initCombobox();
         });
 
         async function loadTeamsDropdown() {
@@ -427,6 +438,90 @@
             } catch (err) {
                 console.error("Failed to load teams dropdown:", err);
             }
+        }
+
+        function initCombobox() {
+            const select = document.getElementById('selectTeam');
+            const search = document.getElementById('searchTeam');
+            const dropdown = document.getElementById('dropdownTeam');
+            const arrow = document.getElementById('arrowTeam');
+            let hi = -1;
+
+            const teams = () => Array.from(select.options).map(o => o.value);
+
+            function render(filter) {
+                const fl = (filter || '').toLowerCase();
+                const list = teams().filter(t => t.toLowerCase().includes(fl));
+                dropdown.innerHTML = '';
+                hi = -1;
+                if (!list.length) {
+                    dropdown.innerHTML = '<div class="team-dropdown-empty">No teams found</div>';
+                    return;
+                }
+                list.forEach(t => {
+                    const el = document.createElement('div');
+                    el.className = 'team-dropdown-item' + (t === select.value ? ' selected' : '');
+                    el.textContent = t;
+                    el.addEventListener('mousedown', e => {
+                        e.preventDefault();
+                        pick(t);
+                    });
+                    dropdown.appendChild(el);
+                });
+            }
+
+            function open() {
+                render(search.value);
+                dropdown.classList.add('open');
+                search.classList.add('open');
+                arrow.classList.add('rotated');
+            }
+
+            function close() {
+                dropdown.classList.remove('open');
+                search.classList.remove('open');
+                arrow.classList.remove('rotated');
+                if (select.value) search.value = select.value;
+            }
+
+            function pick(t) {
+                select.value = t;
+                search.value = t;
+                select.dispatchEvent(new Event('change'));
+                close();
+            }
+
+            search.addEventListener('focus', open);
+            search.addEventListener('click', open);
+            search.addEventListener('input', () => render(search.value));
+
+            search.addEventListener('keydown', e => {
+                const items = dropdown.querySelectorAll('.team-dropdown-item');
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    hi = Math.min(hi + 1, items.length - 1);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    hi = Math.max(hi - 1, 0);
+                } else if (e.key === 'Enter' && hi >= 0) {
+                    e.preventDefault();
+                    pick(items[hi].textContent);
+                    return;
+                } else if (e.key === 'Escape') {
+                    close();
+                    return;
+                }
+                items.forEach((el, i) => el.classList.toggle('highlighted', i === hi));
+                if (items[hi]) items[hi].scrollIntoView({ block: 'nearest' });
+            });
+
+            document.addEventListener('mousedown', e => {
+                if (!document.getElementById('comboboxTeam').contains(e.target)) {
+                    close();
+                }
+            });
+
+            if (select.value) search.value = select.value;
         }
 
         async function loadTeamAnalytics(team) {
@@ -459,7 +554,7 @@
                 document.getElementById('teamSubtitle').innerText = `${confederation} Qualified • World Cup 2026 Target Group`;
                 
                 // Adjust progress bar widths
-                // Max goals 4.0
+                // Max goals 3.0
                 const goalsPercent = Math.min(100, Math.round((state.goals_scored_avg / 3.0) * 100));
                 document.getElementById('goalsBar').style.width = `${goalsPercent}%`;
                 
@@ -475,11 +570,6 @@
                 document.getElementById('radarFitVal').innerText = radar.fitness;
                 
                 // Draw Radar Polygon (centered at 50,50 with max radius ~45)
-                // Coordinates mapping:
-                // Point 1 (Attack): up (50, 50 - att * 0.45)
-                // Point 2 (Defense): right (50 + def * 0.45, 50)
-                // Point 3 (Tactics): down (50, 50 + tac * 0.45)
-                // Point 4 (Fitness): left (50 - fit * 0.45, 50)
                 const attRadius = (radar.attack / 100) * 45;
                 const defRadius = (radar.defense / 100) * 45;
                 const tacRadius = (radar.tactics / 100) * 45;
@@ -545,7 +635,7 @@
                         tableBody.appendChild(tr);
                     });
                     
-                    // Render form circles in the metrics card based on these recent outcomes
+                    // Render form circles in the metrics card based on recent outcomes
                     const formIndicators = document.getElementById('formIndicators');
                     formIndicators.innerHTML = '';
                     dataMatches.matches.forEach(m => {

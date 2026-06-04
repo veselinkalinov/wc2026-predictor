@@ -82,17 +82,6 @@
     <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
         <div class="flex items-center gap-8">
             <span class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</span>
-            <div class="hidden md:flex gap-6">
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-label-mono" href="/predict">Predict</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-label-mono" href="/analytics">Analytics</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-label-mono" href="/insights">Insights</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-label-mono" href="/about">About</a>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <button class="bg-secondary text-on-secondary px-4 py-1.5 font-label-mono text-sm hover:opacity-90 transition-all uppercase tracking-wider" onclick="location.href='/predict'">Try Predictor</button>
-            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">settings</span>
-            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">account_circle</span>
         </div>
     </nav>
 
@@ -154,7 +143,7 @@
                     A sophisticated machine learning engine trained on 50 years of international tournament data to forecast every outcome of the FIFA World Cup 2026.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="bg-secondary text-on-secondary px-8 py-4 font-label-mono font-bold text-sm uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2" onclick="location.href='/predict'">
+                    <button class="bg-secondary text-on-primary px-8 py-4 font-label-mono font-bold text-sm uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2" onclick="location.href='/predict'">
                         Try Predictor <span class="material-symbols-outlined">trending_flat</span>
                     </button>
                     <button class="border border-outline text-on-surface px-8 py-4 font-label-mono font-bold text-sm uppercase tracking-widest hover:bg-surface-container-high transition-colors" onclick="location.href='/about'">
@@ -325,29 +314,22 @@
                 </div>
             </div>
         </section>
-
-        <!-- Footer -->
-        <footer class="w-full py-12 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-8 bg-surface-container-low border-t border-outline-variant">
-            <div class="flex flex-col gap-4">
-                <span class="text-label-mono font-label-mono uppercase tracking-widest text-secondary">FIFA 26 ANALYTICS ENGINE</span>
-                <p class="text-body-md font-body-md text-outline max-w-sm">© 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.</p>
-            </div>
-            <div class="flex flex-wrap justify-center gap-8">
-                <a class="text-on-surface-variant hover:text-secondary text-label-mono text-xs uppercase transition-colors" href="/about">Data Sources</a>
-                <a class="text-on-surface-variant hover:text-secondary text-label-mono text-xs uppercase transition-colors" href="/insights">ML Pipeline</a>
-                <a class="text-on-surface-variant hover:text-secondary text-label-mono text-xs uppercase transition-colors" href="#">Privacy Policy</a>
-                <a class="text-on-surface-variant hover:text-secondary text-label-mono text-xs uppercase transition-colors" href="#">Terms of Service</a>
-            </div>
-            <div class="flex gap-4">
-                <div class="w-10 h-10 rounded-sm border border-outline-variant flex items-center justify-center hover:border-secondary transition-colors cursor-pointer" onclick="location.href='/insights'">
-                    <span class="material-symbols-outlined text-outline">terminal</span>
-                </div>
-                <div class="w-10 h-10 rounded-sm border border-outline-variant flex items-center justify-center hover:border-secondary transition-colors cursor-pointer">
-                    <span class="material-symbols-outlined text-outline">language</span>
-                </div>
-            </div>
-        </footer>
     </main>
+
+    <!-- Footer -->
+    <footer class="lg:ml-64 w-full lg:w-[calc(100%-16rem)] py-5 px-8 bg-surface-container-low border-t border-outline-variant">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-3 max-w-screen-xl mx-auto">
+            <span class="text-label-mono font-label-mono text-xs uppercase tracking-widest text-outline whitespace-nowrap">
+                &copy; 2026 FIFA WC Analytics Engine &middot; Scikit-Learn
+            </span>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/about">Data Sources</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/insights">ML Pipeline</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/privacy">Privacy Policy</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/terms">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
 
     <script>
         // Micro-interaction for hover effects on cards

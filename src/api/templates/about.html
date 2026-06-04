@@ -122,19 +122,6 @@
     <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
         <div class="flex items-center gap-8">
             <span class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</span>
-            <div class="hidden md:flex items-center gap-6">
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/predict">Predict</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/analytics">Analytics</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/insights">Insights</a>
-                <a class="text-secondary border-b-2 border-secondary font-bold pb-1 font-body-md" href="/about">About</a>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <button class="bg-primary-container text-primary px-4 py-1.5 rounded-sm font-label-mono text-sm uppercase tracking-wider border border-primary/20 hover:bg-surface-container-high transition-all" onclick="location.href='/predict'">
-                Live Predictor
-            </button>
-            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">settings</span>
-            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">account_circle</span>
         </div>
     </nav>
 
@@ -301,7 +288,7 @@
             <section class="md:col-span-12 glass-card rounded-lg overflow-hidden flex flex-col md:flex-row">
                 <div class="md:w-1/3 bg-surface-container-high p-8 flex flex-col items-center justify-center text-center border-b md:border-b-0 md:border-r border-outline-variant">
                     <img alt="Author Portrait" class="w-32 h-32 rounded-full border-2 border-secondary mb-4 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgJi7d3CxwiwPrBo5IHpKvMj1TGtYtPnicHonb81gEu-Fenlci809B8xH6h_jd69SEGiSLx796HeviySJmMMLN69PGqNtqyra9mffwfJMKlq6yxAy0o8SVhEo_b1ZJs4tK2osvCkmB_8IqgB7vvdOeAdPM8fpqXdVRFex5cdDq6B2UwBm9ftyS_bgaW7MnyvJ13U8UlVmgJsx_lzMUN84uUPala1HKLCygYFDL3L3mi3C_txog9E7AApmeEZuTLfO3xLEXxi5YL9GX"/>
-                    <h3 class="font-headline-md text-headline-md text-on-surface">Elias Thorne</h3>
+                    <h3 class="font-headline-md text-headline-md text-on-surface">Veselin Kalinov</h3>
                     <p class="text-label-mono text-xs text-secondary">Lead Data Architect</p>
                 </div>
                 <div class="md:w-2/3 p-8 flex flex-col justify-center">
@@ -323,10 +310,17 @@
     </main>
 
     <!-- Footer -->
-    <footer class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low border-t border-outline-variant">
-        <div class="flex flex-col items-center md:items-start">
-            <span class="text-label-mono font-label-mono uppercase tracking-widest text-secondary text-xs">FIFA 26 ANALYTICS</span>
-            <p class="text-body-md font-body-md text-outline text-xs mt-1">© 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.</p>
+    <footer class="lg:ml-64 w-full lg:w-[calc(100%-16rem)] py-5 px-8 bg-surface-container-low border-t border-outline-variant">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-3 max-w-screen-xl mx-auto">
+            <span class="text-label-mono font-label-mono text-xs uppercase tracking-widest text-outline whitespace-nowrap">
+                &copy; 2026 FIFA WC Analytics Engine &middot; Scikit-Learn
+            </span>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/about">Data Sources</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/insights">ML Pipeline</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/privacy">Privacy Policy</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/terms">Terms of Service</a>
+            </div>
         </div>
     </footer>
 

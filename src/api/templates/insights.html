@@ -121,19 +121,6 @@
     <!-- TopNavBar -->
     <header class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
         <div class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</div>
-        <nav class="hidden md:flex items-center gap-8">
-            <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/predict">Predict</a>
-            <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/analytics">Analytics</a>
-            <a class="text-secondary border-b-2 border-secondary font-bold pb-1 text-body-md" href="/insights">Insights</a>
-            <a class="text-on-surface-variant hover:text-on-surface transition-colors font-body-md" href="/about">About</a>
-        </nav>
-        <div class="flex items-center gap-6">
-            <button class="bg-secondary-container text-on-secondary-container px-4 py-2 font-label-mono text-label-mono uppercase tracking-wider hover:opacity-80 transition-opacity" onclick="location.href='/predict'">Live Predictor</button>
-            <div class="flex gap-4">
-                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-on-surface">settings</span>
-                <span class="material-symbols-outlined text-outline cursor-pointer hover:text-on-surface">account_circle</span>
-            </div>
-        </div>
     </header>
 
     <!-- SideNavBar -->
@@ -234,9 +221,9 @@
                             <span class="text-on-surface-variant">Feature Count</span>
                             <span class="font-label-mono text-on-surface">20 columns</span>
                         </div>
-                        <div class="flex justify-between items-center pb-2">
+                        <div class="flex flex-col gap-1 border-t border-outline-variant/30 pt-3 pb-2">
                             <span class="text-on-surface-variant">Best Parameters</span>
-                            <span class="font-label-mono text-xs text-secondary-fixed text-right" id="bestParamsVal">{}</span>
+                            <span class="font-label-mono text-xs text-secondary-fixed text-left break-all whitespace-pre-wrap max-w-full" id="bestParamsVal">{}</span>
                         </div>
                     </div>
                 </div>
@@ -370,10 +357,17 @@
     </main>
 
     <!-- Footer -->
-    <footer class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low border-t border-outline-variant">
-        <div class="text-label-mono font-label-mono uppercase tracking-widest text-outline">FIFA 26 PREDICTOR</div>
-        <div class="text-body-md font-body-md text-outline">
-            © 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.
+    <footer class="lg:ml-64 w-full lg:w-[calc(100%-16rem)] py-5 px-8 bg-surface-container-low border-t border-outline-variant">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-3 max-w-screen-xl mx-auto">
+            <span class="text-label-mono font-label-mono text-xs uppercase tracking-widest text-outline whitespace-nowrap">
+                &copy; 2026 FIFA WC Analytics Engine &middot; Scikit-Learn
+            </span>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/about">Data Sources</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/insights">ML Pipeline</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/privacy">Privacy Policy</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/terms">Terms of Service</a>
+            </div>
         </div>
     </footer>
 

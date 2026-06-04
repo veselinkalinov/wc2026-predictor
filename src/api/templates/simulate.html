@@ -142,17 +142,6 @@
     <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant">
         <div class="flex items-center gap-8">
             <span class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</span>
-            <div class="hidden md:flex gap-6">
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-body-md font-body-md" href="/predict">Predict</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-body-md font-body-md" href="/analytics">Analytics</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-body-md font-body-md" href="/insights">Insights</a>
-                <a class="text-on-surface-variant hover:text-on-surface transition-colors text-body-md font-body-md" href="/about">About</a>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <button class="px-4 py-2 bg-primary-container text-primary text-label-mono font-label-mono uppercase tracking-wider hover:bg-surface-container-high transition-all" onclick="location.href='/predict'">Live Predictor</button>
-            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">settings</span>
-            <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-secondary">account_circle</span>
         </div>
     </nav>
 
@@ -374,15 +363,17 @@
     </main>
 
     <!-- Footer -->
-    <footer class="w-full py-8 px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4 bg-surface-container-low border-t border-outline-variant">
-        <div class="text-label-mono font-label-mono uppercase tracking-widest text-outline">
-            © 2026 FIFA World Cup Analytics Engine. Powered by Scikit-Learn.
-        </div>
-        <div class="flex gap-6">
-            <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors" href="/about">Data Sources</a>
-            <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors" href="/insights">ML Pipeline</a>
-            <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors" href="#">Privacy Policy</a>
-            <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors" href="#">Terms of Service</a>
+    <footer class="lg:ml-64 w-full lg:w-[calc(100%-16rem)] py-5 px-8 bg-surface-container-low border-t border-outline-variant">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-3 max-w-screen-xl mx-auto">
+            <span class="text-label-mono font-label-mono text-xs uppercase tracking-widest text-outline whitespace-nowrap">
+                &copy; 2026 FIFA WC Analytics Engine &middot; Scikit-Learn
+            </span>
+            <div class="flex flex-wrap justify-center gap-6">
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/about">Data Sources</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/insights">ML Pipeline</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/privacy">Privacy Policy</a>
+                <a class="text-label-mono font-label-mono text-on-surface-variant hover:text-secondary transition-colors text-xs uppercase tracking-wider" href="/terms">Terms of Service</a>
+            </div>
         </div>
     </footer>
 

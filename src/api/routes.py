@@ -11,7 +11,7 @@ import pandas as pd
 from flask import Blueprint, request, jsonify, render_template, send_from_directory
 from src.models.predict import MatchPredictor
 from src.models.simulate import TournamentSimulator
-from src.utils.config import config
+from src.utils.config import config, PROJECT_ROOT
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -211,7 +211,7 @@ def serve_visualisation(filename):
     """
     Serve generated plots directly to the frontend.
     """
-    vis_dir = Path(config["paths"]["visualisations"])
+    vis_dir = PROJECT_ROOT / config["paths"]["visualisations"]
     return send_from_directory(vis_dir, filename)
 
 
@@ -220,7 +220,7 @@ def get_model_meta():
     """
     Get training metadata and comparison metrics.
     """
-    meta_path = Path(config["paths"]["models"]) / "meta.json"
+    meta_path = PROJECT_ROOT / config["paths"]["models"] / "meta.json"
     if not meta_path.exists():
         return jsonify({"error": "Model metadata not found"}), 404
     with open(meta_path, "r") as f:
@@ -257,3 +257,13 @@ def render_about_page():
 @pages_bp.route("/simulate")
 def render_simulate_page():
     return render_template("simulate.html")
+
+
+@pages_bp.route("/privacy")
+def render_privacy_page():
+    return render_template("privacy.html")
+
+
+@pages_bp.route("/terms")
+def render_terms_page():
+    return render_template("terms.html")
