@@ -91,6 +91,7 @@ def simulate_tournament():
       - n_sims (int, optional, default: 100)
     """
     data = request.get_json() or {}
+    # Defaulting to 100 in API for quick responses
     n_sims = data.get("n_sims", 100)
 
     if not isinstance(n_sims, int) or n_sims <= 0:
@@ -102,6 +103,7 @@ def simulate_tournament():
 
     try:
         champs = simulator.run_monte_carlo(n_sims=n_sims)
+        # Convert pandas Series output to JSON dictionary mapping
         results_dict = champs.to_dict()
         return jsonify({
             "simulations_run": n_sims,
@@ -147,10 +149,6 @@ def get_team_details(team_name):
                 wins += 1
             elif row["result"] == "A" and not is_home:
                 wins += 1
-            elif row["result"] == "A" and is_home:
-                pass
-            elif row["result"] == "H" and not is_home:
-                pass
         win_ratio = round((wins / total_matches) * 100)
     else:
         win_ratio = 50
@@ -191,6 +189,7 @@ def get_team_matches(team_name):
         else:
             outcome = "D"
             
+        # Try to parse scores, fallback if missing
         h_score = int(row["home_score"]) if "home_score" in row and not pd.isna(row["home_score"]) else 0
         a_score = int(row["away_score"]) if "away_score" in row and not pd.isna(row["away_score"]) else 0
             
@@ -234,10 +233,28 @@ def get_model_meta():
 def get_live_standings():
     """
     Get current World Cup 2026 group standings from cached file or API.
+    Flat formatted list for frontend layout.
     """
     try:
-        standings_data = get_standings()
-        return jsonify(standings_data)
+        raw_data = get_standings()
+        standings_list = []
+        
+        response = raw_data.get("response", [])
+        if response and isinstance(response, list):
+            league = response[0].get("league", {})
+            groups_list = league.get("standings", [])
+            for group in groups_list:
+                for row in group:
+                    standings_list.append({
+                        "group": row.get("group", ""),
+                        "position": row.get("rank", 1),
+                        "team": row.get("team", {}).get("name", "Unknown"),
+                        "played": row.get("all", {}).get("played", 0),
+                        "goals_difference": row.get("goalsDiff", 0),
+                        "points": row.get("points", 0)
+                    })
+                    
+        return jsonify({"standings": standings_list})
     except Exception as e:
         logger.error(f"Failed to load live standings: {str(e)}")
         return jsonify({"error": str(e)}), 500
@@ -247,10 +264,44 @@ def get_live_standings():
 def get_live_fixtures():
     """
     Get World Cup 2026 fixture schedule and results from cached file or API.
+    Flat formatted list for frontend layout.
     """
     try:
-        fixtures_data = get_fixtures()
-        return jsonify(fixtures_data)
+        raw_data = get_fixtures()
+        fixtures_list = []
+        
+        response = raw_data.get("response", [])
+        if response and isinstance(response, list):
+            for item in response:
+                fixture_info = item.get("fixture", {})
+                league_info = item.get("league", {})
+                teams_info = item.get("teams", {})
+                goals_info = item.get("goals", {})
+                
+                status_short = fixture_info.get("status", {}).get("short", "NS").upper()
+                status = "SCHEDULED"
+                if status_short in ["FT", "AET", "PEN"]:
+                    status = "FINISHED"
+                elif status_short in ["1H", "2H", "HT", "ET", "P", "LIVE"]:
+                    status = "LIVE"
+                
+                round_str = league_info.get("round", "")
+                group_name = "Group Stage"
+                if "Group " in round_str:
+                    group_name = "Group " + round_str.split("Group ")[-1]
+                
+                fixtures_list.append({
+                    "date": fixture_info.get("date", ""),
+                    "status": status,
+                    "home_team": teams_info.get("home", {}).get("name", "Unknown"),
+                    "away_team": teams_info.get("away", {}).get("name", "Unknown"),
+                    "home_score": goals_info.get("home"),
+                    "away_score": goals_info.get("away"),
+                    "group": group_name,
+                    "match_number": fixture_info.get("id", 0) - 200000 + 1
+                })
+                
+        return jsonify({"fixtures": fixtures_list})
     except Exception as e:
         logger.error(f"Failed to load live fixtures: {str(e)}")
         return jsonify({"error": str(e)}), 500

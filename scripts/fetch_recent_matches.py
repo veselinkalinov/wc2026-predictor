@@ -1,8 +1,8 @@
 """
 fetch_recent_matches.py
 
-Responsibility: Fetches recent international matches (from 2024 to June 2026)
-from API-Football, cleans and normalizes them, appends new records to data/raw/matches.csv,
+Responsibility: Fetches finished World Cup matches from Football-Data.org,
+cleans and normalises them, appends new records to data/raw/matches.csv,
 and triggers the model retraining pipeline.
 """
 
@@ -25,39 +25,8 @@ logger = get_logger(__name__)
 # Load environment variables
 load_dotenv()
 
-RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY", "")
-MATCHES_CSV_PATH = PROJECT_ROOT / \
-    config["paths"]["raw_data"] / config["data"]["matches_file"]
-
-# Target leagues for fetching:
-# 10 = Friendlies
-# 5 = CONMEBOL Qualifiers
-# 4 = UEFA Qualifiers
-# 32 = CONCACAF Qualifiers
-# 31 = CAF Qualifiers
-# 30 = AFC Qualifiers
-TARGET_LEAGUES = {
-    10: "Friendly",
-    5: "FIFA World Cup qualification",
-    4: "FIFA World Cup qualification",
-    32: "FIFA World Cup qualification",
-    31: "FIFA World Cup qualification",
-    30: "FIFA World Cup qualification"
-}
-SEASONS = [2024, 2025, 2026]
-
-# Mock data fallback for testing without API keys (adds simulated friendly results in June 2026)
-MOCK_RECENT_MATCHES = [
-    {"date": "2026-06-01", "home_team": "Germany", "away_team": "France", "home_score": 2, "away_score": 1,
-        "tournament": "Friendly", "city": "Berlin", "country": "Germany", "neutral": "FALSE"},
-    {"date": "2026-06-02", "home_team": "Brazil", "away_team": "Spain", "home_score": 2, "away_score": 2,
-        "tournament": "Friendly", "city": "Madrid", "country": "Spain", "neutral": "TRUE"},
-    {"date": "2026-06-03", "home_team": "United States", "away_team": "Ecuador", "home_score": 1, "away_score": 0,
-        "tournament": "Friendly", "city": "New York", "country": "United States", "neutral": "FALSE"},
-    {"date": "2026-06-04", "home_team": "Mexico", "away_team": "Colombia", "home_score": 1, "away_score": 2,
-        "tournament": "Friendly", "city": "Mexico City", "country": "Mexico", "neutral": "FALSE"},
-]
-
+API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "")
+MATCHES_CSV_PATH = PROJECT_ROOT / config["paths"]["raw_data"] / config["data"]["matches_file"]
 
 def load_existing_matches():
     """
@@ -65,8 +34,7 @@ def load_existing_matches():
     """
     existing = set()
     if not MATCHES_CSV_PATH.exists():
-        logger.warning(
-            f"matches.csv not found at {MATCHES_CSV_PATH}. A new file will be created.")
+        logger.warning(f"matches.csv not found at {MATCHES_CSV_PATH}. A new file will be created.")
         return existing
 
     with open(MATCHES_CSV_PATH, "r", encoding="utf-8") as f:
@@ -75,72 +43,63 @@ def load_existing_matches():
             existing.add((row["date"], row["home_team"], row["away_team"]))
     return existing
 
-
-def query_fixtures(league_id, season):
+def query_world_cup_matches():
     """
-    Fetch finished fixtures for a specific league and season from API-Football.
+    Fetch all matches for the World Cup (competition WC) from Football-Data.org.
     """
-    if not RAPIDAPI_KEY:
+    if not API_KEY:
+        logger.warning("FOOTBALL_DATA_API_KEY not found in environment variables.")
         return []
 
-    url = "https://api-football-v1.p.rapidapi.com/v3/fixtures"
+    url = "https://api.football-data.org/v4/competitions/WC/matches"
     headers = {
-        "x-rapidapi-host": "api-football-v1.p.rapidapi.com",
-        "x-rapidapi-key": RAPIDAPI_KEY
-    }
-    params = {
-        "league": league_id,
-        "season": season,
-        "status": "FT"  # Finished matches only
+        "X-Auth-Token": API_KEY
     }
 
     try:
-        logger.info(
-            f"Fetching fixtures for league {league_id}, season {season}...")
-        response = requests.get(url, headers=headers,
-                                params=params, timeout=15)
+        logger.info("Fetching World Cup matches from Football-Data.org...")
+        response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
         data = response.json()
-
-        errors = data.get("errors", [])
-        if errors:
-            logger.error(f"API-Football error: {errors}")
-            return []
-
-        return data.get("response", [])
+        return data.get("matches", [])
     except Exception as e:
-        logger.error(
-            f"Failed to fetch league {league_id} season {season}: {str(e)}")
+        logger.error(f"Failed to fetch World Cup matches: {str(e)}")
+        if 'response' in locals() and hasattr(response, 'text'):
+            logger.error(f"Response details: {response.text}")
         return []
 
-
-def parse_and_clean_fixtures(fixtures, tournament_fallback):
+def parse_and_clean_matches(matches):
     """
-    Parse API-Football fixtures list into matches.csv expected formats.
+    Parse Football-Data.org matches list into matches.csv expected formats.
     """
     parsed = []
-    for f in fixtures:
+    for m in matches:
         try:
-            fixture_data = f.get("fixture", {})
-            teams = f.get("teams", {})
-            goals = f.get("goals", {})
-            league = f.get("league", {})
+            status = m.get("status")
+            if status != "FINISHED":
+                continue # Only process finished matches
 
-            date_str = fixture_data.get("date", "")[:10]  # Get YYYY-MM-DD
-            home = clean_team_name(teams.get("home", {}).get("name"))
-            away = clean_team_name(teams.get("away", {}).get("name"))
-            home_score = goals.get("home")
-            away_score = goals.get("away")
+            # Extract date (YYYY-MM-DD)
+            utc_date = m.get("utcDate", "")
+            if not utc_date:
+                continue
+            date_str = utc_date[:10]
+
+            home = clean_team_name(m.get("homeTeam", {}).get("name"))
+            away = clean_team_name(m.get("awayTeam", {}).get("name"))
+            
+            score = m.get("score", {})
+            full_time = score.get("fullTime", {})
+            home_score = full_time.get("home")
+            away_score = full_time.get("away")
 
             if home_score is None or away_score is None:
-                continue  # Skip unplayed
+                continue
 
-            tournament = league.get("name", tournament_fallback)
-            city = fixture_data.get("venue", {}).get("city", "Unknown")
-            country = league.get("country", "Unknown")
-
-            # If match is played in a country that doesn't match home team's name
-            neutral = "TRUE" if country != home else "FALSE"
+            city = m.get("venue", "Unknown")
+            area_name = m.get("area", {}).get("name", "USA/Canada/Mexico")
+            
+            neutral = "TRUE" if area_name != home else "FALSE"
 
             parsed.append({
                 "date": date_str,
@@ -148,44 +107,33 @@ def parse_and_clean_fixtures(fixtures, tournament_fallback):
                 "away_team": away,
                 "home_score": int(home_score),
                 "away_score": int(away_score),
-                "tournament": tournament,
+                "tournament": "FIFA World Cup",
                 "city": city,
-                "country": country,
+                "country": area_name,
                 "neutral": neutral
             })
         except Exception as e:
-            logger.warning(f"Error parsing fixture: {str(e)}")
+            logger.warning(f"Error parsing match: {str(e)}")
             continue
     return parsed
 
-
 def main():
     logger.info("=" * 70)
-    logger.info("STARTING RECENT MATCHES FETCH & RETRAINING LOOP")
+    logger.info("STARTING WORLD CUP MATCHES FETCH & RETRAINING LOOP")
     logger.info("=" * 70)
 
     existing_keys = load_existing_matches()
-    logger.info(
-        f"Loaded {len(existing_keys)} existing matches from matches.csv")
+    logger.info(f"Loaded {len(existing_keys)} existing matches from matches.csv")
 
     fetched_matches = []
 
-    if RAPIDAPI_KEY:
-        logger.info(
-            "RAPIDAPI_KEY found. Fetching live matches from API-Football...")
-        for league_id, tourney_name in TARGET_LEAGUES.items():
-            for season in SEASONS:
-                fixtures = query_fixtures(league_id, season)
-                if fixtures:
-                    parsed = parse_and_clean_fixtures(fixtures, tourney_name)
-                    fetched_matches.extend(parsed)
-        logger.info(
-            f"Fetched {len(fetched_matches)} total finished fixtures from API-Football.")
+    if API_KEY:
+        matches = query_world_cup_matches()
+        if matches:
+            fetched_matches = parse_and_clean_matches(matches)
+            logger.info(f"Fetched {len(fetched_matches)} finished World Cup matches from Football-Data.org.")
     else:
-        logger.warning("RAPIDAPI_KEY not found in environment variables.")
-        logger.info(
-            "Falling back to pre-defined mock friendly matches for demonstration...")
-        fetched_matches = MOCK_RECENT_MATCHES
+        logger.warning("FOOTBALL_DATA_API_KEY is not configured in .env. Skipping fetch.")
 
     # Deduplicate and append
     new_matches = []
@@ -196,44 +144,40 @@ def main():
             existing_keys.add(key)
 
     if not new_matches:
-        logger.info("No new matches found. matches.csv is fully up to date.")
+        logger.info("No new finished World Cup matches found. matches.csv is fully up to date.")
     else:
-        logger.info(
-            f"Appending {len(new_matches)} new matches to matches.csv...")
-
+        logger.info(f"Appending {len(new_matches)} new matches to matches.csv...")
+        
         file_exists = MATCHES_CSV_PATH.exists()
         with open(MATCHES_CSV_PATH, "a", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=[
-                                    "date", "home_team", "away_team", "home_score", "away_score", "tournament", "city", "country", "neutral"])
+                "date", "home_team", "away_team", "home_score", "away_score", "tournament", "city", "country", "neutral"
+            ])
             if not file_exists:
                 writer.writeheader()
             for m in new_matches:
                 writer.writerow(m)
-
+                
         logger.info("Successfully updated matches.csv")
 
     # Trigger the retraining pipeline steps
     logger.info("Triggering retraining pipeline steps...")
-
+    
     logger.info("[STEP 1/4] Running data cleaning and ranking merges...")
     run_cleaning()
-
-    logger.info(
-        "[STEP 2/4] Engineering Elo, form, and rolling goal averages...")
+    
+    logger.info("[STEP 2/4] Engineering Elo, form, and rolling goal averages...")
     build_feature_matrix()
-
-    logger.info(
-        "[STEP 3/4] Tuning and training HistGradientBoosting classifier...")
+    
+    logger.info("[STEP 3/4] Tuning and training HistGradientBoosting classifier...")
     train_model()
-
-    logger.info(
-        "[STEP 4/4] Writing test confusion matrix and feature contribution heatmaps...")
+    
+    logger.info("[STEP 4/4] Writing test confusion matrix and feature contribution heatmaps...")
     generate_evaluation_report()
 
     logger.info("=" * 70)
     logger.info("MATCHES REFRESH AND MODEL RETRAINING COMPLETED SUCCESSFULLY!")
     logger.info("=" * 70)
-
 
 if __name__ == "__main__":
     main()

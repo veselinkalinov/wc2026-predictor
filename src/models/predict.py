@@ -2,7 +2,8 @@
 predict.py
 
 Responsibility: Load the trained model artifacts, construct feature vectors for
-live matchups, and perform symmetric predictions for neutral venues.
+live matchups, and perform symmetric predictions for neutral venues. Includes
+auto-reload on disk file modification for zero-restart model updates.
 """
 
 from pathlib import Path
@@ -19,25 +20,63 @@ logger = get_logger(__name__)
 class MatchPredictor:
     def __init__(self):
         models_dir = Path(config["paths"]["models"])
+        features_dir = Path(config["paths"]["features"])
+
+        self.model_path = models_dir / "best_model.pkl"
+        self.scaler_path = models_dir / "scaler.pkl"
+        self.meta_path = models_dir / "meta.json"
+        self.feature_matrix_path = features_dir / "feature_matrix.csv"
 
         # Load artifacts
-        self.model = joblib.load(models_dir / "best_model.pkl")
-        self.scaler = joblib.load(models_dir / "scaler.pkl")
+        self.model = joblib.load(self.model_path)
+        self.scaler = joblib.load(self.scaler_path)
 
-        with open(models_dir / "meta.json", "r") as f:
+        with open(self.meta_path, "r") as f:
             meta = json.load(f)
 
         self.features = meta["features"]
         self.classes = meta["classes"]
 
         # Load the latest matches to get recent stats for teams
-        features_dir = Path(config["paths"]["features"])
-        self.feature_matrix = pd.read_csv(features_dir / "feature_matrix.csv")
+        self.feature_matrix = pd.read_csv(self.feature_matrix_path)
         self.feature_matrix["date"] = pd.to_datetime(
             self.feature_matrix["date"])
 
         # Build a lookup dictionary of the latest state for each team
         self.team_states = self._build_latest_team_states()
+
+        # Track file modification time for auto-reloads
+        self.last_loaded_time = self.model_path.stat().st_mtime if self.model_path.exists() else 0
+
+    def _check_and_reload(self) -> bool:
+        """
+        Check if the model file on disk has been updated, and reload if necessary.
+        Returns True if a reload occurred, and False otherwise.
+        """
+        if not self.model_path.exists():
+            return False
+        mtime = self.model_path.stat().st_mtime
+        if mtime > self.last_loaded_time:
+            logger.info("Model file update detected on disk. Reloading model artifacts and team states...")
+            try:
+                self.model = joblib.load(self.model_path)
+                self.scaler = joblib.load(self.scaler_path)
+                with open(self.meta_path, "r") as f:
+                    meta = json.load(f)
+                self.features = meta["features"]
+                self.classes = meta["classes"]
+
+                # Reload feature matrix and team states
+                self.feature_matrix = pd.read_csv(self.feature_matrix_path)
+                self.feature_matrix["date"] = pd.to_datetime(self.feature_matrix["date"])
+                self.team_states = self._build_latest_team_states()
+
+                self.last_loaded_time = mtime
+                logger.info("Reload completed successfully.")
+                return True
+            except Exception as e:
+                logger.error(f"Failed to reload model artifacts: {str(e)}")
+        return False
 
     def _build_team_state(self, team_name: str, team_matches: pd.DataFrame) -> dict:
         """
@@ -156,6 +195,9 @@ class MatchPredictor:
         """
         Predict outcomes using Symmetric Prediction Averaging.
         """
+        # Ensure latest model states are loaded if updated on disk
+        self._check_and_reload()
+
         # 1. Forward direction: Team A as Home, Team B as Away
         feat_forward = self._construct_features(
             home_team, away_team, is_neutral, is_competitive)

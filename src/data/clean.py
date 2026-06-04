@@ -44,6 +44,9 @@ TEAM_MAPPING = {
     "Ireland": "Republic of Ireland",
     "East Timor": "Timor-Leste",
     "Curacao": "Curaçao",
+    "Turkiye": "Turkey",
+    "Bosnia-Herzegovina": "Bosnia and Herzegovina",
+    "Bosnia & Herzegovina": "Bosnia and Herzegovina",
 }
 
 

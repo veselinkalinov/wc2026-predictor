@@ -20,7 +20,7 @@ data:
   matches_file: "matches.csv"
   rankings_file: "fifa_rankings.csv"
   date_from: "2000-01-01"
-  date_to: "2025-12-31"
+  date_to: "2026-06-10"
   min_matches: 10 # Minimum matches a team must have to be included
 
 features:

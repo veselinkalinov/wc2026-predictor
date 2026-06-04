@@ -33,36 +33,71 @@
         .team-dropdown-item.selected{color:#7dffa2;font-weight:700;}
         .team-dropdown-empty{padding:.8rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#8f9097;text-align:center;}
         .team-dropdown::-webkit-scrollbar{width:4px;} .team-dropdown::-webkit-scrollbar-track{background:#131315;} .team-dropdown::-webkit-scrollbar-thumb{background:#44474d;border-radius:2px;} .team-dropdown::-webkit-scrollbar-thumb:hover{background:#7dffa2;}
+        /* Card Hover */
+        .glass-card {
+            background: rgba(27, 27, 29, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #44474d;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .glass-card:hover {
+            border-color: #7dffa2;
+            box-shadow: 0 0 15px rgba(125, 255, 162, 0.1);
+        }
     </style>
     <script id="tailwind-config">
         tailwind.config={darkMode:"class",theme:{extend:{"colors":{"surface-container-low":"#1b1b1d","outline-variant":"#44474d","on-surface-variant":"#c5c6cd","on-tertiary-fixed":"#2b1701","surface-container-highest":"#343536","on-primary-fixed-variant":"#39475f","primary":"#b9c7e4","on-secondary-container":"#00622e","error-container":"#93000a","surface-container-lowest":"#0e0e10","on-primary":"#233148","on-surface":"#e4e2e4","secondary":"#7dffa2","background":"#131315","tertiary":"#e7bf99","primary-container":"#0a192f","on-error-container":"#ffdad6","on-secondary":"#003918","surface-container-high":"#2a2a2c","surface":"#131315","outline":"#8f9097","secondary-container":"#05e777","surface-container":"#1f1f21","error":"#ffb4ab","on-primary-container":"#74829d","secondary-fixed":"#62ff96","on-background":"#e4e2e4","inverse-surface":"#e4e2e4"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"gutter":"24px","margin-desktop":"48px","margin-mobile":"16px","container-max":"1440px"},"fontFamily":{"display-lg":["Montserrat"],"headline-lg":["Montserrat"],"body-lg":["Inter"],"label-mono":["JetBrains Mono"],"body-md":["Inter"],"headline-md":["Montserrat"],"stat-value":["JetBrains Mono"]}}}}
     </script>
 </head>
 <body class="bg-background text-on-surface font-body-md min-h-screen">
+    <!-- TopNavBar -->
     <nav class="fixed top-0 w-full z-50 flex justify-between items-center px-margin-desktop h-16 bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant" style="backdrop-filter:blur(12px);">
         <span class="text-headline-md font-headline-md font-extrabold text-secondary cursor-pointer" onclick="location.href='/'">FIFA 26 PREDICTOR</span>
     </nav>
+    
+    <!-- SideNavBar -->
     <aside class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-20 pb-8 bg-surface-container-lowest border-r border-outline-variant w-64 z-40">
         <div class="px-6 mb-8 flex items-center gap-3">
-            <div class="w-10 h-10 bg-primary-container flex items-center justify-center rounded">
+            <div class="w-10 h-10 bg-primary-container border border-outline-variant/30 flex items-center justify-center rounded">
                 <img alt="WC Logo" class="w-6 h-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgBX5QzCE0F8tIOZX7Vcyq8M3P9-noQLJqYSYOXpxZflvJ1d8kXgPbMLawop2mu3ihBuGMMc2vt4YE8GfaWUIAe6OnRXP5c4cUMaIN1BAk5oUDdyeSsSJ-i09gEakAZWibqZzoqryt1oKdG4fIfvIbYVLCqancYEa_UUKO67TR3uN4vd1mdwWctZoWI3azmcgl6n5CB4oHX_ZCAB9eYVTEhzrdAjE_6TjWdXTjT9-C8HVoc6D7bq7Lgr5TobYxLUeRqyVsnok9xurJ"/>
             </div>
-            <div><p class="text-secondary font-headline-md text-headline-md leading-none">WC2026 AI</p><p class="text-label-mono font-label-mono text-[10px] text-outline">MISSION CONTROL</p></div>
+            <div>
+                <p class="text-secondary font-headline-md text-headline-md leading-none">WC2026 AI</p>
+                <p class="text-label-mono font-label-mono text-[10px] text-outline uppercase tracking-widest mt-1">Mission Control</p>
+            </div>
         </div>
         <nav class="flex-1 space-y-1">
-            <a class="bg-primary-container text-secondary border-l-4 border-secondary px-4 py-3 flex items-center gap-3" href="/predict"><span class="material-symbols-outlined">query_stats</span><span class="text-label-mono font-label-mono">Prediction</span></a>
-            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/analytics"><span class="material-symbols-outlined">analytics</span><span class="text-label-mono font-label-mono">Team Analytics</span></a>
-            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/insights"><span class="material-symbols-outlined">troubleshoot</span><span class="text-label-mono font-label-mono">Model Insights</span></a>
-            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors font-label-mono" href="/live"><span class="material-symbols-outlined">sensors</span><span class="text-label-mono font-label-mono">Live Hub</span></a>
-            <a class="text-on-surface-variant hover:bg-surface-container-high px-4 py-3 flex items-center gap-3 transition-colors" href="/about"><span class="material-symbols-outlined">info</span><span class="text-label-mono font-label-mono">About Project</span></a>
+            <a class="bg-primary-container text-secondary border-l-4 border-secondary px-6 py-3 flex items-center gap-3 font-label-mono" href="/predict">
+                <span class="material-symbols-outlined">query_stats</span> Prediction
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors font-label-mono" href="/analytics">
+                <span class="material-symbols-outlined">analytics</span> Team Analytics
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors font-label-mono" href="/insights">
+                <span class="material-symbols-outlined">troubleshoot</span> Model Insights
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors font-label-mono" href="/live">
+                <span class="material-symbols-outlined">sensors</span> Live Hub
+            </a>
+            <a class="text-on-surface-variant hover:bg-surface-container-high px-6 py-3 flex items-center gap-3 transition-colors font-label-mono" href="/about">
+                <span class="material-symbols-outlined">info</span> About Project
+            </a>
         </nav>
-        <div class="px-4 mt-auto space-y-4">
-            <button class="w-full py-3 bg-secondary text-on-primary font-bold text-label-mono uppercase tracking-widest hover:opacity-90 transition-all" onclick="location.href='/simulate'">Run Simulation</button>
-            <div class="pt-4 border-t border-outline-variant">
-                <a class="text-on-surface-variant hover:text-on-surface px-4 py-2 flex items-center gap-3 text-label-mono font-label-mono" href="/about"><span class="material-symbols-outlined text-sm">description</span> Documentation</a>
+        <div class="px-6 mt-auto space-y-4">
+            <button class="w-full py-3 bg-secondary text-primary-container font-bold text-label-mono text-xs uppercase tracking-widest rounded-sm hover:opacity-90 active:scale-95 transition-all border border-secondary/30 shadow-[0_0_15px_rgba(125,255,162,0.15)] flex items-center justify-center gap-2" onclick="location.href='/simulate'">
+                <span class="material-symbols-outlined text-sm">bolt</span> Run Simulation
+            </button>
+            <div class="pt-4 border-t border-outline-variant space-y-2">
+                <a class="text-on-surface-variant hover:text-on-surface flex items-center gap-2 text-xs font-label-mono" href="/about">
+                    <span class="material-symbols-outlined text-sm">description</span> Documentation
+                </a>
+                <a class="text-on-surface-variant hover:text-on-surface flex items-center gap-2 text-xs font-label-mono" href="#">
+                    <span class="material-symbols-outlined text-sm">help_outline</span> Support
+                </a>
             </div>
         </div>
     </aside>
+
     <main class="lg:ml-64 pt-24 px-margin-mobile md:px-margin-desktop pb-16">
         <div class="max-w-container-max mx-auto">
             <header class="mb-12 border-b border-outline-variant pb-6">
@@ -111,13 +146,13 @@
                 </div>
             </section>
             <div class="flex flex-col items-center justify-center mb-16">
-                <button class="px-12 py-5 bg-secondary text-on-primary font-bold text-headline-md uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(125,255,162,0.2)] rounded" id="runPrediction">Run Prediction</button>
+                <button class="px-12 py-5 bg-secondary text-primary-container font-bold text-label-mono text-sm uppercase tracking-widest rounded-sm hover:scale-105 active:scale-95 transition-all border border-secondary/40 shadow-[0_0_25px_rgba(125,255,162,0.2)]" id="runPrediction">Run Prediction</button>
                 <div class="mt-4 text-label-mono font-label-mono text-secondary opacity-0 transition-opacity" id="simulatingLabel">SIMULATING MATCH...</div>
             </div>
             <div class="hidden opacity-0 translate-y-8 transition-all duration-700 space-y-12" id="resultsArea">
                 <div class="border-t border-outline-variant pt-12">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-8">
-                        <div><h2 class="text-headline-lg font-headline-lg text-on-surface">Simulation Results</h2><p class="text-body-md text-on-surface-variant" id="engineVersionLabel">Processed via Scikit-Learn HistGradientBoosting Engine</p></div>
+                        <div><h2 class="text-headline-lg text-headline-lg text-on-surface">Simulation Results</h2><p class="text-body-md text-on-surface-variant" id="engineVersionLabel">Processed via Scikit-Learn HistGradientBoosting Engine</p></div>
                         <div class="flex items-center gap-8 bg-surface-container-high/50 p-6 border border-outline-variant rounded-lg">
                             <div class="text-right"><span class="text-label-mono font-label-mono text-outline uppercase text-[10px]">Model Certainty</span><div class="text-stat-value font-stat-value text-secondary" id="confidenceValue">0%</div></div>
                             <div class="gauge-container"><div class="gauge-bg"></div><div class="gauge-fill" id="gaugeFill"></div></div>
@@ -157,15 +192,75 @@
         </div>
     </footer>
     <script>
-        const flagEmojis={"France":"🇫🇷","Brazil":"🇧🇷","Argentina":"🇦🇷","England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Spain":"🇪🇸","Germany":"🇩🇪","Italy":"🇮🇹","Croatia":"🇭🇷","United States":"🇺🇸","Canada":"🇨🇦","Mexico":"🇲🇽","Portugal":"🇵🇹","Netherlands":"🇳🇱","Belgium":"🇧🇪","Uruguay":"🇺🇾","Colombia":"🇨🇴","Japan":"🇯🇵","Morocco":"🇲🇦","Senegal":"🇸🇳","Switzerland":"🇨🇭","Denmark":"🇩🇰","Ecuador":"🇪🇨","Ukraine":"🇺🇦","Sweden":"🇸🇪","Poland":"🇵🇱","Australia":"🇦🇺","South Korea":"🇰🇷","Iran":"🇮🇷","Tunisia":"🇹🇳","Saudi Arabia":"🇸🇦","Ghana":"🇬🇭","Cameroon":"🇨🇲","Costa Rica":"🇨🇷","Peru":"🇵🇪","Chile":"🇨🇱","Austria":"🇦🇹","Turkey":"🇹🇷","Nigeria":"🇳🇬","Algeria":"🇩🇿","Egypt":"🇪🇬","Ivory Coast":"🇨🇮","Norway":"🇳🇴","Czech Republic":"🇨🇿","Hungary":"🇭🇺","Serbia":"🇷🇸","Greece":"🇬🇷"};
+        const flagEmojis = {
+            "France": "🇫🇷", "Brazil": "🇧🇷", "Argentina": "🇦🇷", "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿", 
+            "Spain": "🇪🇸", "Germany": "🇩🇪", "Italy": "🇮🇹", "Croatia": "🇭🇷", 
+            "United States": "🇺🇸", "Canada": "🇨🇦", "Mexico": "🇲🇽", "Portugal": "🇵🇹", 
+            "Netherlands": "🇳🇱", "Belgium": "🇧🇪", "Uruguay": "🇺🇾", "Colombia": "🇨🇴", 
+            "Japan": "🇯🇵", "Morocco": "🇲🇦", "Senegal": "🇸🇳", "Switzerland": "🇨🇭",
+            "Denmark": "🇩🇰", "Ecuador": "🇪🇨", "Ukraine": "🇺🇦", "Sweden": "🇸🇪",
+            "Poland": "🇵🇱", "Wales": "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "Australia": "🇦🇺", "South Korea": "🇰🇷",
+            "Iran": "🇮🇷", "Tunisia": "🇹🇳", "Saudi Arabia": "🇸🇦", "Ghana": "🇬🇭",
+            "Cameroon": "🇨🇲", "Costa Rica": "🇨🇷", "Peru": "🇵🇪", "Chile": "🇨🇱",
+            "Austria": "🇦🇹", "Turkey": "🇹🇷", "Scotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "Nigeria": "🇳🇬",
+            "Algeria": "🇩🇿", "Egypt": "🇪🇬", "Ivory Coast": "🇨🇮", "Norway": "🇳🇴",
+            "Czech Republic": "🇨🇿", "Hungary": "🇭🇺", "Serbia": "🇷🇸", "Greece": "🇬🇷",
+            "Jamaica": "🇯🇲", "South Africa": "🇿🇦", "New Zealand": "🇳🇿", "Gambia": "🇬🇲",
+            "Bosnia and Herzegovina": "🇧🇦", "Qatar": "🇶🇦", "Haiti": "🇭🇹", "Curaçao": "🇨🇼",
+            "Cape Verde": "🇨🇻", "Iraq": "🇮🇶", "Jordan": "🇯🇴", "DR Congo": "🇨🇩",
+            "Uzbekistan": "🇺🇿", "Panama": "🇵🇦", "Paraguay": "🇵🇾", "North Korea": "🇰🇵",
+            "Taiwan": "🇹🇼", "Kyrgyzstan": "🇰🇬", "Saint Kitts and Nevis": "🇰🇳", "Saint Lucia": "🇱🇨",
+            "Saint Vincent and the Grenadines": "🇻🇨", "Brunei": "🇧🇳", "Eswatini": "🇸🇿", 
+            "Timor-Leste": "🇹🇱", "U.S. Virgin Islands": "🇻🇮"
+        };
         function getFlag(c){return flagEmojis[c]||"⚽";}
         let teamDetails={};
         document.addEventListener('DOMContentLoaded',async()=>{
             await loadTeams(); await loadModelMeta();
             const sA=document.getElementById('selectTeamA'),sB=document.getElementById('selectTeamB');
-            if(sA.options.length>0){const fi=Array.from(sA.options).findIndex(o=>o.value==="France");const bi=Array.from(sB.options).findIndex(o=>o.value==="Brazil");sA.selectedIndex=fi!==-1?fi:0;sB.selectedIndex=bi!==-1?bi:Math.min(1,sB.options.length-1);updateTeamState('A');updateTeamState('B');}
+            
+            // Parse query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const homeParam = urlParams.get('home');
+            const awayParam = urlParams.get('away');
+            const neutralParam = urlParams.get('neutral');
+ 
+            if(sA.options.length>0){
+                let fi = -1;
+                let bi = -1;
+                if (homeParam) {
+                    fi = Array.from(sA.options).findIndex(o => o.value.toLowerCase() === homeParam.toLowerCase());
+                }
+                if (awayParam) {
+                    bi = Array.from(sB.options).findIndex(o => o.value.toLowerCase() === awayParam.toLowerCase());
+                }
+                
+                // Fallbacks
+                if (fi === -1) fi = Array.from(sA.options).findIndex(o => o.value === "France");
+                if (bi === -1) bi = Array.from(sB.options).findIndex(o => o.value === "Brazil");
+                
+                sA.selectedIndex = fi !== -1 ? fi : 0;
+                sB.selectedIndex = bi !== -1 ? bi : Math.min(1, sB.options.length - 1);
+                
+                if (neutralParam !== null) {
+                    const isNeutralCheckbox = document.getElementById('isNeutral');
+                    if (isNeutralCheckbox) {
+                        isNeutralCheckbox.checked = (neutralParam === '1' || neutralParam === 'true');
+                    }
+                }
+                
+                updateTeamState('A');
+                updateTeamState('B');
+            }
             sA.addEventListener('change',()=>updateTeamState('A'));sB.addEventListener('change',()=>updateTeamState('B'));
             initCombobox('A');initCombobox('B');
+
+            // Auto-trigger prediction if query parameters are present and matched
+            if (homeParam && awayParam) {
+                setTimeout(() => {
+                    document.getElementById('runPrediction').click();
+                }, 600);
+            }
         });
         async function loadTeams(){try{const r=await fetch('/api/teams');const d=await r.json();['selectTeamA','selectTeamB'].forEach(id=>{const s=document.getElementById(id);s.innerHTML='';d.teams.forEach(t=>{const o=document.createElement('option');o.value=o.innerText=t;s.appendChild(o);});});}catch(e){console.error(e);}}
         async function loadModelMeta(){try{const r=await fetch('/api/model-meta');const d=await r.json();document.getElementById('engineVersionLabel').innerText=`Processed via Scikit-Learn ${d.model_type} Engine`;}catch(e){}}

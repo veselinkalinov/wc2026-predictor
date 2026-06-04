@@ -49,6 +49,11 @@ class TournamentSimulator:
         """
         Reset predictor's team states to baseline before starting a new simulation run.
         """
+        # If the predictor reloaded new states from disk, update baseline_states first!
+        if self.predictor._check_and_reload():
+            self.baseline_states = json.loads(
+                json.dumps(self.predictor.team_states))
+
         self.predictor.team_states = json.loads(
             json.dumps(self.baseline_states))
 

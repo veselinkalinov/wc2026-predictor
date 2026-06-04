@@ -1,18 +1,20 @@
 """
 api_football.py
 
-Responsibility: Handles all API calls to API-Football (via RapidAPI),
-caching response JSONs locally and providing mock fallbacks if offline,
-no credentials are set, or request limits are reached.
+Responsibility: Handles all API calls to API-Football (via RapidAPI) or
+Football-Data.org, caching response JSONs locally and providing mock fallbacks
+if offline, no credentials are set, or request limits are reached.
 """
 
 import os
 import json
 from pathlib import Path
+from datetime import datetime
 import requests
 from dotenv import load_dotenv
 from src.utils.logger import get_logger
 from src.utils.config import PROJECT_ROOT
+from src.data.clean import clean_team_name
 
 logger = get_logger(__name__)
 
@@ -20,6 +22,7 @@ logger = get_logger(__name__)
 load_dotenv()
 
 RAPIDAPI_KEY = os.getenv("RAPIDAPI_KEY", "")
+FOOTBALL_DATA_API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "")
 CACHE_DIR = PROJECT_ROOT / "data" / "live_cache"
 FIXTURES_CACHE = CACHE_DIR / "fixtures.json"
 STANDINGS_CACHE = CACHE_DIR / "standings.json"
@@ -232,10 +235,198 @@ def fetch_from_api(endpoint: str, params: dict) -> dict:
         return {}
 
 
+def fetch_from_football_data(endpoint: str) -> dict:
+    """
+    Low-level query to Football-Data.org API.
+    """
+    if not FOOTBALL_DATA_API_KEY:
+        return {}
+
+    url = f"https://api.football-data.org/v4/{endpoint}"
+    headers = {
+        "X-Auth-Token": FOOTBALL_DATA_API_KEY
+    }
+
+    try:
+        logger.info(f"Querying Football-Data.org: {url}")
+        response = requests.get(url, headers=headers, timeout=15)
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        logger.error(f"Football-Data.org query failed for {endpoint}: {str(e)}")
+        return {}
+
+
+def map_football_data_standings(fd_data: dict) -> dict:
+    """
+    Map Football-Data.org standings response into API-Football format.
+    Normalises team names to the model's canonical mapping.
+    """
+    response_data = []
+    league_obj = {
+        "id": 1,
+        "name": "World Cup",
+        "country": "World",
+        "logo": "https://media.api-sports.io/football/leagues/1.png",
+        "flag": None,
+        "season": 2026,
+        "standings": []
+    }
+
+    fd_standings = fd_data.get("standings", [])
+    for group_data in fd_standings:
+        # Standard standings filters
+        if group_data.get("type") != "TOTAL" or group_data.get("stage") != "GROUP_STAGE":
+            continue
+
+        group_raw = group_data.get("group", "")
+        group_name = "Group " + group_raw.split("GROUP_")[-1] if "GROUP_" in group_raw else group_raw
+
+        group_standings = []
+        for row in group_data.get("table", []):
+            team_info = row.get("team", {})
+            raw_team_name = team_info.get("name", "Unknown")
+            clean_name = clean_team_name(raw_team_name)
+
+            group_standings.append({
+                "rank": row.get("position", 1),
+                "team": {
+                    "id": team_info.get("id", 0),
+                    "name": clean_name,
+                    "logo": team_info.get("crest", "")
+                },
+                "points": row.get("points", 0),
+                "goalsDiff": row.get("goalDifference", 0),
+                "group": group_name,
+                "form": "",
+                "status": "same",
+                "description": "Possible Qualification",
+                "all": {
+                    "played": row.get("playedGames", 0),
+                    "win": row.get("won", 0),
+                    "draw": row.get("draw", 0),
+                    "lose": row.get("lost", 0),
+                    "goals": {
+                        "for": row.get("goalsFor", 0),
+                        "against": row.get("goalsAgainst", 0)
+                    }
+                },
+                "update": datetime.now().isoformat()
+            })
+        league_obj["standings"].append(group_standings)
+
+    response_data.append({"league": league_obj})
+    return {"response": response_data, "errors": [], "results": len(response_data)}
+
+
+def map_football_data_fixtures(fd_data: dict) -> dict:
+    """
+    Map Football-Data.org matches response into API-Football fixtures format.
+    Normalises team names to the model's canonical mapping.
+    """
+    response_fixtures = []
+    
+    fd_matches = fd_data.get("matches", [])
+    for m in fd_matches:
+        fixture_date = m.get("utcDate", "")
+        status_raw = m.get("status", "SCHEDULED").upper()
+        
+        status_short = "NS"
+        status_long = "Not Started"
+        if status_raw == "FINISHED":
+            status_short = "FT"
+            status_long = "Finished"
+        elif status_raw in ["IN_PLAY", "PAUSED", "LIVE"]:
+            status_short = "LIVE"
+            status_long = "In Play"
+
+        group_raw = m.get("group", "")
+        group_name = "Group Stage"
+        if group_raw:
+            group_name = "Group Stage - Group " + (group_raw.split("GROUP_")[-1] if "GROUP_" in group_raw else group_raw)
+
+        home_team = m.get("homeTeam", {})
+        away_team = m.get("awayTeam", {})
+        clean_home = clean_team_name(home_team.get("name", "Unknown"))
+        clean_away = clean_team_name(away_team.get("name", "Unknown"))
+        
+        score = m.get("score", {})
+        full_time = score.get("fullTime", {})
+
+        # Compute timestamp safely
+        timestamp = 0
+        if fixture_date:
+            try:
+                dt_str = fixture_date.replace("Z", "+00:00")
+                timestamp = int(datetime.fromisoformat(dt_str).timestamp())
+            except Exception:
+                pass
+
+        response_fixtures.append({
+            "fixture": {
+                "id": m.get("id", 0),
+                "referee": "TBD",
+                "timezone": "UTC",
+                "date": fixture_date,
+                "timestamp": timestamp,
+                "periods": {
+                    "first": None,
+                    "second": None
+                },
+                "venue": {
+                    "id": None,
+                    "name": "TBD",
+                    "city": "TBD"
+                },
+                "status": {
+                    "long": status_long,
+                    "short": status_short,
+                    "elapsed": 0
+                }
+            },
+            "league": {
+                "id": 1,
+                "name": "World Cup",
+                "country": "World",
+                "logo": "https://media.api-sports.io/football/leagues/1.png",
+                "flag": None,
+                "season": 2026,
+                "round": group_name
+            },
+            "teams": {
+                "home": {
+                    "id": home_team.get("id", 0),
+                    "name": clean_home,
+                    "logo": home_team.get("crest", ""),
+                    "winner": None
+                },
+                "away": {
+                    "id": away_team.get("id", 0),
+                    "name": clean_away,
+                    "logo": away_team.get("crest", ""),
+                    "winner": None
+                }
+            },
+            "goals": {
+                "home": full_time.get("home"),
+                "away": full_time.get("away")
+            },
+            "score": {
+                "fulltime": {
+                    "home": full_time.get("home"),
+                    "away": full_time.get("away")
+                }
+            }
+        })
+
+    return {"response": response_fixtures, "errors": [], "results": len(response_fixtures)}
+
+
 def get_standings(bypass_cache: bool = False) -> dict:
     """
-    Fetch standings for World Cup 2026 (League=1, Season=2026).
-    Checks cache first, then API. Generates mock data if both fail.
+    Fetch standings for World Cup 2026.
+    Checks cache first, then Football-Data.org (if key exists) or API-Football.
+    Generates mock data if all credentials or calls fail or return empty.
     """
     _ensure_cache_dir()
 
@@ -243,41 +434,70 @@ def get_standings(bypass_cache: bool = False) -> dict:
         try:
             logger.info("Loading standings from local cache.")
             with open(STANDINGS_CACHE, "r", encoding="utf-8") as f:
-                return json.load(f)
+                cached_data = json.load(f)
+                response = cached_data.get("response", [])
+                if response:
+                    standings = response[0].get("league", {}).get("standings", [])
+                    if standings and any(len(group) > 0 for group in standings):
+                        return cached_data
         except Exception as e:
             logger.error(f"Failed to read standings cache: {str(e)}")
 
-    # Fetch from API
+    # Try Football-Data.org API if key configured
+    if FOOTBALL_DATA_API_KEY:
+        fd_data = fetch_from_football_data("competitions/WC/standings")
+        if fd_data and fd_data.get("standings"):
+            mapped_data = map_football_data_standings(fd_data)
+            response = mapped_data.get("response", [])
+            if response:
+                standings = response[0].get("league", {}).get("standings", [])
+                if standings and any(len(group) > 0 for group in standings):
+                    try:
+                        with open(STANDINGS_CACHE, "w", encoding="utf-8") as f:
+                            json.dump(mapped_data, f, indent=4)
+                        logger.info("Saved standings from Football-Data.org to cache.")
+                        return mapped_data
+                    except Exception as e:
+                        logger.error(f"Failed to write standings cache: {str(e)}")
+                        return mapped_data
+
+    # Fetch from API-Football
     api_data = fetch_from_api("standings", {"league": 1, "season": 2026})
     
     if api_data and api_data.get("response"):
-        try:
-            with open(STANDINGS_CACHE, "w", encoding="utf-8") as f:
-                json.dump(api_data, f, indent=4)
-            logger.info("Saved standings from API to cache.")
-            return api_data
-        except Exception as e:
-            logger.error(f"Failed to write standings cache: {str(e)}")
-            return api_data
+        response = api_data.get("response", [])
+        if response:
+            standings = response[0].get("league", {}).get("standings", [])
+            if standings and any(len(group) > 0 for group in standings):
+                try:
+                    with open(STANDINGS_CACHE, "w", encoding="utf-8") as f:
+                        json.dump(api_data, f, indent=4)
+                    logger.info("Saved standings from API to cache.")
+                    return api_data
+                except Exception as e:
+                    logger.error(f"Failed to write standings cache: {str(e)}")
+                    return api_data
 
     # Fallback to Mock
-    logger.info("API standings fetch failed. Utilizing default mock standings.")
+    logger.info("API standings fetch failed or returned empty. Utilizing default mock standings.")
     mock_standings = _generate_mock_standings()
     
-    if not STANDINGS_CACHE.exists():
-        try:
-            with open(STANDINGS_CACHE, "w", encoding="utf-8") as f:
-                json.dump(mock_standings, f, indent=4)
-        except Exception:
-            pass
+    try:
+        with open(STANDINGS_CACHE, "w", encoding="utf-8") as f:
+            json.dump(mock_standings, f, indent=4)
+    except Exception:
+        pass
 
     return mock_standings
 
 
+
+
 def get_fixtures(bypass_cache: bool = False) -> dict:
     """
-    Fetch fixtures for World Cup 2026 (League=1, Season=2026).
-    Checks cache first, then API. Generates mock data if both fail.
+    Fetch fixtures for World Cup 2026.
+    Checks cache first, then Football-Data.org (if key exists) or API-Football.
+    Generates mock data if all credentials or calls fail.
     """
     _ensure_cache_dir()
 
@@ -289,7 +509,21 @@ def get_fixtures(bypass_cache: bool = False) -> dict:
         except Exception as e:
             logger.error(f"Failed to read fixtures cache: {str(e)}")
 
-    # Fetch from API
+    # Try Football-Data.org API if key configured
+    if FOOTBALL_DATA_API_KEY:
+        fd_data = fetch_from_football_data("competitions/WC/matches")
+        if fd_data and fd_data.get("matches"):
+            mapped_data = map_football_data_fixtures(fd_data)
+            try:
+                with open(FIXTURES_CACHE, "w", encoding="utf-8") as f:
+                    json.dump(mapped_data, f, indent=4)
+                logger.info("Saved fixtures from Football-Data.org to cache.")
+                return mapped_data
+            except Exception as e:
+                logger.error(f"Failed to write fixtures cache: {str(e)}")
+                return mapped_data
+
+    # Fetch from API-Football
     api_data = fetch_from_api("fixtures", {"league": 1, "season": 2026})
     
     if api_data and api_data.get("response"):
