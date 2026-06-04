@@ -25,11 +25,14 @@
 - [Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+  - [Environment Variables](#environment-variables)
   - [Data Setup](#data-setup)
+  - [Docker Deployment](#docker-deployment)
 - [Usage](#-usage)
   - [Running the Full Pipeline](#running-the-full-pipeline)
   - [Running Individual Steps](#running-individual-steps)
   - [Quick Retraining](#quick-retraining)
+  - [Live Match Fetch & Retrain](#live-match-fetch--retrain)
   - [Running Diagnostics](#running-diagnostics)
   - [Running Tests](#running-tests)
 - [Pipeline Architecture](#-pipeline-architecture)
@@ -39,9 +42,10 @@
   - [4. Model Training & Evaluation](#4-model-training--evaluation)
   - [5. Match Prediction](#5-match-prediction)
   - [6. Tournament Simulation](#6-tournament-simulation)
-- [REST API](#-rest-api)
-  - [Starting the Server](#starting-the-server)
-  - [Endpoints](#endpoints)
+- [Web UI & REST API](#-web-ui--rest-api)
+  - [Starting the Dashboard and Server](#starting-the-dashboard-and-server)
+  - [Dashboard Views](#dashboard-views)
+  - [REST API Endpoints](#rest-api-endpoints)
 - [Model Performance](#-model-performance)
 - [Configuration](#-configuration)
 - [Notebooks](#-notebooks)
@@ -61,7 +65,7 @@ The project follows a structured ML pipeline:
 Raw Data → Validation → Cleaning → Feature Engineering → Training → Evaluation → Prediction → Simulation
 ```
 
-It processes **25+ years of international match history** (2000–2025) from Kaggle datasets, engineers domain-specific features rooted in football analytics, trains a multinomial Logistic Regression classifier to predict three-way outcomes (**Home Win**, **Draw**, **Away Win**), and runs **Monte Carlo simulations** of the full 48-team World Cup 2026 tournament to estimate each nation's probability of winning.
+It processes international match history from Kaggle datasets, engineers domain-specific features rooted in football analytics (Elo ratings, rolling form, goal statistics, and FIFA rankings), trains a machine learning classifier to predict three-way outcomes (**Home Win**, **Draw**, **Away Win**), and runs **Monte Carlo simulations** of the full 48-team World Cup 2026 tournament to estimate each nation's probability of winning.
 
 ---
 
@@ -73,13 +77,16 @@ It processes **25+ years of international match history** (2000–2025) from Kag
 | **Team Form Tracking** | Rolling form scores based on points earned in the last *N* matches (configurable window) |
 | **Goal Statistics** | Rolling averages for goals scored, conceded, and goal difference per team |
 | **FIFA Rankings Integration** | Historical FIFA ranking snapshots merged via temporal join (`merge_asof`) |
-| **Team Name Normalisation** | 40+ team name mappings across datasets (e.g., "Korea Republic" → "South Korea") |
+| **Team Name Normalisation** | 32 team name mappings across datasets (e.g., "Korea Republic" → "South Korea") |
 | **Baseline Evaluation** | Three rule-based baselines (random guessing, most-frequent class, Elo heuristic) to establish performance floors |
-| **Trained ML Model** | Multinomial Logistic Regression with StandardScaler, serialised via joblib |
+| **Trained ML Model** | Tuned **HistGradientBoostingClassifier** (selected by lowest log loss) with StandardScaler, serialised via joblib |
 | **Symmetric Prediction** | Neutral-venue matches use Symmetric Prediction Averaging to eliminate home/away ordering bias |
 | **Monte Carlo Simulation** | Full tournament simulation with dynamic Elo/form/goals updates after every simulated match |
-| **Interactive Dashboard** | Complete Web UI with Predictor, Analytics, SVG radar polygon drawing, and Monte Carlo tournament runs (served via templates) |
-| **REST API** | Flask API with endpoints for health checks, team listings, match predictions, and tournament simulations |
+| **Hot-Reloading** | `MatchPredictor` monitors file modification times on disk and automatically reloads model artifacts without server restarts |
+| **Live Data Integration** | Cached client for RapidAPI API-Football and Football-Data.org APIs with local caching and offline mock fallbacks |
+| **Auto-Retrain Scheduler** | Automatic background scraper to fetch recent matches, append to the database, and trigger a pipeline retrain |
+| **Interactive Dashboard** | Complete Web UI with Predictor, Analytics, SVG radar polygon drawing, live standings, and Monte Carlo tournament runs (served via templates) |
+| **REST API** | Flask API with 10 endpoints for health checks, team listings, match predictions, tournament simulations, live scores, and model metadata |
 | **Data Validation** | Structural checks on raw files — column presence, minimum row counts, known-team assertions |
 | **Centralised Config** | Single `config.yaml` file as the source of truth for all parameters |
 | **Structured Logging** | Dual-output logger (console + file) with timestamped, leveled log entries |
@@ -96,8 +103,11 @@ wc2026-predictor/
 │
 ├── config.yaml              # Central configuration (paths, params, thresholds)
 ├── requirements.txt         # Python dependencies
+├── .env                     # Environment variables (API keys, settings - git-ignored)
 ├── .gitignore               # Files excluded from version control
 ├── LICENSE                  # MIT License
+├── Dockerfile               # Container setup (installs dependencies, runs tests, serves app)
+├── docker-compose.yaml      # Multi-container orchestration (web server and scheduler services)
 │
 ├── src/                     # Source code (importable Python package)
 │   ├── __init__.py
@@ -114,24 +124,27 @@ wc2026-predictor/
 │   │
 │   ├── models/              # Model training, evaluation & prediction
 │   │   ├── baseline.py      #   → Rule-based baseline evaluation
-│   │   ├── train.py         #   → Logistic Regression training + serialisation
+│   │   ├── train.py         #   → Multi-model grid search training + serialisation
 │   │   ├── evaluate.py      #   → Classification report + diagnostic plots
-│   │   ├── predict.py       #   → MatchPredictor with symmetric averaging
+│   │   ├── predict.py       #   → MatchPredictor with symmetric averaging & auto-reload
 │   │   └── simulate.py      #   → Monte Carlo World Cup simulation
 │   │
 │   ├── api/                 # Flask Web Dashboard & API
 │   │   ├── app.py           #   → Flask app factory with CORS
 │   │   ├── routes.py        #   → Pages blueprint and API endpoints
-│   │   └── templates/       #   → Web UI dashboard pages (home, predict, analytics, simulate, about, insights)
+│   │   └── templates/       #   → Web UI dashboard pages (9 templates)
 │   │
 │   └── utils/               # Shared utilities
 │       ├── config.py        #   → YAML config loader
-│       └── logger.py        #   → Centralised logging setup
+│       ├── logger.py        #   → Centralised logging setup
+│       └── api_football.py  #   → Live data API client with local JSON caching
 │
 ├── scripts/                 # Standalone runnable scripts
 │   ├── run_pipeline.py      #   → End-to-end pipeline (6 steps)
 │   ├── retrain.py           #   → Quick retraining loop (4 steps)
-│   └── diagnostics.py       #   → Data diagnostics & coverage analysis
+│   ├── diagnostics.py       #   → Data diagnostics & coverage analysis
+│   ├── fetch_recent_matches.py # → Fetches recent matches and appends to matches.csv
+│   └── scheduler.py         #   → Cron-like background scheduler for Docker
 │
 ├── notebooks/               # Jupyter notebooks for exploration
 │   ├── 01_eda.ipynb         #   → Exploratory data analysis
@@ -143,13 +156,14 @@ wc2026-predictor/
 │   ├── test_features.py     #   → Tests for Elo, form & goals features
 │   └── test_predict.py      #   → Tests for prediction logic
 │
-├── data/                    # Data directory (raw files not committed)
+├── data/                    # Data directory (large files not committed)
 │   ├── raw/                 #   → Source CSVs (manually downloaded)
 │   ├── processed/           #   → Cleaned & merged datasets
-│   └── features/            #   → Final feature matrices
+│   ├── features/            #   → Final feature matrices
+│   └── live_cache/          #   → Cached standings and fixtures JSON files
 │
 ├── models/                  # Serialised models (not committed)
-│   └── registry/            #   → best_model.pkl, scaler.pkl, meta.json
+│   └── registry/            #   → best_model.pkl, scaler.pkl, meta.json, etc.
 │
 ├── visualisations/          # Generated plots (confusion matrix, feature importance)
 └── logs/                    # Application logs (not committed)
@@ -164,6 +178,7 @@ wc2026-predictor/
 - **Python 3.10** or higher
 - **pip** (Python package manager)
 - **Git**
+- **Docker & Docker Compose** (Optional, for containerized deployment)
 
 ### Installation
 
@@ -192,9 +207,21 @@ wc2026-predictor/
    pip install -r requirements.txt
    ```
 
+### Environment Variables
+
+Create a `.env` file in the root of the project to configure live data scraper access. A sample format:
+
+```env
+RAPIDAPI_KEY=your_rapidapi_key_here
+FOOTBALL_DATA_API_KEY=your_footballdata_api_key_here
+RETRAINING_INTERVAL_HOURS=24
+```
+
+> **Warning:** Never commit your `.env` file containing active API keys to version control.
+
 ### Data Setup
 
-The raw data files are not included in the repository. You need to download them manually and place them in `data/raw/`:
+The raw datasets must be manually placed in `data/raw/` for the local training pipeline to execute:
 
 | File | Source |
 |---|---|
@@ -202,8 +229,7 @@ The raw data files are not included in the repository. You need to download them
 | `fifa_rankings.csv` | [FIFA World Ranking (Kaggle)](https://www.kaggle.com/datasets/cashncarry/fifaworldranking) |
 | `elo_ratings.csv` | Search Kaggle for *"international football elo ratings"* |
 
-After downloading, your `data/raw/` directory should look like:
-
+Ensure your `data/raw/` directory contains:
 ```
 data/raw/
 ├── matches.csv
@@ -211,7 +237,15 @@ data/raw/
 └── elo_ratings.csv
 ```
 
-> **Tip:** Run `python -m src.data.fetch` to verify all required files are present and non-empty.
+Run `python -m src.data.fetch` to verify all required files are present and non-empty.
+
+### Docker Deployment
+
+To spin up the entire application inside Docker containers (the Flask web dashboard on port 5000 and the background retraining scheduler service):
+
+```bash
+docker-compose up --build
+```
 
 ---
 
@@ -224,14 +258,6 @@ The pipeline runner executes all 6 steps sequentially — from raw data validati
 ```bash
 python -m scripts.run_pipeline
 ```
-
-This runs:
-1. Raw file presence check
-2. Structural data validation
-3. Data cleaning and normalisation
-4. Feature engineering (Elo, form, goals)
-5. Logistic Regression model training
-6. Evaluation report and visualisation generation
 
 ### Running Individual Steps
 
@@ -265,23 +291,33 @@ python -m src.models.simulate
 
 ### Quick Retraining
 
-To retrain the model without re-running fetch and validation checks:
+To retrain the models on the processed dataset without re-running data fetching and validation checks:
 
 ```bash
 python -m scripts.retrain
 ```
 
-This executes: cleaning → feature building → training → evaluation.
+This executes: cleaning → feature building → model training → evaluation.
+
+### Live Match Fetch & Retrain
+
+To download completed World Cup matches from Football-Data.org, append them to `matches.csv`, and run a full retrain:
+
+```bash
+python -m scripts.fetch_recent_matches
+```
 
 ### Running Diagnostics
 
-The diagnostics script performs a comprehensive analysis of your raw data — team name overlaps across datasets, Elo coverage, ranking date formats, tournament type distributions, and outcome class distributions:
+Perform a diagnostic scan of the raw data to check names, Elo coverage, formats, and outcome ratios:
 
 ```bash
 python scripts/diagnostics.py
 ```
 
 ### Running Tests
+
+Execute the unit tests using `pytest`:
 
 ```bash
 # Run the full test suite
@@ -297,82 +333,48 @@ pytest tests/test_features.py -v
 
 ### 1. Data Ingestion & Validation
 
-- **`src/data/fetch.py`** — Verifies that all three required CSV files (`matches.csv`, `fifa_rankings.csv`, `elo_ratings.csv`) are present in `data/raw/` and are non-empty.
-- **`src/data/validate.py`** — Runs structural assertions: checks column presence, enforces minimum row counts (e.g., matches ≥ 40,000 rows), validates data types, and confirms the presence of known teams (Brazil, Germany, France, etc.).
+- **`src/data/fetch.py`** — Verifies that the required raw CSV files exist in `data/raw/` and are non-empty.
+- **`src/data/validate.py`** — Runs schema validation: checks column presence, minimum row counts, data types, and asserts the presence of historical powerhouse teams.
 
 ### 2. Data Cleaning
 
-**`src/data/clean.py`** handles:
-
-- **Date parsing** — Converts match dates and constructs ranking dates from year/semester
-- **Team name normalisation** — Maps 40+ naming inconsistencies across datasets to canonical names (e.g., `"IR Iran"` → `"Iran"`, `"Côte d'Ivoire"` → `"Ivory Coast"`)
-- **Outcome computation** — Derives match result labels: `H` (home win), `D` (draw), `A` (away win)
-- **Competitive flag** — Classifies matches as competitive vs. friendly
-- **Ranking merge** — Uses `pd.merge_asof` to attach the most recent FIFA ranking snapshot to each match
-- **Fallback handling** — Assigns rank 211 and 0 points to non-FIFA teams
-- **Temporal filtering** — Restricts data to the configured date range (default: 2000–2025)
-- **Minimum match threshold** — Removes teams with fewer than 10 total appearances
+**`src/data/clean.py`** cleans match entries by:
+- Normalising team names across different sources using a 32-entry canonical map.
+- Computing match outcome targets: `H` (home win), `D` (draw), `A` (away win).
+- Identifying competitive fixtures via the `is_competitive` flag.
+- Merging historical FIFA rankings using pandas' `merge_asof` (temporal backward join).
+- Applying date boundaries and filtering out teams with fewer than 10 total match appearances.
 
 ### 3. Feature Engineering
 
-**`src/features/build.py`** orchestrates three feature generators:
+**`src/features/build.py`** manages three feature generators:
 
 | Feature Module | Columns Generated | Description |
 |---|---|---|
-| **`elo.py`** | `home_elo`, `away_elo`, `elo_diff` | Chronological Elo ratings computed from scratch using a K-factor of 32 and standard expected score formula |
-| **`form.py`** | `home_form`, `away_form`, `form_diff` | Rolling form score (0.0–1.0) based on points earned in the last 5 matches |
-| **`goals.py`** | `home_goals_scored_avg`, `home_goals_conceded_avg`, `home_goal_diff_avg`, (same for away) | Rolling averages over the last 10 matches with cold-start default of 1.2 |
+| **`elo.py`** | `home_elo`, `away_elo`, `elo_diff` | Chronological Elo ratings computed from scratch across match history (K=32, initial=1500) |
+| **`form.py`** | `home_form`, `away_form`, `form_diff` | Rolling points earned in the last 5 matches, normalised between 0.0 and 1.0 (cold-start default 0.5) |
+| **`goals.py`** | `home_goals_scored_avg`, `home_goals_conceded_avg`, `home_goal_diff_avg` (same for away) | Rolling goal averages over the last 10 matches (cold-start default 1.2 goals) |
 
-Additional derived features:
-- `rank_diff` — Difference in FIFA rankings
-- `rank_points_diff` — Difference in FIFA ranking points
-- `is_neutral` — Whether the match is played at a neutral venue
-- `is_competitive` — Whether the match is a competitive fixture
+It also derives `rank_diff`, `rank_points_diff`, `is_neutral` (from match metadata), and `is_competitive`.
 
 ### 4. Model Training & Evaluation
 
-**`src/models/train.py`** — Trains a multinomial Logistic Regression classifier:
-
-- **20 input features** (Elo, form, goals, rankings, venue, competition type)
-- **StandardScaler** fitted on training data, applied to both train and test sets
-- **Temporal train/test split** at `2022-01-01` (no data leakage)
-- **Serialisation** — Saves `best_model.pkl`, `scaler.pkl`, and `meta.json` to `models/registry/`
-
-**`src/models/baseline.py`** — Evaluates three rule-based baselines on the test set:
-
-| Baseline | Accuracy | Log Loss |
-|---|---|---|
-| Random Guessing (uniform 1/3) | ~0.33 | 1.0986 |
-| Most Frequent Class (always H) | ~0.48 | 1.0046 |
-| Elo Heuristic (higher Elo wins) | 0.5922 | 0.9589 |
-
-**`src/models/evaluate.py`** — Generates a detailed evaluation report:
-
-- Classification report (precision, recall, F1 per class)
-- Confusion matrix heatmap → `visualisations/confusion_matrix.png`
-- Feature importance bar chart → `visualisations/feature_importance.png`
+- **`src/models/train.py`** — Evaluates multiple architectures (Logistic Regression, Random Forest, and HistGradientBoosting) using `GridSearchCV` with a `TimeSeriesSplit(n_splits=3)`. The model with the lowest test **Log Loss** is chosen as the active model.
+- **`src/models/baseline.py`** — Computes three baselines (Random Guessing, Most Frequent Class, Elo Heuristic) on the test split for comparison.
+- **`src/models/evaluate.py`** — Saves classification metrics, a confusion matrix heatmap (`confusion_matrix.png`), and feature importance graphs (`feature_importance.png`).
 
 ### 5. Match Prediction
 
-**`src/models/predict.py`** — The `MatchPredictor` class:
-
-- Loads trained model artifacts and builds a lookup dictionary of **latest team states** (Elo, form, goal averages, FIFA rank) for all 268 teams
-- Constructs feature vectors on-the-fly for any matchup
-- **Symmetric Prediction Averaging** — For neutral-venue matches, predicts the match twice (swapping home/away roles), inverts the reverse probabilities, and averages. This eliminates ordering bias in predictions
-- Supports **dynamic state updates** for tournament simulation (Elo, form, and goal averages updated after each simulated match)
+- **`src/models/predict.py`** — The `MatchPredictor` loads the serialized scaler and best model. It maps the latest computed parameters (Elo, form, goals, rank) for each team.
+- **Symmetric Prediction Averaging** — In neutral-venue matches, it executes predictions twice (swapping home/away designations) and averages the forward and inverted probabilities to eliminate team ordering bias.
+- **Hot-Reloading** — Tracks file modifications to the model pickle file, updating prediction parameters automatically without server restarts.
 
 ### 6. Tournament Simulation
 
-**`src/models/simulate.py`** — The `TournamentSimulator` class:
-
-- Contains the **official 48-team World Cup 2026 group draw** (12 groups × 4 teams)
-- Recognises host nations (USA, Mexico, Canada) and applies home advantage when a host team plays
-- **Group stage**: Round-robin within each group, ranking by points → goal difference → goals for
-- **Knockout stage**: Top 2 from each group + 8 best 3rd-placed teams = 32 teams in Round of 32 → Round of 16 → QF → SF → Final
-- **Penalty shootouts**: Knockout draws resolved with Elo-weighted probability
-- **Goal simulation**: Poisson-distributed goals aligned with the drawn result
-- **Dynamic state updates**: Elo, form, and goal averages updated after every simulated match
-- **Monte Carlo**: Runs *N* independent tournament simulations and returns win probabilities per team
+- **`src/models/simulate.py`** — The `TournamentSimulator` executes Monte Carlo simulations of the FIFA World Cup 2026.
+- It hardcodes the official 12-group World Cup group draw (48 teams total) and recognizes host nations (USA, Mexico, Canada) to apply home-field advantage.
+- **Dynamic State Updates** — During a tournament run, Elo, form, and goal stats are dynamically updated after each simulated match.
+- **Goal Simulation** — Simulates scorelines using Poisson distributions. Penalty shootouts in knockout matches are simulated using Elo-weighted probabilities.
 
 ---
 
@@ -380,48 +382,38 @@ Additional derived features:
 
 ### Starting the Dashboard and Server
 
-Start the Flask server locally:
+Run the Flask application:
 
 ```bash
 python -m src.api.app
 ```
 
-Once started, open **`http://127.0.0.1:5000/`** in your web browser to access the complete interactive analytics dashboard!
+Then visit **`http://127.0.0.1:5000/`** to view the interactive dashboard.
 
 ### Dashboard Views
 
-- **`/` (Home)**: Portal home screen detailing training metrics, latency rates, and the ML methodology.
-- **`/predict` (Match Predictor)**: Interactive head-to-head prediction engine with radial certainty gauges, ELO strength stats, and custom AI scout summaries.
-- **`/analytics` (Team Analytics)**: Dynamic diagnostic panels displaying rolling form points, match histories, and a JS-rendered SVG radar chart.
-- **`/insights` (Model Insights)**: Model parameters display, confusion matrices, and feature contributions charts.
-- **`/simulate` (Tournament Simulator)**: Configurable Monte Carlo bracket runs displaying aggregate contenders and searchable grids of all 48 teams.
+- **`/` (Home)**: Displays training metrics, latency, and pipeline details.
+- **`/predict` (Match Predictor)**: Interactively predict match outcomes with gauges and form cards.
+- **`/analytics` (Team Analytics)**: Display team stats, last 5 matches, and an SVG-drawn radar chart.
+- **`/insights` (Model Insights)**: Visualise the confusion matrix, feature importances, and hyperparameter logs.
+- **`/simulate` (Tournament Simulator)**: Run Monte Carlo runs with customizable iterations and visualize champions.
+- **`/live` (Live Tournament Tracker)**: Renders live World Cup standings and fixtures fetched from the API.
+- **`/about`**: Overview of the methodology and project developers.
+- **`/privacy` & `/terms`**: Standard legal documentation pages.
 
 ### REST API Endpoints
 
-All REST API endpoints are prefixed with `/api`.
+All endpoints return JSON responses and are prefixed with `/api`.
 
 #### `GET /api/health`
-
-Health check endpoint.
-
-```json
-{ "status": "healthy", "service": "wc2026-predictor-api" }
-```
+Checks API health. Returns `{"status": "healthy", "service": "wc2026-predictor-api"}`.
 
 #### `GET /api/teams`
-
-Returns all 268 known teams sorted alphabetically.
-
-```json
-{ "count": 268, "teams": ["Afghanistan", "Albania", "Algeria", "..."] }
-```
+Lists all known teams in alphabetical order.
 
 #### `POST /api/predict`
-
-Predict match outcome probabilities.
-
-**Request body:**
-
+Predicts outcome probabilities for a specific match.
+**Body:**
 ```json
 {
   "home_team": "Argentina",
@@ -431,78 +423,52 @@ Predict match outcome probabilities.
 }
 ```
 
-| Parameter | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `home_team` | string | ✅ | — | Name of the home team |
-| `away_team` | string | ✅ | — | Name of the away team |
-| `is_neutral` | int | ❌ | 1 | `1` = neutral venue, `0` = home advantage |
-| `is_competitive` | int | ❌ | 1 | `1` = competitive match, `0` = friendly |
-
-**Response:**
-
-```json
-{
-  "home_team": "Argentina",
-  "away_team": "France",
-  "prediction": "H",
-  "probabilities": {
-    "home_win": 0.4498,
-    "draw": 0.2696,
-    "away_win": 0.2805
-  }
-}
-```
-
 #### `POST /api/simulate`
-
-Run Monte Carlo tournament simulations.
-
-**Request body:**
-
+Runs Monte Carlo tournament simulations.
+**Body:**
 ```json
 { "n_sims": 1000 }
 ```
 
-| Parameter | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `n_sims` | int | ❌ | 100 | Number of simulations (max 5000) |
+#### `GET /api/team-details/<team_name>`
+Retrieves stats, Elo, rankings, form history, and radar stats for a team.
 
-**Response:**
+#### `GET /api/team-matches/<team_name>`
+Gets the last 5 matches for a team.
 
-```json
-{
-  "simulations_run": 1000,
-  "win_probabilities": {
-    "Spain": 0.17,
-    "Argentina": 0.13,
-    "France": 0.10,
-    "Brazil": 0.08,
-    "England": 0.07,
-    "..."
-  }
-}
-```
+#### `GET /api/visualisations/<filename>`
+Serves generated visualization plots (`confusion_matrix.png` / `feature_importance.png`).
+
+#### `GET /api/model-meta`
+Retrieves model configuration, tuning hyperparameters, and active model metrics.
+
+#### `GET /api/live/standings`
+Fetches current live World Cup group standings.
+
+#### `GET /api/live/fixtures`
+Fetches current live World Cup fixtures and schedules.
 
 ---
 
 ## 📊 Model Performance
 
-Comparative performance of trained model architectures on the test set (matches from 2022 onwards) after hyperparameter tuning:
+Performance of model architectures on the test set (matches from 2022 onwards) evaluated via hyperparameter tuning:
 
 | Model / Baseline | Test Accuracy | Test Log Loss | Test Brier Score | Status |
 |---|---|---|---|---|
-| **HistGradientBoosting (Tuned)** | **60.02%** | **0.8692** | **0.1707** | 🏆 **Active Best** |
-| Logistic Regression | 59.91% | 0.8782 | 0.1722 | Inactive |
-| Elo Heuristic Baseline | 59.22% | 0.9589 | 0.1887 | Baseline Floor |
-| Random Forest | 58.41% | 0.8826 | 0.1735 | Inactive |
+| **HistGradientBoosting (Tuned)** | 59.63% | **0.8719** | **0.1711** | 🏆 **Active Best** |
+| Logistic Regression | **59.92%** | 0.8777 | 0.1721 | Inactive |
+| Random Forest | 58.00% | 0.8826 | 0.1735 | Inactive |
+| **Elo Heuristic Baseline** | 59.22% | 0.9589 | 0.1887 | Baseline Floor |
+| Uniform Random Guessing | 33.33% | 1.0986 | 0.2222 | Reference |
 
-The model achieves higher accuracy and significantly better calibrated probabilities (lower log loss) compared to the best heuristic baseline.
+*Note: HistGradientBoosting is selected as the best model because it minimizes Log Loss and Brier Score, providing the most calibrated probabilities for tournament simulation.*
 
 ---
 
 ## ⚙️ Configuration
 
-All parameters are centralised in [`config.yaml`](config.yaml):
+Central configuration parameters in [`config.yaml`](config.yaml):
 
 ```yaml
 project:
@@ -517,21 +483,29 @@ paths:
   visualisations: "visualisations"
 
 data:
+  matches_file: "matches.csv"
+  rankings_file: "fifa_rankings.csv"
   date_from: "2000-01-01"
-  date_to: "2025-12-31"
+  date_to: "2026-06-10"
   min_matches: 10
 
 features:
-  form_window: 5          # Recent matches for form calculation
-  goals_window: 10        # Recent matches for goal averages
-  elo_k_factor: 32        # Elo rating update sensitivity
-  elo_initial: 1500       # Starting Elo for all teams
+  form_window: 5
+  goals_window: 10
+  elo_k_factor: 32
+  elo_initial: 1500
 
 model:
-  train_cutoff: "2022-01-01"  # Temporal split boundary
-  random_state: 42            # Reproducibility seed
-  test_size: 0.2              # Fallback if not using temporal split
-  target_column: "result"     # H / D / A
+  train_cutoff: "2022-01-01"
+  random_state: 42
+  test_size: 0.2
+  target_column: "result"
+  random_forest:
+    n_estimators: 100
+    max_depth: 10
+  hist_gradient_boosting:
+    max_iter: 100
+    learning_rate: 0.1
 
 evaluation:
   metrics:
@@ -545,65 +519,49 @@ api:
   debug: false
 ```
 
-> **Important:** Never hardcode these values in source files — always import from `src.utils.config`.
-
 ---
 
 ## 📓 Notebooks
 
-Interactive Jupyter notebooks for exploration and analysis:
-
-| Notebook | Purpose |
-|---|---|
-| `01_eda.ipynb` | Exploratory data analysis — distributions, trends, correlations |
-| `02_feature_engineering.ipynb` | Feature exploration and visualisation |
-| `03_model_evaluation.ipynb` | Model comparison and evaluation metrics |
-
-Launch Jupyter:
-
-```bash
-jupyter notebook notebooks/
-```
+Jupyter notebooks for exploratory work are in `notebooks/`:
+- `01_eda.ipynb` — Exploratory Data Analysis of match results.
+- `02_feature_engineering.ipynb` — Elo and rolling window experiments.
+- `03_model_evaluation.ipynb` — Model comparison metrics.
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Category | Technology |
-|---|---|
-| **Language** | Python 3.10+ |
-| **Data Processing** | Pandas 2.2 |
-| **Machine Learning** | scikit-learn 1.5 |
-| **Visualisation** | Matplotlib 3.10, Seaborn 0.13 |
-| **API Framework** | Flask 3.0 |
-| **Configuration** | PyYAML 6.0 |
-| **Environment** | python-dotenv 1.0 |
-| **Model Serialisation** | joblib 1.4 |
-| **Notebooks** | Jupyter, IPyKernel |
-| **Testing** | pytest |
+- **Language**: Python 3.10+
+- **Data Science**: pandas 2.2, scikit-learn 1.5, joblib 1.4, numpy
+- **Visualisation**: matplotlib 3.10, seaborn 0.13
+- **Web App**: Flask 3.0, python-dotenv 1.0, requests 2.32
+- **Configuration**: PyYAML 6.0
+- **Testing**: pytest 8.0+
+- **Containerisation**: Docker, Docker Compose
 
 ---
 
 ## 🗺️ Roadmap
 
 - [x] Project scaffold and configuration
-- [x] Data fetching and validation
-- [x] Data cleaning and preprocessing
-- [x] Feature engineering (Elo, form, goals)
-- [x] Diagnostic tooling
-- [x] Unit test suite
-- [x] Baseline model evaluation
+- [x] Data validation
+- [x] Preprocessing and team normalisation
+- [x] Feature building (Elo, Form, Goals)
+- [x] Diagnostic scripts
+- [x] Unit tests
+- [x] Baselines implementation
 - [x] Logistic Regression training pipeline
-- [x] Model evaluation with confusion matrix and feature importance plots
-- [x] Match prediction with symmetric averaging
-- [x] World Cup 2026 Monte Carlo simulation
-- [x] Flask REST API (health, teams, predict, simulate)
-- [x] End-to-end pipeline runner
-- [x] Quick retraining script
-- [x] Multi-model training (Random Forest, XGBoost, HistGradientBoosting)
-- [x] Hyperparameter tuning (GridSearch)
-- [x] Interactive frontend dashboard
-- [ ] Deployment (Docker + cloud hosting)
+- [x] Model evaluation (confusion matrix, importances)
+- [x] Match prediction with Symmetric Averaging
+- [x] Monte Carlo simulator for WC 2026
+- [x] Flask REST API endpoints
+- [x] End-to-end pipeline runner script
+- [x] Grid search hyperparameter tuning
+- [x] Multi-model training comparison
+- [x] Interactive web dashboard
+- [x] Docker and Docker Compose containerization
+- [ ] Cloud deployment
 
 ---
 
