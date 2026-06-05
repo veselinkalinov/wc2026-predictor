@@ -7,6 +7,7 @@ auto-reload on disk file modification for zero-restart model updates.
 """
 
 from pathlib import Path
+import time
 import json
 import pandas as pd
 import numpy as np
@@ -47,12 +48,28 @@ class MatchPredictor:
 
         # Track file modification time for auto-reloads
         self.last_loaded_time = self.model_path.stat().st_mtime if self.model_path.exists() else 0
+        self.last_check_time = 0.0
+        self.prediction_cache = {}
+
+    def clear_prediction_cache(self) -> None:
+        """
+        Clear the prediction cache. Useful before starting a fresh Monte Carlo run.
+        """
+        self.prediction_cache = {}
 
     def _check_and_reload(self) -> bool:
         """
         Check if the model file on disk has been updated, and reload if necessary.
         Returns True if a reload occurred, and False otherwise.
         """
+        if getattr(self, "disable_reload", False):
+            return False
+        current_time = time.time()
+        # Throttle file system checks to once every 10 seconds to optimize loop speed
+        if current_time - self.last_check_time < 10.0:
+            return False
+        self.last_check_time = current_time
+
         if not self.model_path.exists():
             return False
         mtime = self.model_path.stat().st_mtime
@@ -153,6 +170,42 @@ class MatchPredictor:
             "rank_points": 0.0,
         }
 
+    def _construct_features_numpy(
+        self, home_team: str, away_team: str, is_neutral: int, is_competitive: int
+    ) -> np.ndarray:
+        """
+        Build the feature row in the exact order the model expects using numpy (optimized).
+        """
+        h_state = self.get_team_state(home_team)
+        a_state = self.get_team_state(away_team)
+
+        row_map = {
+            "home_elo": h_state["elo"],
+            "away_elo": a_state["elo"],
+            "elo_diff": h_state["elo"] - a_state["elo"],
+            "home_form": h_state["form"],
+            "away_form": a_state["form"],
+            "form_diff": h_state["form"] - a_state["form"],
+            "home_goals_scored_avg": h_state["goals_scored_avg"],
+            "home_goals_conceded_avg": h_state["goals_conceded_avg"],
+            "home_goal_diff_avg": h_state["goal_diff_avg"],
+            "away_goals_scored_avg": a_state["goals_scored_avg"],
+            "away_goals_conceded_avg": a_state["goals_conceded_avg"],
+            "away_goal_diff_avg": a_state["goal_diff_avg"],
+            "home_rank": h_state["rank"],
+            "away_rank": a_state["rank"],
+            "rank_diff": h_state["rank"] - a_state["rank"],
+            "home_rank_points": h_state["rank_points"],
+            "away_rank_points": a_state["rank_points"],
+            "rank_points_diff": h_state["rank_points"] - a_state["rank_points"],
+            "is_neutral": is_neutral,
+            "is_competitive": is_competitive,
+        }
+
+        # Build list in the exact order of self.features
+        vals = [row_map[feat] for feat in self.features]
+        return np.array([vals])
+
     def _construct_features(
         self, home_team: str, away_team: str, is_neutral: int, is_competitive: int
     ) -> pd.DataFrame:
@@ -198,18 +251,37 @@ class MatchPredictor:
         # Ensure latest model states are loaded if updated on disk
         self._check_and_reload()
 
-        # 1. Forward direction: Team A as Home, Team B as Away
-        feat_forward = self._construct_features(
+        # Ensure latest model states are loaded if updated on disk
+        self._check_and_reload()
+
+        # Build rounded cache key to optimize batch simulation runs
+        h_state = self.get_team_state(home_team)
+        a_state = self.get_team_state(away_team)
+        
+        cache_key = (
+            home_team,
+            away_team,
+            round((h_state["elo"] - a_state["elo"]) / 15.0) * 15.0,
+            round((h_state["form"] - a_state["form"]) / 0.05) * 0.05,
+            is_neutral,
+            is_competitive
+        )
+        
+        if cache_key in self.prediction_cache:
+            return self.prediction_cache[cache_key]
+
+        # 1. Forward direction: Team A as Home, Team B as Away (optimized using numpy)
+        feat_forward = self._construct_features_numpy(
             home_team, away_team, is_neutral, is_competitive)
-        feat_forward_scaled = self.scaler.transform(feat_forward.values)
+        feat_forward_scaled = self.scaler.transform(feat_forward)
         probs_forward = self.model.predict_proba(feat_forward_scaled)[
             0]  # [p_H, p_D, p_A]
 
         if is_neutral == 1:
             # 2. Reverse direction: Team B as Home, Team A as Away
-            feat_reverse = self._construct_features(
+            feat_reverse = self._construct_features_numpy(
                 away_team, home_team, is_neutral, is_competitive)
-            feat_reverse_scaled = self.scaler.transform(feat_reverse.values)
+            feat_reverse_scaled = self.scaler.transform(feat_reverse)
             probs_reverse = self.model.predict_proba(feat_reverse_scaled)[0]
 
             # Invert the reverse probabilities: swap index 0 (H) and index 2 (A)
@@ -226,7 +298,7 @@ class MatchPredictor:
         pred_idx = np.argmax(probs_final)
         prediction = self.classes[pred_idx]
 
-        return {
+        res_dict = {
             "home_team": home_team,
             "away_team": away_team,
             "probabilities": {
@@ -236,3 +308,5 @@ class MatchPredictor:
             },
             "prediction": prediction,
         }
+        self.prediction_cache[cache_key] = res_dict
+        return res_dict

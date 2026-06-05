@@ -114,6 +114,20 @@ def simulate_tournament():
         return jsonify({"error": f"Failed to run simulation: {str(e)}"}), 500
 
 
+@api_bp.route("/simulate-detailed", methods=["POST"])
+def simulate_detailed_tournament():
+    """
+    Run a single end-to-end tournament simulation and return full details
+    of matches, standings, and knockout bracket results.
+    """
+    try:
+        results = simulator.simulate_detailed_tournament()
+        return jsonify(results)
+    except Exception as e:
+        logger.error(f"API detailed simulation failed: {str(e)}")
+        return jsonify({"error": f"Failed to run detailed simulation: {str(e)}"}), 500
+
+
 @api_bp.route("/team-details/<team_name>", methods=["GET"])
 def get_team_details(team_name):
     """

@@ -49,10 +49,64 @@
             background: #44474d;
             border-radius: 3px;
         }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #05e777;
+        }
         
         /* Bar chart styling */
         .bar-glow {
             box-shadow: 0 0 8px rgba(125, 255, 162, 0.3);
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(27, 27, 29, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid #44474d;
+            transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+        }
+        .glass-card:hover {
+            border-color: #05e777;
+            box-shadow: 0 0 20px rgba(5, 231, 119, 0.15);
+        }
+
+        /* Bracket layout styles */
+        .bracket-container {
+            min-height: 950px;
+            height: 1250px;
+        }
+        .bracket-column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            height: 100%;
+            min-width: 260px;
+        }
+
+        /* Confetti particle animation */
+        @keyframes fall {
+            0% { top: -20px; opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .confetti-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Match card glowing styles */
+        .match-card {
+            transition: all 0.3s ease;
+        }
+        .match-card.active-match {
+            border-color: #05e777;
+            box-shadow: 0 0 15px rgba(5, 231, 119, 0.3);
+            transform: scale(1.03);
         }
     </style>
     <script id="tailwind-config">
@@ -149,7 +203,7 @@
     <aside class="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-20 pb-8 bg-surface-container-lowest border-r border-outline-variant w-64 z-40">
         <div class="px-6 mb-8 flex items-center gap-3">
             <div class="w-10 h-10 bg-primary-container flex items-center justify-center rounded">
-                <img alt="WC Logo" class="w-6 h-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgBX5QzCE0F8tIOZX7Vcyq8M3P9-noQLJqYSYOXpxZflvJ1d8kXgPbMLawop2mu3ihBuGMMc2vt4YE8GfaWUIAe6OnRXP5c4cUMaIN1BAk5oUDdyeSsSJ-i09gEakAZWibqZzoqryt1oKdG4fIfvIbYVLCqancYEa_UUKO67TR3uN4vd1mdwWctZoWI3azmcgl6n5CB4oHX_ZCAB9eYVTEhzrdAjE_6TjWdXTjT9-C8HVoc6D7bq7Lgr5TobYxLUeRqyVsnok9xurj"/>
+                <img alt="WC Logo" class="w-6 h-6 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgBX5QzCE0F8tIOZX7Vcyq8M3P9-noQLJqYSYOXpxZflvJ1d8kXgPbMLawop2mu3ihBuGMMc2vt4YE8GfaWUIAe6OnRXP5c4cUMaIN1BAk5oUDdyeSsSJ-i09gEakAZWibqZzoqryt1oKdG4fIfvIbYVLCqancYEa_UUKO67TR3uN4vd1mdwWctZoWI3azmcgl6n5CB4oHX_ZCAB9eYVTEhzrdAjE_6TjWdXTjT9-C8HVoc6D7bq7Lgr5TobYxLUeRqyVsnok9xurJ"/>
             </div>
             <div>
                 <p class="text-secondary font-headline-md text-headline-md leading-none">WC2026 AI</p>
@@ -197,174 +251,370 @@
     <main class="lg:ml-64 pt-24 px-margin-mobile md:px-margin-desktop pb-16">
         <div class="max-w-container-max mx-auto">
             <!-- Header Section -->
-            <header class="mb-12 border-b border-outline-variant pb-6">
+            <header class="mb-8 border-b border-outline-variant pb-6">
                 <p class="text-label-mono font-label-mono text-secondary mb-2 uppercase tracking-[0.2em]">Monte Carlo Simulator v5.0</p>
                 <h1 class="text-display-lg font-display-lg text-on-surface">Tournament Simulator</h1>
             </header>
 
-            <!-- Description Card -->
-            <section class="mb-12 bg-surface-container-low border border-outline-variant p-6 rounded-lg">
-                <div class="flex items-start gap-4">
-                    <div class="p-3 bg-primary-container text-secondary rounded">
-                        <span class="material-symbols-outlined text-2xl">science</span>
-                    </div>
-                    <div>
-                        <h2 class="text-headline-md font-headline-md text-on-surface mb-2">Simulate the World Cup 2026</h2>
-                        <p class="text-body-md text-on-surface-variant leading-relaxed">
-                            Run thousands of end-to-end tournament simulations. Our simulator models the group stage and the knockout brackets, calculating goals via Poisson distributions and updating ELO rating and form scores dynamically after every single match.
-                        </p>
-                    </div>
-                </div>
-            </section>
+            <!-- Navigation Tabs -->
+            <div class="flex border-b border-outline-variant mb-8 gap-4">
+                <button id="tabMonteCarloBtn" class="px-6 py-3 border-b-2 border-secondary text-secondary font-bold text-sm tracking-wider uppercase focus:outline-none transition-colors">
+                    Monte Carlo Engine
+                </button>
+                <button id="tabInteractiveBtn" class="px-6 py-3 border-b-2 border-transparent text-on-surface-variant hover:text-on-surface font-bold text-sm tracking-wider uppercase focus:outline-none transition-colors">
+                    Interactive Bracket Sim
+                </button>
+            </div>
 
-            <!-- Control Card & Status Panel Grid -->
-            <section class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
-                <!-- Control Panel -->
-                <div class="md:col-span-6 bg-surface-container-low border border-outline-variant p-8 rounded-lg flex flex-col justify-between" id="controlPanel">
-                    <div>
-                        <h3 class="text-label-mono font-label-mono text-outline uppercase mb-6 pb-2 border-b border-outline-variant/30">Simulation Parameters</h3>
-                        
-                        <div class="mb-8">
-                            <div class="flex justify-between items-center mb-3">
-                                <label for="simSlider" class="text-body-md font-bold text-on-surface">Number of Tournaments</label>
-                                <span class="text-stat-value font-stat-value text-secondary" id="simCountLabel">250</span>
-                            </div>
-                            <input type="range" id="simSlider" min="10" max="1000" step="10" value="250" class="w-full h-1.5 bg-surface-container-lowest rounded-lg appearance-none cursor-pointer accent-secondary">
-                            <div class="flex justify-between text-[10px] font-label-mono text-outline mt-2">
-                                <span>10 Sims (Fast)</span>
-                                <span>1,000 Sims (Thorough)</span>
-                            </div>
+            <!-- Tab 1: Monte Carlo Panel -->
+            <div id="panelMonteCarlo" class="space-y-12">
+                <!-- Description Card -->
+                <section class="bg-surface-container-low border border-outline-variant p-6 rounded-lg">
+                    <div class="flex items-start gap-4">
+                        <div class="p-3 bg-primary-container text-secondary rounded">
+                            <span class="material-symbols-outlined text-2xl">science</span>
                         </div>
-                    </div>
-
-                    <button class="w-full py-5 bg-secondary text-on-secondary font-bold text-headline-md uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(125,255,162,0.2)] rounded" id="runSimulationBtn">
-                        Execute Monte Carlo
-                    </button>
-                </div>
-
-                <!-- Simulation Progress / Active States -->
-                <div class="md:col-span-6 bg-surface-container-low border border-outline-variant p-8 rounded-lg flex flex-col justify-center items-center text-center relative overflow-hidden" id="statusPanel">
-                    <!-- Default Screen (Idle) -->
-                    <div id="idleState" class="space-y-4">
-                        <span class="material-symbols-outlined text-6xl text-outline-variant">memory</span>
-                        <p class="text-label-mono font-label-mono text-outline">CALIBRATION ENGINE IDLE</p>
-                        <p class="text-xs text-on-surface-variant max-w-xs">Select the number of simulation runs and press execute to start the model calculations.</p>
-                    </div>
-
-                    <!-- Processing Screen (Running) -->
-                    <div id="runningState" class="hidden w-full space-y-6">
-                        <span class="material-symbols-outlined text-6xl text-secondary animate-spin">sync</span>
-                        <div class="space-y-2">
-                            <p class="text-label-mono font-label-mono text-secondary tracking-widest uppercase" id="runningPhaseLabel">Ingesting Baseline States...</p>
-                            <p class="text-stat-value font-stat-value text-on-surface" id="runningCountLabel">0 / 250</p>
-                        </div>
-                        <div class="w-full h-1 bg-surface-container-lowest overflow-hidden rounded-full max-w-md mx-auto relative">
-                            <div class="h-full bg-secondary bar-glow" id="progressBar" style="width: 0%"></div>
-                        </div>
-                        <p class="text-xs text-on-surface-variant italic">Dynamically recalculating team form and ELO rating indexes...</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Results Section (Hidden by Default) -->
-            <section class="hidden opacity-0 translate-y-8 transition-all duration-700 space-y-12" id="resultsSection">
-                <div class="border-t border-outline-variant pt-12">
-                    <!-- Title Row -->
-                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-8">
                         <div>
-                            <h2 class="text-headline-lg font-headline-lg text-on-surface">Monte Carlo Outputs</h2>
-                            <p class="text-body-md text-on-surface-variant" id="simOverviewLabel">Compiled over 250 simulated tournaments</p>
-                        </div>
-                        <div class="bg-primary-container/20 border border-secondary/20 px-6 py-3 rounded-lg text-right">
-                            <span class="text-label-mono font-label-mono text-outline uppercase text-[10px]">Projected Winner</span>
-                            <div class="text-headline-md font-headline-md text-secondary" id="projectedWinnerLabel">Argentina</div>
+                            <h2 class="text-headline-md font-headline-md text-on-surface mb-2">Simulate the World Cup 2026</h2>
+                            <p class="text-body-md text-on-surface-variant leading-relaxed">
+                                Run thousands of end-to-end tournament simulations. Our simulator models the group stage and the knockout brackets, calculating goals via Poisson distributions and updating ELO rating and form scores dynamically after every single match.
+                            </p>
                         </div>
                     </div>
+                </section>
 
-                    <!-- Bento Grid for Results Details -->
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                        <!-- Top Contenders Bar Chart (7 cols) -->
-                        <div class="lg:col-span-7 bg-surface-container-low border border-outline-variant p-6 rounded-lg flex flex-col">
-                            <div class="flex items-center justify-between mb-6 border-b border-outline-variant/30 pb-3">
-                                <h3 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-[18px]">bar_chart</span> Top Contenders Win Probs
-                                </h3>
-                                <span class="text-xs text-outline font-label-mono">CHAMPIONSHIP ODDS</span>
-                            </div>
-                            <!-- Bar Chart Area -->
-                            <div class="space-y-4 flex-1 flex flex-col justify-center" id="topContendersChart">
-                                <!-- Populated dynamically by JS -->
-                            </div>
-                        </div>
-
-                        <!-- Side Summary & AI analysis (5 cols) -->
-                        <div class="lg:col-span-5 flex flex-col gap-6">
-                            <!-- AI simulation summary -->
-                            <div class="bg-primary-container border border-secondary/30 p-6 rounded-lg relative overflow-hidden flex-1 flex flex-col justify-center">
-                                <div class="absolute -right-4 -bottom-4 opacity-10">
-                                    <span class="material-symbols-outlined text-[120px]" data-weight="fill">auto_awesome</span>
+                <!-- Control Card & Status Panel Grid -->
+                <section class="grid grid-cols-1 md:grid-cols-12 gap-8">
+                    <!-- Control Panel -->
+                    <div class="md:col-span-6 bg-surface-container-low border border-outline-variant p-8 rounded-lg flex flex-col justify-between" id="controlPanel">
+                        <div>
+                            <h3 class="text-label-mono font-label-mono text-outline uppercase mb-6 pb-2 border-b border-outline-variant/30">Simulation Parameters</h3>
+                            
+                            <div class="mb-8">
+                                <div class="flex justify-between items-center mb-3">
+                                    <label for="simSlider" class="text-body-md font-bold text-on-surface">Number of Tournaments</label>
+                                    <span class="text-stat-value font-stat-value text-secondary" id="simCountLabel">250</span>
                                 </div>
-                                <h3 class="text-label-mono text-secondary text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">auto_awesome</span> AI Simulation Summary
-                                </h3>
-                                <p class="text-on-primary-container text-body-md relative z-10 leading-relaxed font-medium" id="aiSimSummary">
-                                    The model projects that Argentina is the overall favorite to lift the World Cup trophy. Host nations (USA, Mexico, Canada) benefit from severe continental crowd bonuses, yielding a combined win index of 18.4%.
-                                </p>
+                                <input type="range" id="simSlider" min="10" max="1000" step="10" value="250" class="w-full h-1.5 bg-surface-container-lowest rounded-lg appearance-none cursor-pointer accent-secondary">
+                                <div class="flex justify-between text-[10px] font-label-mono text-outline mt-2">
+                                    <span>10 Sims (Fast)</span>
+                                    <span>1,000 Sims (Thorough)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="w-full py-5 bg-secondary text-on-secondary font-bold text-headline-md uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_30px_rgba(125,255,162,0.2)] rounded" id="runSimulationBtn">
+                            Execute Monte Carlo
+                        </button>
+                    </div>
+
+                    <!-- Simulation Progress / Active States -->
+                    <div class="md:col-span-6 bg-surface-container-low border border-outline-variant p-8 rounded-lg flex flex-col justify-center items-center text-center relative overflow-hidden" id="statusPanel">
+                        <!-- Default Screen (Idle) -->
+                        <div id="idleState" class="space-y-4">
+                            <span class="material-symbols-outlined text-6xl text-outline-variant">memory</span>
+                            <p class="text-label-mono font-label-mono text-outline">CALIBRATION ENGINE IDLE</p>
+                            <p class="text-xs text-on-surface-variant max-w-xs">Select the number of simulation runs and press execute to start the model calculations.</p>
+                        </div>
+
+                        <!-- Processing Screen (Running) -->
+                        <div id="runningState" class="hidden w-full space-y-6">
+                            <span class="material-symbols-outlined text-6xl text-secondary animate-spin">sync</span>
+                            <div class="space-y-2">
+                                <p class="text-label-mono font-label-mono text-secondary tracking-widest uppercase" id="runningPhaseLabel">Ingesting Baseline States...</p>
+                                <p class="text-stat-value font-stat-value text-on-surface" id="runningCountLabel">0 / 250</p>
+                            </div>
+                            <div class="w-full h-1 bg-surface-container-lowest overflow-hidden rounded-full max-w-md mx-auto relative">
+                                <div class="h-full bg-secondary bar-glow" id="progressBar" style="width: 0%"></div>
+                            </div>
+                            <p class="text-xs text-on-surface-variant italic">Dynamically recalculating team form and ELO rating indexes...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Results Section (Hidden by Default) -->
+                <section class="hidden opacity-0 translate-y-8 transition-all duration-700 space-y-12" id="resultsSection">
+                    <div class="border-t border-outline-variant pt-12">
+                        <!-- Title Row -->
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-8">
+                            <div>
+                                <h2 class="text-headline-lg font-headline-lg text-on-surface">Monte Carlo Outputs</h2>
+                                <p class="text-body-md text-on-surface-variant" id="simOverviewLabel">Compiled over 250 simulated tournaments</p>
+                            </div>
+                            <div class="bg-primary-container/20 border border-secondary/20 px-6 py-3 rounded-lg text-right">
+                                <span class="text-label-mono font-label-mono text-outline uppercase text-[10px]">Projected Winner</span>
+                                <div class="text-headline-md font-headline-md text-secondary" id="projectedWinnerLabel">Argentina</div>
+                            </div>
+                        </div>
+
+                        <!-- Bento Grid for Results Details -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                            <!-- Top Contenders Bar Chart (7 cols) -->
+                            <div class="lg:col-span-7 bg-surface-container-low border border-outline-variant p-6 rounded-lg flex flex-col">
+                                <div class="flex items-center justify-between mb-6 border-b border-outline-variant/30 pb-3">
+                                    <h3 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-[18px]">bar_chart</span> Top Contenders Win Probs
+                                    </h3>
+                                    <span class="text-xs text-outline font-label-mono">CHAMPIONSHIP ODDS</span>
+                                </div>
+                                <!-- Bar Chart Area -->
+                                <div class="space-y-4 flex-1 flex flex-col justify-center" id="topContendersChart">
+                                    <!-- Populated dynamically by JS -->
+                                </div>
                             </div>
 
-                            <!-- Fast stats -->
-                            <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg">
-                                <h4 class="text-label-mono font-label-mono text-outline uppercase tracking-wider text-xs mb-4">Simulation Analytics</h4>
-                                <ul class="space-y-3 text-sm">
-                                    <li class="flex justify-between border-b border-outline-variant/20 pb-2">
-                                        <span class="text-on-surface-variant">Symmetric Matchups</span>
-                                        <span class="font-label-mono text-on-surface font-bold">104 matches per run</span>
-                                    </li>
-                                    <li class="flex justify-between border-b border-outline-variant/20 pb-2">
-                                        <span class="text-on-surface-variant">Host Venue Advantage</span>
-                                        <span class="font-label-mono text-on-surface font-bold">Active</span>
-                                    </li>
-                                    <li class="flex justify-between pb-1">
-                                        <span class="text-on-surface-variant">Dynamic ELO Re-rating</span>
-                                        <span class="font-label-mono text-on-surface font-bold">Smoothing K=10</span>
-                                    </li>
-                                </ul>
+                            <!-- Side Summary & AI analysis (5 cols) -->
+                            <div class="lg:col-span-5 flex flex-col gap-6">
+                                <!-- AI simulation summary -->
+                                <div class="bg-primary-container border border-secondary/30 p-6 rounded-lg relative overflow-hidden flex-1 flex flex-col justify-center">
+                                    <div class="absolute -right-4 -bottom-4 opacity-10">
+                                        <span class="material-symbols-outlined text-[120px]" data-weight="fill">auto_awesome</span>
+                                    </div>
+                                    <h3 class="text-label-mono text-secondary text-xs uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">auto_awesome</span> AI Simulation Summary
+                                    </h3>
+                                    <p class="text-on-primary-container text-body-md relative z-10 leading-relaxed font-medium" id="aiSimSummary">
+                                        The model projects that Argentina is the overall favorite to lift the World Cup trophy.
+                                    </p>
+                                </div>
+
+                                <!-- Fast stats -->
+                                <div class="bg-surface-container-lowest border border-outline-variant p-6 rounded-lg">
+                                    <h4 class="text-label-mono font-label-mono text-outline uppercase tracking-wider text-xs mb-4">Simulation Analytics</h4>
+                                    <ul class="space-y-3 text-sm">
+                                        <li class="flex justify-between border-b border-outline-variant/20 pb-2">
+                                            <span class="text-on-surface-variant">Symmetric Matchups</span>
+                                            <span class="font-label-mono text-on-surface font-bold">104 matches per run</span>
+                                        </li>
+                                        <li class="flex justify-between border-b border-outline-variant/20 pb-2">
+                                            <span class="text-on-surface-variant">Host Venue Advantage</span>
+                                            <span class="font-label-mono text-on-surface font-bold">Active</span>
+                                        </li>
+                                        <li class="flex justify-between pb-1">
+                                            <span class="text-on-surface-variant">Dynamic ELO Re-rating</span>
+                                            <span class="font-label-mono text-on-surface font-bold">Smoothing K=10</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Searchable Data Grid of all Teams -->
+                        <div class="bg-surface-container-low border border-outline-variant p-6 rounded-lg mt-8">
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-outline-variant/30 pb-4">
+                                <h3 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-[18px]">table_rows</span> Complete Probabilities Table
+                                </h3>
+                                <!-- Search Bar -->
+                                <div class="relative w-full sm:w-64">
+                                    <input type="text" id="teamSearchInput" placeholder="Search team..." class="bg-surface-container-lowest border border-outline-variant text-on-surface text-sm w-full py-2 pl-10 pr-4 focus:ring-1 focus:ring-secondary focus:border-secondary rounded appearance-none cursor-text">
+                                    <span class="material-symbols-outlined text-outline-variant absolute left-3 top-2.5 text-sm">search</span>
+                                </div>
+                            </div>
+
+                            <div class="overflow-x-auto custom-scrollbar max-h-96">
+                                <table class="w-full text-left font-body-md border-collapse">
+                                    <thead>
+                                        <tr class="text-label-mono text-[11px] text-outline border-b border-outline-variant sticky top-0 bg-surface-container-low z-10">
+                                            <th class="py-3 px-4 uppercase font-semibold">Rank</th>
+                                            <th class="py-3 px-4 uppercase font-semibold">Team</th>
+                                            <th class="py-3 px-4 uppercase font-semibold text-right">Championship Probability</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-sm divide-y divide-outline-variant/20" id="probabilitiesTableBody">
+                                        <!-- Populated dynamically by JS -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
+                </section>
+            </div>
 
-                    <!-- Searchable Data Grid of all Teams -->
-                    <div class="bg-surface-container-low border border-outline-variant p-6 rounded-lg">
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 border-b border-outline-variant/30 pb-4">
-                            <h3 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
-                                <span class="material-symbols-outlined text-[18px]">table_rows</span> Complete Probabilities Table
-                            </h3>
-                            <!-- Search Bar -->
-                            <div class="relative w-full sm:w-64">
-                                <input type="text" id="teamSearchInput" placeholder="Search team..." class="bg-surface-container-lowest border border-outline-variant text-on-surface text-sm w-full py-2 pl-10 pr-4 focus:ring-1 focus:ring-secondary focus:border-secondary rounded appearance-none cursor-text">
-                                <span class="material-symbols-outlined text-outline-variant absolute left-3 top-2.5 text-sm">search</span>
-                            </div>
+            <!-- Tab 2: Interactive Bracket Panel -->
+            <div id="panelInteractive" class="hidden space-y-8">
+                <!-- Controls and Toolbar -->
+                <div class="bg-surface-container-low border border-outline-variant p-6 rounded-lg flex flex-wrap justify-between items-center gap-4">
+                    <div class="flex flex-wrap gap-3 items-center">
+                        <button id="simGroupBtn" class="px-5 py-2.5 bg-secondary text-on-secondary font-bold text-xs uppercase tracking-wider rounded-md hover:scale-105 active:scale-95 transition-all shadow-[0_0_15px_rgba(5,231,119,0.15)]">
+                            Simulate Group Stage
+                        </button>
+                        <button id="simKnockoutBtn" class="px-5 py-2.5 bg-outline-variant text-outline font-bold text-xs uppercase tracking-wider rounded-md transition-all cursor-not-allowed" disabled>
+                            Simulate Round of 32
+                        </button>
+                        <button id="autoPlayBtn" class="px-5 py-2.5 bg-primary text-on-primary font-bold text-xs uppercase tracking-wider rounded-md hover:scale-105 active:scale-95 transition-all flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">play_arrow</span> Auto-Play
+                        </button>
+                        <button id="resetSimBtn" class="px-5 py-2.5 border border-outline-variant hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-bold text-xs uppercase tracking-wider rounded-md transition-all">
+                            Reset
+                        </button>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-label-mono font-label-mono text-outline text-xs uppercase block">Current Phase</span>
+                        <div id="simPhaseLabel" class="text-xl font-headline-md text-secondary font-extrabold">Idle (Ready)</div>
+                    </div>
+                </div>
+
+                <!-- Simulation Views Area -->
+                <div class="relative">
+                    <!-- Idle Welcome View -->
+                    <div id="interactiveIdleView" class="bg-surface-container-low border border-outline-variant p-12 rounded-lg text-center space-y-4">
+                        <span class="material-symbols-outlined text-7xl text-outline-variant animate-pulse">sports_soccer</span>
+                        <h3 class="text-headline-md font-headline-md text-on-surface font-bold">Interactive Tournament Simulation</h3>
+                        <p class="text-body-md text-on-surface-variant max-w-lg mx-auto">
+                            Run a detailed, step-by-step model projection of the FIFA World Cup 2026. Watch the matches resolve, check the updated group standings, and trace the knockout tree column by column.
+                        </p>
+                        <div class="pt-4">
+                            <button id="initSimBtn" class="px-6 py-3 bg-secondary text-on-secondary font-bold text-sm uppercase tracking-widest rounded shadow-md hover:scale-102 transition-all">
+                                Initialize Tournament Data
+                            </button>
                         </div>
+                    </div>
 
-                        <div class="overflow-x-auto custom-scrollbar max-h-96">
-                            <table class="w-full text-left font-body-md border-collapse">
-                                <thead>
-                                    <tr class="text-label-mono text-[11px] text-outline border-b border-outline-variant sticky top-0 bg-surface-container-low z-10">
-                                        <th class="py-3 px-4 uppercase font-semibold">Rank</th>
-                                        <th class="py-3 px-4 uppercase font-semibold">Team</th>
-                                        <th class="py-3 px-4 uppercase font-semibold text-right">Championship Probability</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-sm divide-y divide-outline-variant/20" id="probabilitiesTableBody">
-                                    <!-- Populated dynamically by JS -->
-                                </tbody>
-                            </table>
+                    <!-- Groups Standings View -->
+                    <div id="interactiveGroupsView" class="hidden space-y-6">
+                        <div class="flex justify-between items-center pb-2 border-b border-outline-variant">
+                            <h3 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">grid_view</span> Group Stage Standings
+                            </h3>
+                            <span class="text-xs text-outline italic">Hover team to view stats &bull; Top 2 and 8 best 3rd advance</span>
+                        </div>
+                        <div id="groupsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            <!-- Populated dynamically by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Knockout Bracket View -->
+                    <div id="interactiveBracketView" class="hidden space-y-6">
+                        <div class="flex justify-between items-center pb-2 border-b border-outline-variant">
+                            <h3 class="font-label-mono text-on-surface-variant text-sm uppercase tracking-widest flex items-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">account_tree</span> Knockout Tree Projection
+                            </h3>
+                            <span class="text-xs text-outline italic">Click team to view detailed ML tactical stats profile</span>
+                        </div>
+                        
+                        <!-- Scrollable Bracket Grid -->
+                        <div class="overflow-x-auto custom-scrollbar bg-surface-container-low border border-outline-variant rounded-lg p-6">
+                            <div class="flex gap-10 bracket-container select-none">
+                                <!-- Round of 32 -->
+                                <div class="bracket-column">
+                                    <h4 class="text-center font-label-mono text-xs text-secondary uppercase pb-2 border-b border-outline-variant/30 tracking-wider">Round of 32</h4>
+                                    <div id="bracket-r32" class="flex-1 flex flex-col justify-around py-4"></div>
+                                </div>
+                                <!-- Round of 16 -->
+                                <div class="bracket-column">
+                                    <h4 class="text-center font-label-mono text-xs text-primary uppercase pb-2 border-b border-outline-variant/30 tracking-wider">Round of 16</h4>
+                                    <div id="bracket-r16" class="flex-1 flex flex-col justify-around py-4"></div>
+                                </div>
+                                <!-- Quarter-finals -->
+                                <div class="bracket-column">
+                                    <h4 class="text-center font-label-mono text-xs text-tertiary uppercase pb-2 border-b border-outline-variant/30 tracking-wider">Quarter-Finals</h4>
+                                    <div id="bracket-qf" class="flex-1 flex flex-col justify-around py-4"></div>
+                                </div>
+                                <!-- Semi-finals -->
+                                <div class="bracket-column">
+                                    <h4 class="text-center font-label-mono text-xs text-on-primary-container uppercase pb-2 border-b border-outline-variant/30 tracking-wider">Semi-Finals</h4>
+                                    <div id="bracket-sf" class="flex-1 flex flex-col justify-around py-4"></div>
+                                </div>
+                                <!-- Final -->
+                                <div class="bracket-column">
+                                    <h4 class="text-center font-label-mono text-xs text-secondary uppercase pb-2 border-b border-outline-variant/30 tracking-wider">Final</h4>
+                                    <div id="bracket-final" class="flex-1 flex flex-col justify-around py-4"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </section>
+
+                <!-- Congratulations Overlay (Hidden by Default) -->
+                <div id="congratsOverlay" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md">
+                    <div id="confettiContainer" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                    <div class="bg-surface-container border-2 border-secondary p-8 rounded-xl shadow-[0_0_50px_rgba(125,255,162,0.3)] max-w-md w-full text-center space-y-6 relative z-10 animate-grow">
+                        <span class="material-symbols-outlined text-8xl text-secondary animate-bounce">emoji_events</span>
+                        <div class="space-y-1">
+                            <span class="text-label-mono font-label-mono text-outline uppercase tracking-widest text-xs block">Tournament Champion</span>
+                            <h2 id="congratsTeamName" class="text-4xl font-headline-md font-extrabold text-on-surface">Argentina</h2>
+                        </div>
+                        <div class="w-24 h-24 bg-surface-container-high border border-outline-variant flex items-center justify-center rounded-full mx-auto overflow-hidden">
+                            <span id="congratsFlag" class="text-5xl">🇦🇷</span>
+                        </div>
+                        <p class="text-sm text-on-surface-variant">
+                            The Monte Carlo tactical engine has simulated all rounds. This team has successfully advanced through all matches and claimed the FIFA World Cup 2026 title!
+                        </p>
+                        <div class="flex gap-4">
+                            <button onclick="closeCongrats()" class="flex-1 py-3 bg-secondary text-on-secondary font-bold text-xs uppercase tracking-wider rounded hover:opacity-90 transition-opacity">
+                                View Bracket
+                            </button>
+                            <button id="congratsResetBtn" class="flex-1 py-3 border border-outline-variant hover:bg-surface-container-high text-on-surface font-bold text-xs uppercase tracking-wider rounded transition-colors">
+                                Reset Sim
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
+
+    <!-- Team Details Sidebar Panel -->
+    <div id="teamDetailsSidebar" class="fixed right-0 top-0 h-full w-96 bg-surface-container-low border-l border-outline-variant z-50 transform translate-x-full transition-transform duration-300 shadow-2xl p-6 flex flex-col">
+        <!-- Sidebar Header -->
+        <div class="flex justify-between items-center border-b border-outline-variant/30 pb-4 mb-6">
+            <div class="flex items-center gap-3">
+                <span id="sidebarFlag" class="text-3xl">⚽</span>
+                <div>
+                    <h3 id="sidebarTeamName" class="text-headline-md font-headline-md font-bold text-on-surface">Team Name</h3>
+                    <span class="text-label-mono font-label-mono text-[10px] text-outline uppercase tracking-wider">ML Predictions Profile</span>
+                </div>
+            </div>
+            <button onclick="closeSidebar()" class="p-1 hover:bg-surface-container-high rounded text-outline hover:text-on-surface">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        
+        <!-- Sidebar Scrollable Content -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar space-y-6">
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-surface-container-lowest p-3 border border-outline-variant/20 rounded">
+                    <span class="text-[10px] font-label-mono text-outline uppercase block mb-1">ELO Rating</span>
+                    <span id="sidebarElo" class="text-xl font-stat-value font-bold text-secondary">1500</span>
+                </div>
+                <div class="bg-surface-container-lowest p-3 border border-outline-variant/20 rounded">
+                    <span class="text-[10px] font-label-mono text-outline uppercase block mb-1">FIFA Rank</span>
+                    <span id="sidebarRank" class="text-xl font-stat-value font-bold text-on-surface">#211</span>
+                </div>
+                <div class="bg-surface-container-lowest p-3 border border-outline-variant/20 rounded">
+                    <span class="text-[10px] font-label-mono text-outline uppercase block mb-1">Form Index</span>
+                    <span id="sidebarForm" class="text-xl font-stat-value font-bold text-primary">0.50</span>
+                </div>
+                <div class="bg-surface-container-lowest p-3 border border-outline-variant/20 rounded">
+                    <span class="text-[10px] font-label-mono text-outline uppercase block mb-1">Historical Win %</span>
+                    <span id="sidebarWinRatio" class="text-xl font-stat-value font-bold text-tertiary">50%</span>
+                </div>
+            </div>
+            
+            <!-- SVG Radar Attributes Chart -->
+            <div class="bg-surface-container-lowest border border-outline-variant/30 p-4 rounded">
+                <h4 class="text-label-mono font-label-mono text-xs text-outline uppercase tracking-wider mb-4 text-center">ML Pipeline Ratings</h4>
+                <div class="flex justify-center">
+                    <svg id="radarSvg" width="200" height="200" viewBox="0 0 200 200" class="overflow-visible">
+                        <!-- Polygons drawn dynamically by JS -->
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Recent Matches -->
+            <div>
+                <h4 class="text-label-mono font-label-mono text-xs text-outline uppercase tracking-wider mb-3">Recent Real-World Matches</h4>
+                <div id="sidebarRecentMatches" class="space-y-2">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar overlay backdrop -->
+    <div id="sidebarOverlay" class="fixed inset-0 bg-background/50 backdrop-blur-sm z-40 hidden" onclick="closeSidebar()"></div>
 
     <!-- Footer -->
     <footer class="lg:ml-64 w-full lg:w-[calc(100%-16rem)] py-5 px-8 bg-surface-container-low border-t border-outline-variant">
@@ -397,7 +647,13 @@
             "Austria": "🇦🇹", "Turkey": "🇹🇷", "Scotland": "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "Nigeria": "🇳🇬",
             "Algeria": "🇩🇿", "Egypt": "🇪🇬", "Ivory Coast": "🇨🇮", "Norway": "🇳🇴",
             "Czech Republic": "🇨🇿", "Hungary": "🇭🇺", "Serbia": "🇷🇸", "Greece": "🇬🇷",
-            "Jamaica": "🇯🇲", "South Africa": "🇿🇦", "New Zealand": "🇳🇿", "Gambia": "🇬🇲"
+            "Jamaica": "🇯🇲", "South Africa": "🇿🇦", "New Zealand": "🇳🇿", "Gambia": "🇬🇲",
+            "Bosnia and Herzegovina": "🇧🇦", "Qatar": "🇶🇦", "Haiti": "🇭🇹", "Curaçao": "🇨🇼",
+            "Cape Verde": "🇨🇻", "Iraq": "🇮🇶", "Jordan": "🇯🇴", "DR Congo": "🇨🇩",
+            "Uzbekistan": "🇺🇿", "Panama": "🇵🇦", "Paraguay": "🇵🇾", "North Korea": "🇰🇵",
+            "Taiwan": "🇹🇼", "Kyrgyzstan": "🇰🇬", "Saint Kitts and Nevis": "🇰🇳", "Saint Lucia": "🇱🇨",
+            "Saint Vincent and the Grenadines": "🇻🇨", "Brunei": "🇧🇳", "Eswatini": "🇸🇿", 
+            "Timor-Leste": "🇹🇱", "U.S. Virgin Islands": "🇻🇮"
         };
 
         function getFlagEmoji(country) {
@@ -407,6 +663,34 @@
         // Global states
         let allTeams = [];
         let winProbabilities = {};
+        
+        // Tab management
+        const tabMonteCarloBtn = document.getElementById('tabMonteCarloBtn');
+        const tabInteractiveBtn = document.getElementById('tabInteractiveBtn');
+        const panelMonteCarlo = document.getElementById('panelMonteCarlo');
+        const panelInteractive = document.getElementById('panelInteractive');
+
+        tabMonteCarloBtn.addEventListener('click', () => {
+            tabMonteCarloBtn.classList.replace('border-transparent', 'border-secondary');
+            tabMonteCarloBtn.classList.replace('text-on-surface-variant', 'text-secondary');
+            tabInteractiveBtn.classList.replace('border-secondary', 'border-transparent');
+            tabInteractiveBtn.classList.replace('text-secondary', 'text-on-surface-variant');
+            panelMonteCarlo.classList.remove('hidden');
+            panelInteractive.classList.add('hidden');
+        });
+
+        tabInteractiveBtn.addEventListener('click', () => {
+            tabInteractiveBtn.classList.replace('border-transparent', 'border-secondary');
+            tabInteractiveBtn.classList.replace('text-on-surface-variant', 'text-secondary');
+            tabMonteCarloBtn.classList.replace('border-secondary', 'border-transparent');
+            tabMonteCarloBtn.classList.replace('text-secondary', 'text-on-surface-variant');
+            panelInteractive.classList.remove('hidden');
+            panelMonteCarlo.classList.add('hidden');
+        });
+
+        // ----------------------------------------------------
+        // MONTE CARLO SIMULATOR CODE
+        // ----------------------------------------------------
         
         // Load data on page load
         document.addEventListener('DOMContentLoaded', async () => {
@@ -598,7 +882,7 @@
                         <div class="flex items-center gap-2 font-bold">
                             <span class="text-outline-variant font-label-mono w-4">#${i + 1}</span>
                             <span class="text-lg leading-none">${getFlagEmoji(item.team)}</span>
-                            <span class="text-on-surface">${item.team}</span>
+                            <span class="text-on-surface hover:text-secondary cursor-pointer" onclick="showTeamDetails('${item.team}')">${item.team}</span>
                         </div>
                         <span class="font-label-mono text-secondary font-bold">${displayPercent}%</span>
                     </div>
@@ -631,7 +915,7 @@
                     <td class="py-3.5 px-4 font-label-mono text-on-surface-variant font-bold">${index + 1}</td>
                     <td class="py-3.5 px-4 flex items-center gap-3">
                         <span class="text-lg leading-none">${getFlagEmoji(item.team)}</span>
-                        <span class="font-bold text-on-surface">${item.team}</span>
+                        <span class="font-bold text-on-surface hover:text-secondary cursor-pointer" onclick="showTeamDetails('${item.team}')">${item.team}</span>
                     </td>
                     <td class="py-3.5 px-4 text-right font-label-mono text-secondary font-bold">${displayPercent}%</td>
                 `;
@@ -661,6 +945,714 @@
                 } else {
                     row.classList.add('hidden');
                 }
+            });
+        }
+
+
+        // ----------------------------------------------------
+        // INTERACTIVE BRACKET SIMULATOR CODE
+        // ----------------------------------------------------
+        
+        let detailedSimData = null;
+        let interactiveState = 'idle'; // idle -> groups -> r32 -> r16 -> qf -> sf -> final -> complete
+        let isAutoPlaying = false;
+        let autoPlayInterval = null;
+        let bracketMatches = {
+            r32: [], r16: [], qf: [], sf: [], final: []
+        };
+        let advancingFromGroups = new Set();
+
+        const simGroupBtn = document.getElementById('simGroupBtn');
+        const simKnockoutBtn = document.getElementById('simKnockoutBtn');
+        const autoPlayBtn = document.getElementById('autoPlayBtn');
+        const resetSimBtn = document.getElementById('resetSimBtn');
+        const simPhaseLabel = document.getElementById('simPhaseLabel');
+        const initSimBtn = document.getElementById('initSimBtn');
+        
+        const idleView = document.getElementById('interactiveIdleView');
+        const groupsView = document.getElementById('interactiveGroupsView');
+        const bracketView = document.getElementById('interactiveBracketView');
+
+        // Initial setup
+        initSimBtn.addEventListener('click', initializeInteractiveData);
+        simGroupBtn.addEventListener('click', simulateGroupStageStep);
+        simKnockoutBtn.addEventListener('click', simulateKnockoutStep);
+        autoPlayBtn.addEventListener('click', toggleAutoPlay);
+        resetSimBtn.addEventListener('click', resetInteractiveSimulation);
+        document.getElementById('congratsResetBtn').addEventListener('click', () => {
+            closeCongrats();
+            resetInteractiveSimulation();
+        });
+
+        // Initialize detailed simulation data
+        async function initializeInteractiveData() {
+            initSimBtn.disabled = true;
+            initSimBtn.innerText = "Simulating Model...";
+            
+            try {
+                const res = await fetch('/api/simulate-detailed', { method: 'POST' });
+                detailedSimData = await res.json();
+                
+                // Parse advancing teams from R32 list
+                const r32Matches = detailedSimData.knockout_rounds.r32;
+                advancingFromGroups = new Set(r32Matches.flatMap(m => [m.home_team, m.away_team]));
+                
+                // Transition views
+                idleView.classList.add('hidden');
+                groupsView.classList.remove('hidden');
+                
+                interactiveState = 'idle';
+                simPhaseLabel.innerText = "Group Stage (Ready)";
+                
+                renderGroupsEmpty();
+                
+                simGroupBtn.disabled = false;
+                simGroupBtn.classList.replace('bg-outline-variant', 'bg-secondary');
+                simGroupBtn.classList.replace('text-outline', 'text-on-secondary');
+                simKnockoutBtn.disabled = true;
+                simKnockoutBtn.innerText = "Simulate Round of 32";
+                simKnockoutBtn.classList.replace('bg-secondary', 'bg-outline-variant');
+                simKnockoutBtn.classList.replace('text-on-secondary', 'text-outline');
+                simKnockoutBtn.classList.add('cursor-not-allowed');
+                
+            } catch (err) {
+                console.error("Failed to initialize detailed simulation:", err);
+                alert("Failed to compile tournament detailed data. Verify flask is active.");
+                initSimBtn.disabled = false;
+                initSimBtn.innerText = "Initialize Tournament Data";
+            }
+        }
+
+        // Render empty groups grid initially
+        function renderGroupsEmpty() {
+            const grid = document.getElementById('groupsGrid');
+            grid.innerHTML = '';
+            
+            const groupLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"];
+            
+            // Inital groups config from simulate.py
+            const defaultGroups = {
+                "A": ["Mexico", "South Africa", "South Korea", "Czech Republic"],
+                "B": ["Canada", "Bosnia and Herzegovina", "Qatar", "Switzerland"],
+                "C": ["Brazil", "Morocco", "Haiti", "Scotland"],
+                "D": ["United States", "Paraguay", "Australia", "Turkey"],
+                "E": ["Germany", "Curaçao", "Ivory Coast", "Ecuador"],
+                "F": ["Netherlands", "Japan", "Sweden", "Tunisia"],
+                "G": ["Belgium", "Egypt", "Iran", "New Zealand"],
+                "H": ["Spain", "Cape Verde", "Saudi Arabia", "Uruguay"],
+                "I": ["France", "Senegal", "Iraq", "Norway"],
+                "J": ["Argentina", "Algeria", "Austria", "Jordan"],
+                "K": ["Portugal", "DR Congo", "Uzbekistan", "Colombia"],
+                "L": ["England", "Croatia", "Ghana", "Panama"]
+            };
+            
+            groupLetters.forEach(g => {
+                const card = document.createElement('div');
+                card.className = "bg-surface-container-low border border-outline-variant rounded-lg p-5 glass-card";
+                
+                let tbody = '';
+                defaultGroups[g].forEach((team, idx) => {
+                    tbody += `
+                        <tr class="border-b border-outline-variant/10">
+                            <td class="py-2.5 font-label-mono text-outline text-[11px]">${idx + 1}</td>
+                            <td class="py-2.5 flex items-center gap-2">
+                                <span class="text-sm">${getFlagEmoji(team)}</span>
+                                <span class="font-bold text-on-surface hover:text-secondary cursor-pointer text-xs sm:text-sm" onclick="showTeamDetails('${team}')">${team}</span>
+                            </td>
+                            <td class="py-2.5 text-center font-label-mono font-bold text-xs">-</td>
+                            <td class="py-2.5 text-center font-label-mono text-outline text-xs">-</td>
+                            <td class="py-2.5 text-center font-label-mono text-outline text-xs">-</td>
+                        </tr>
+                    `;
+                });
+                
+                card.innerHTML = `
+                    <h4 class="font-label-mono font-bold text-sm text-secondary uppercase border-b border-outline-variant/30 pb-2 mb-3 flex justify-between">
+                        <span>Group ${g}</span>
+                        <span class="text-[10px] text-outline font-normal">Initial Seeds</span>
+                    </h4>
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-outline font-label-mono text-[9px] uppercase border-b border-outline-variant/20">
+                                <th class="pb-1.5 w-6">#</th>
+                                <th class="pb-1.5">Team</th>
+                                <th class="pb-1.5 text-center w-8">PTS</th>
+                                <th class="pb-1.5 text-center w-8">GD</th>
+                                <th class="pb-1.5 text-center w-8">GF</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tbody}</tbody>
+                    </table>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Simulate Group Stage and update views
+        function simulateGroupStageStep() {
+            if (!detailedSimData) return;
+            
+            const grid = document.getElementById('groupsGrid');
+            grid.innerHTML = '';
+            
+            // Populate groups using standings data
+            Object.keys(detailedSimData.group_standings).forEach(g => {
+                const standings = detailedSimData.group_standings[g];
+                const card = document.createElement('div');
+                
+                // Standard classes
+                card.className = "bg-surface-container-low border border-outline-variant rounded-lg p-5 glass-card border-l-4 border-l-secondary/40";
+                
+                let tbody = '';
+                standings.forEach((row, idx) => {
+                    const advances = advancingFromGroups.has(row.team);
+                    let rowClass = "border-b border-outline-variant/10";
+                    let marker = "";
+                    
+                    if (advances) {
+                        if (idx < 2) {
+                            rowClass += " bg-secondary/5 font-medium";
+                            marker = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary mr-1 animate-pulse"></span>`;
+                        } else {
+                            // Advanced via 3rd place rule
+                            rowClass += " bg-primary/5 font-medium";
+                            marker = `<span class="inline-block w-1.5 h-1.5 rounded-full bg-primary mr-1 animate-pulse"></span>`;
+                        }
+                    }
+                    
+                    tbody += `
+                        <tr class="${rowClass}">
+                            <td class="py-2 font-label-mono text-outline text-[11px]">${idx + 1}</td>
+                            <td class="py-2 flex items-center gap-1.5">
+                                ${marker}
+                                <span class="text-sm leading-none">${getFlagEmoji(row.team)}</span>
+                                <span class="font-bold text-on-surface hover:text-secondary cursor-pointer text-xs truncate max-w-[110px] sm:max-w-none" onclick="showTeamDetails('${row.team}')">${row.team}</span>
+                            </td>
+                            <td class="py-2 text-center font-label-mono font-bold text-xs ${advances ? 'text-secondary' : ''}">${row.pts}</td>
+                            <td class="py-2 text-center font-label-mono text-on-surface-variant text-xs">${row.gd > 0 ? '+' : ''}${row.gd}</td>
+                            <td class="py-2 text-center font-label-mono text-outline text-xs">${row.gf}</td>
+                        </tr>
+                    `;
+                });
+                
+                card.innerHTML = `
+                    <h4 class="font-label-mono font-bold text-sm text-secondary uppercase border-b border-outline-variant/30 pb-2 mb-3 flex justify-between">
+                        <span>Group ${g}</span>
+                        <span class="text-[10px] text-secondary font-bold uppercase tracking-wider">Simulated</span>
+                    </h4>
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="text-outline font-label-mono text-[9px] uppercase border-b border-outline-variant/20">
+                                <th class="pb-1.5 w-6">#</th>
+                                <th class="pb-1.5">Team</th>
+                                <th class="pb-1.5 text-center w-8">PTS</th>
+                                <th class="pb-1.5 text-center w-8">GD</th>
+                                <th class="pb-1.5 text-center w-8">GF</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tbody}</tbody>
+                    </table>
+                `;
+                grid.appendChild(card);
+            });
+            
+            // Initialize empty brackets data structures
+            initializeBracketStructure();
+            
+            // Render the empty/TBD bracket columns next to groups
+            renderBracketUI();
+            
+            bracketView.classList.remove('hidden');
+            interactiveState = 'groups';
+            simPhaseLabel.innerText = "Knockouts Initialized";
+            
+            // Update buttons
+            simGroupBtn.disabled = true;
+            simGroupBtn.classList.replace('bg-secondary', 'bg-outline-variant');
+            simGroupBtn.classList.replace('text-on-secondary', 'text-outline');
+            simGroupBtn.innerText = "Group Stage Simulated";
+            
+            simKnockoutBtn.disabled = false;
+            simKnockoutBtn.classList.replace('bg-outline-variant', 'bg-secondary');
+            simKnockoutBtn.classList.replace('text-outline', 'text-on-secondary');
+            simKnockoutBtn.classList.remove('cursor-not-allowed');
+            simKnockoutBtn.innerText = "Simulate Round of 32";
+        }
+
+        // Setup bracket placeholders before filling matches
+        function initializeBracketStructure() {
+            // Fill R32 with actual pairing structures from detailedSimData, but empty results
+            bracketMatches.r32 = detailedSimData.knockout_rounds.r32.map(m => ({
+                home_team: m.home_team,
+                away_team: m.away_team,
+                home_goals: null,
+                away_goals: null,
+                winner: null,
+                shootout_winner: null,
+                completed: false
+            }));
+            
+            // Initialize other rounds with placeholder TBDs
+            const roundsConfig = [
+                { key: 'r16', size: 8 },
+                { key: 'qf', size: 4 },
+                { key: 'sf', size: 2 },
+                { key: 'final', size: 1 }
+            ];
+            
+            roundsConfig.forEach(cfg => {
+                bracketMatches[cfg.key] = Array.from({ length: cfg.size }, () => ({
+                    home_team: "TBD",
+                    away_team: "TBD",
+                    home_goals: null,
+                    away_goals: null,
+                    winner: null,
+                    shootout_winner: null,
+                    completed: false
+                }));
+            });
+        }
+
+        // Draw bracket panels
+        function renderBracketUI() {
+            const rounds = [
+                { key: 'r32', label: 'Round of 32' },
+                { key: 'r16', label: 'Round of 16' },
+                { key: 'qf', label: 'Quarter-Finals' },
+                { key: 'sf', label: 'Semi-Finals' },
+                { key: 'final', label: 'Final' }
+            ];
+            
+            rounds.forEach(r => {
+                const col = document.getElementById(`bracket-${r.key}`);
+                col.innerHTML = '';
+                
+                bracketMatches[r.key].forEach((match, idx) => {
+                    const card = document.createElement('div');
+                    
+                    const isTbdHome = match.home_team === "TBD";
+                    const isTbdAway = match.away_team === "TBD";
+                    
+                    const homeFlag = isTbdHome ? "⚽" : getFlagEmoji(match.home_team);
+                    const awayFlag = isTbdAway ? "⚽" : getFlagEmoji(match.away_team);
+                    
+                    const scoreA = match.completed ? match.home_goals : "-";
+                    const scoreB = match.completed ? match.away_goals : "-";
+                    
+                    const isWinnerHome = match.completed && match.winner === match.home_team;
+                    const isWinnerAway = match.completed && match.winner === match.away_team;
+                    
+                    let shootoutText = '';
+                    if (match.completed && match.shootout_winner) {
+                        shootoutText = `<div class="text-[9px] font-label-mono text-center text-secondary mt-1 bg-secondary/10 py-0.5 rounded font-bold">${match.shootout_winner} advanced on Penalties</div>`;
+                    }
+                    
+                    // Highlight match if it is the current active round we are about to simulate
+                    let activeClass = "";
+                    if (interactiveState === 'groups' && r.key === 'r32') activeClass = " active-match";
+                    else if (interactiveState === 'r32' && r.key === 'r16') activeClass = " active-match";
+                    else if (interactiveState === 'r16' && r.key === 'qf') activeClass = " active-match";
+                    else if (interactiveState === 'qf' && r.key === 'sf') activeClass = " active-match";
+                    else if (interactiveState === 'sf' && r.key === 'final') activeClass = " active-match";
+                    
+                    card.className = `bg-surface-container-high border border-outline-variant p-3 rounded shadow-md hover:border-secondary transition-all w-60 match-card${activeClass}`;
+                    
+                    // Format team names to make them look clickable if they aren't TBD
+                    const teamNameClickA = isTbdHome ? `<span>${match.home_team}</span>` : `<span class="hover:text-secondary cursor-pointer hover:underline font-bold" onclick="showTeamDetails('${match.home_team}')">${match.home_team}</span>`;
+                    const teamNameClickB = isTbdAway ? `<span>${match.away_team}</span>` : `<span class="hover:text-secondary cursor-pointer hover:underline font-bold" onclick="showTeamDetails('${match.away_team}')">${match.away_team}</span>`;
+                    
+                    card.innerHTML = `
+                        <div class="text-[9px] font-label-mono text-outline uppercase mb-2 text-center flex justify-between border-b border-outline-variant/20 pb-1">
+                            <span>M${idx + 1}</span>
+                            <span>${r.label}</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center ${isWinnerHome ? 'text-secondary bg-secondary/5 px-1 rounded' : ''}">
+                                <div class="flex items-center gap-1.5 text-xs truncate max-w-[170px]">
+                                    <span class="text-sm leading-none">${homeFlag}</span>
+                                    ${teamNameClickA}
+                                </div>
+                                <span class="font-label-mono text-xs font-bold">${scoreA}</span>
+                            </div>
+                            <div class="flex justify-between items-center ${isWinnerAway ? 'text-secondary bg-secondary/5 px-1 rounded' : ''}">
+                                <div class="flex items-center gap-1.5 text-xs truncate max-w-[170px]">
+                                    <span class="text-sm leading-none">${awayFlag}</span>
+                                    ${teamNameClickB}
+                                </div>
+                                <span class="font-label-mono text-xs font-bold">${scoreB}</span>
+                            </div>
+                        </div>
+                        ${shootoutText}
+                    `;
+                    col.appendChild(card);
+                });
+            });
+        }
+
+        // Simulate next round
+        function simulateKnockoutStep() {
+            if (!detailedSimData) return;
+            
+            if (interactiveState === 'groups') {
+                // R32 -> simulate
+                simulateStage('r32', 'r16');
+                interactiveState = 'r32';
+                simPhaseLabel.innerText = "Round of 32 Complete";
+                simKnockoutBtn.innerText = "Simulate Round of 16";
+            } else if (interactiveState === 'r32') {
+                // R16 -> simulate
+                simulateStage('r16', 'qf');
+                interactiveState = 'r16';
+                simPhaseLabel.innerText = "Round of 16 Complete";
+                simKnockoutBtn.innerText = "Simulate Quarter-Finals";
+            } else if (interactiveState === 'r16') {
+                // QF -> simulate
+                simulateStage('qf', 'sf');
+                interactiveState = 'qf';
+                simPhaseLabel.innerText = "Quarter-Finals Complete";
+                simKnockoutBtn.innerText = "Simulate Semi-Finals";
+            } else if (interactiveState === 'qf') {
+                // SF -> simulate
+                simulateStage('sf', 'final');
+                interactiveState = 'sf';
+                simPhaseLabel.innerText = "Semi-Finals Complete";
+                simKnockoutBtn.innerText = "Simulate Final";
+            } else if (interactiveState === 'sf') {
+                // Final -> simulate
+                simulateStage('final', null);
+                interactiveState = 'complete';
+                simPhaseLabel.innerText = "Championship Concluded";
+                
+                // Disable next round button
+                simKnockoutBtn.disabled = true;
+                simKnockoutBtn.classList.replace('bg-secondary', 'bg-outline-variant');
+                simKnockoutBtn.classList.replace('text-on-secondary', 'text-outline');
+                simKnockoutBtn.classList.add('cursor-not-allowed');
+                simKnockoutBtn.innerText = "Tournament Complete";
+                
+                if (isAutoPlaying) {
+                    toggleAutoPlay(); // Pause autoplay
+                }
+                
+                // Show congratulations modal with confetti!
+                setTimeout(() => {
+                    showCongrats();
+                }, 800);
+            }
+        }
+
+        // Core helper to simulate a knockout round and wire winners forward
+        function simulateStage(roundKey, nextRoundKey) {
+            const sourceMatches = detailedSimData.knockout_rounds[roundKey];
+            
+            // 1. Mark current matches as complete with detailed scores
+            bracketMatches[roundKey].forEach((m, idx) => {
+                const src = sourceMatches[idx];
+                m.home_goals = src.home_goals;
+                m.away_goals = src.away_goals;
+                m.winner = src.winner;
+                m.shootout_winner = src.shootout_winner;
+                m.completed = true;
+            });
+            
+            // 2. Wire winners into the next round's home_team / away_team arrays
+            if (nextRoundKey) {
+                bracketMatches[roundKey].forEach((m, idx) => {
+                    const winner = m.winner;
+                    const nextMatchIdx = Math.floor(idx / 2);
+                    const isHome = idx % 2 === 0;
+                    
+                    if (isHome) {
+                        bracketMatches[nextRoundKey][nextMatchIdx].home_team = winner;
+                    } else {
+                        bracketMatches[nextRoundKey][nextMatchIdx].away_team = winner;
+                    }
+                });
+            }
+            
+            renderBracketUI();
+        }
+
+        // Autoplay simulation
+        function toggleAutoPlay() {
+            if (isAutoPlaying) {
+                // Pause autoplay
+                clearInterval(autoPlayInterval);
+                isAutoPlaying = false;
+                autoPlayBtn.innerHTML = `<span class="material-symbols-outlined text-sm">play_arrow</span> Auto-Play`;
+                autoPlayBtn.classList.replace('bg-surface-container-highest', 'bg-primary');
+            } else {
+                // Start autoplay
+                if (!detailedSimData) {
+                    initializeInteractiveData().then(() => {
+                        startAutoPlayLoop();
+                    });
+                } else {
+                    startAutoPlayLoop();
+                }
+            }
+        }
+
+        function startAutoPlayLoop() {
+            isAutoPlaying = true;
+            autoPlayBtn.innerHTML = `<span class="material-symbols-outlined text-sm">pause</span> Pause`;
+            autoPlayBtn.classList.replace('bg-primary', 'bg-surface-container-highest');
+            
+            autoPlayInterval = setInterval(() => {
+                if (interactiveState === 'idle') {
+                    simulateGroupStageStep();
+                } else if (interactiveState !== 'complete') {
+                    simulateKnockoutStep();
+                } else {
+                    toggleAutoPlay();
+                }
+            }, 1800);
+        }
+
+        // Reset all simulation states
+        function resetInteractiveSimulation() {
+            if (isAutoPlaying) {
+                toggleAutoPlay();
+            }
+            
+            detailedSimData = null;
+            interactiveState = 'idle';
+            bracketMatches = {
+                r32: [], r16: [], qf: [], sf: [], final: []
+            };
+            advancingFromGroups = new Set();
+            
+            // Reset Views
+            idleView.classList.remove('hidden');
+            groupsView.classList.add('hidden');
+            bracketView.classList.add('hidden');
+            
+            simPhaseLabel.innerText = "Idle (Ready)";
+            initSimBtn.disabled = false;
+            initSimBtn.innerText = "Initialize Tournament Data";
+            
+            simGroupBtn.disabled = false;
+            simGroupBtn.classList.replace('bg-outline-variant', 'bg-secondary');
+            simGroupBtn.classList.replace('text-outline', 'text-on-secondary');
+            simGroupBtn.innerText = "Simulate Group Stage";
+            
+            simKnockoutBtn.disabled = true;
+            simKnockoutBtn.classList.replace('bg-secondary', 'bg-outline-variant');
+            simKnockoutBtn.classList.replace('text-on-secondary', 'text-outline');
+            simKnockoutBtn.classList.add('cursor-not-allowed');
+            simKnockoutBtn.innerText = "Simulate Round of 32";
+        }
+
+        // Celebrate congrats card
+        function showCongrats() {
+            const champion = detailedSimData.champion;
+            document.getElementById('congratsTeamName').innerText = champion;
+            document.getElementById('congratsFlag').innerText = getFlagEmoji(champion);
+            
+            document.getElementById('congratsOverlay').classList.remove('hidden');
+            triggerConfetti();
+        }
+
+        function closeCongrats() {
+            document.getElementById('congratsOverlay').classList.add('hidden');
+            // Clean up confetti timer/elements
+            document.getElementById('confettiContainer').innerHTML = '';
+        }
+
+        function triggerConfetti() {
+            const container = document.getElementById('confettiContainer');
+            container.innerHTML = '';
+            const colors = ['#05e777', '#7dffa2', '#b9c7e4', '#e7bf99', '#ffdcbd'];
+            for (let i = 0; i < 70; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti-particle';
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = -10 + 'px';
+                particle.style.transform = `rotate(${Math.random() * 360}deg)`;
+                
+                const delay = Math.random() * 2;
+                const duration = Math.random() * 3 + 2.5;
+                particle.style.animation = `fall ${duration}s linear ${delay}s infinite, spin ${duration/2}s linear infinite`;
+                
+                container.appendChild(particle);
+            }
+        }
+
+
+        // ----------------------------------------------------
+        // TEAM DETAILS SIDEBAR CODE
+        // ----------------------------------------------------
+        
+        async function showTeamDetails(teamName) {
+            // Close any active auto-play to not interfere with user profile lookup
+            if (isAutoPlaying) {
+                toggleAutoPlay();
+            }
+            
+            const sidebar = document.getElementById('teamDetailsSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            document.getElementById('sidebarTeamName').innerText = teamName;
+            document.getElementById('sidebarFlag').innerText = getFlagEmoji(teamName);
+            
+            // Set stats placeholders
+            document.getElementById('sidebarElo').innerText = "...";
+            document.getElementById('sidebarRank').innerText = "...";
+            document.getElementById('sidebarForm').innerText = "...";
+            document.getElementById('sidebarWinRatio').innerText = "...";
+            document.getElementById('sidebarRecentMatches').innerHTML = `<p class="text-xs text-outline italic text-center py-4">Loading stats...</p>`;
+            
+            // Open sidebar
+            overlay.classList.remove('hidden');
+            sidebar.classList.remove('translate-x-full');
+            
+            try {
+                // Fetch ML details
+                const r = await fetch(`/api/team-details/${encodeURIComponent(teamName)}`);
+                const d = await r.json();
+                
+                document.getElementById('sidebarElo').innerText = Math.round(d.state.elo);
+                document.getElementById('sidebarRank').innerText = `#${d.state.rank}`;
+                document.getElementById('sidebarForm').innerText = d.state.form.toFixed(2);
+                document.getElementById('sidebarWinRatio').innerText = `${d.win_ratio}%`;
+                
+                // Draw Radar
+                drawRadarChart(d.radar);
+                
+                // Fetch recent matches
+                const mRes = await fetch(`/api/team-matches/${encodeURIComponent(teamName)}`);
+                const mData = await mRes.json();
+                
+                const recContainer = document.getElementById('sidebarRecentMatches');
+                recContainer.innerHTML = '';
+                
+                if (mData.matches.length === 0) {
+                    recContainer.innerHTML = `<p class="text-xs text-outline italic text-center">No recent matches logged in registry.</p>`;
+                } else {
+                    mData.matches.forEach(m => {
+                        const div = document.createElement('div');
+                        div.className = "flex items-center justify-between bg-surface-container-lowest/50 p-2.5 border border-outline-variant/15 rounded-md hover:bg-surface-container-lowest/80 transition-colors";
+                        
+                        let badgeColor = "bg-primary/20 text-primary";
+                        if (m.outcome === "W") badgeColor = "bg-secondary/20 text-secondary";
+                        else if (m.outcome === "L") badgeColor = "bg-error/20 text-error";
+                        
+                        div.innerHTML = `
+                            <div class="flex flex-col truncate max-w-[170px]">
+                                <span class="text-xs font-bold text-on-surface flex items-center gap-1">
+                                    <span>${getFlagEmoji(m.opponent)}</span>
+                                    <span class="truncate">${m.opponent}</span>
+                                </span>
+                                <span class="text-[9px] font-label-mono text-outline uppercase truncate mt-0.5">${m.tournament}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] font-label-mono text-on-surface-variant">${m.score_text}</span>
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${m.outcome}</span>
+                            </div>
+                        `;
+                        recContainer.appendChild(div);
+                    });
+                }
+                
+            } catch (err) {
+                console.error("Failed to load details for sidebar:", err);
+                document.getElementById('sidebarRecentMatches').innerHTML = `<p class="text-xs text-error italic text-center py-4">Failed to load detailed profile.</p>`;
+            }
+        }
+
+        function closeSidebar() {
+            document.getElementById('teamDetailsSidebar').classList.add('translate-x-full');
+            document.getElementById('sidebarOverlay').classList.add('hidden');
+        }
+
+        function drawRadarChart(stats) {
+            const svg = document.getElementById('radarSvg');
+            svg.innerHTML = '';
+            
+            const center = 100;
+            const r = 70;
+            
+            const axes = [
+                { name: 'Attack', val: stats.attack, x: center, y: center - r },
+                { name: 'Fitness', val: stats.fitness, x: center + r, y: center },
+                { name: 'Defense', val: stats.defense, x: center, y: center + r },
+                { name: 'Tactics', val: stats.tactics, x: center - r, y: center }
+            ];
+            
+            // 1. Draw concentric grid polygons
+            for (let scale = 0.25; scale <= 1.0; scale += 0.25) {
+                const points = [
+                    `${center},${center - r * scale}`,
+                    `${center + r * scale},${center}`,
+                    `${center},${center + r * scale}`,
+                    `${center - r * scale},${center}`
+                ].join(' ');
+                
+                const gridPolygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                gridPolygon.setAttribute('points', points);
+                gridPolygon.setAttribute('fill', 'none');
+                gridPolygon.setAttribute('stroke', '#44474d');
+                gridPolygon.setAttribute('stroke-width', '0.75');
+                gridPolygon.setAttribute('stroke-dasharray', '2,2');
+                svg.appendChild(gridPolygon);
+            }
+            
+            // 2. Draw axis lines and text labels
+            axes.forEach(axis => {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', center);
+                line.setAttribute('y1', center);
+                line.setAttribute('x2', axis.x);
+                line.setAttribute('y2', axis.y);
+                line.setAttribute('stroke', '#44474d');
+                line.setAttribute('stroke-width', '0.75');
+                svg.appendChild(line);
+                
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', axis.x === center ? center : (axis.x > center ? axis.x + 8 : axis.x - 8));
+                text.setAttribute('y', axis.y === center ? center + 3 : (axis.y > center ? axis.y + 10 : axis.y - 6));
+                text.setAttribute('fill', '#c5c6cd');
+                text.setAttribute('font-family', 'JetBrains Mono');
+                text.setAttribute('font-size', '8px');
+                text.setAttribute('font-weight', 'bold');
+                text.setAttribute('text-anchor', axis.x === center ? 'middle' : (axis.x > center ? 'start' : 'end'));
+                text.textContent = axis.name;
+                svg.appendChild(text);
+            });
+            
+            // 3. Draw data polygon
+            const pointsData = [
+                `${center},${center - r * (stats.attack / 100)}`,
+                `${center + r * (stats.fitness / 100)},${center}`,
+                `${center},${center + r * (stats.defense / 100)}`,
+                `${center - r * (stats.tactics / 100)},${center}`
+            ].join(' ');
+            
+            const dataPolygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            dataPolygon.setAttribute('points', pointsData);
+            dataPolygon.setAttribute('fill', 'rgba(125, 255, 162, 0.15)');
+            dataPolygon.setAttribute('stroke', '#7dffa2');
+            dataPolygon.setAttribute('stroke-width', '1.5');
+            svg.appendChild(dataPolygon);
+            
+            // 4. Draw data dots
+            const pts = [
+                { x: center, y: center - r * (stats.attack / 100) },
+                { x: center + r * (stats.fitness / 100), y: center },
+                { x: center, y: center + r * (stats.defense / 100) },
+                { x: center - r * (stats.tactics / 100), y: center }
+            ];
+            
+            pts.forEach(pt => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', pt.x);
+                circle.setAttribute('cy', pt.y);
+                circle.setAttribute('r', '3.5');
+                circle.setAttribute('fill', '#7dffa2');
+                circle.setAttribute('stroke', '#131315');
+                circle.setAttribute('stroke-width', '1.2');
+                svg.appendChild(circle);
             });
         }
     </script>

@@ -1,3 +1,12 @@
+import os
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["MKL_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+os.environ["VECLIB_MAXIMUM_THREADS"] = "1"
+os.environ["NUMEXPR_NUM_THREADS"] = "1"
+os.environ["JOBLIB_MULTIPROCESSING_BACKEND"] = "threading"
+os.environ["LOKY_MAX_CPU_COUNT"] = "1"
+
 """
 app.py
 
