@@ -1,3 +1,12 @@
+from src.utils.logger import get_logger
+from src.utils.config import config
+from src.features.elo import get_k_factor, goal_margin_multiplier
+from src.models.predict import MatchPredictor
+import pandas as pd
+import numpy as np
+import random
+import json
+from pathlib import Path
 import os
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
@@ -17,15 +26,6 @@ Upgrades:
 2. Home-field advantage Elo adjustment for hosting nations.
 3. Configurable EWMA decay factors.
 """
-from pathlib import Path
-import json
-import random
-import numpy as np
-import pandas as pd
-from src.models.predict import MatchPredictor
-from src.features.elo import get_k_factor, goal_margin_multiplier
-from src.utils.config import config
-from src.utils.logger import get_logger
 
 
 logger = get_logger(__name__)
@@ -57,9 +57,10 @@ class TournamentSimulator:
         # Save a backup of the real-world baseline team states
         self.baseline_states = json.loads(
             json.dumps(self.predictor.team_states))
-            
+
         # Fast copy cache for Monte Carlo runs
-        self.fast_baseline_states = {k: v.copy() for k, v in self.baseline_states.items()}
+        self.fast_baseline_states = {k: v.copy()
+                                     for k, v in self.baseline_states.items()}
 
         # Load logistic regression for fast Monte Carlo path
         self.fast_model_loaded = False
@@ -75,16 +76,18 @@ class TournamentSimulator:
                 model = joblib.load(lr_path)
                 scaler = joblib.load(scaler_path)
                 clf = model.calibrated_classifiers_[0]
-                
+
                 self.fast_W = clf.estimator.coef_  # (3, 20)
                 self.fast_intercept = clf.estimator.intercept_  # (3,)
                 self.fast_mean = scaler.mean_  # (20,)
                 self.fast_scale = scaler.scale_  # (20,)
                 self.fast_a = np.array([c.a_ for c in clf.calibrators])
                 self.fast_b = np.array([c.b_ for c in clf.calibrators])
-                
+
                 self.fast_W_scaled = self.fast_W / self.fast_scale
-                self.fast_intercept_scaled = self.fast_intercept - np.sum(self.fast_W * self.fast_mean / self.fast_scale, axis=1)
+                self.fast_intercept_scaled = self.fast_intercept - \
+                    np.sum(self.fast_W * self.fast_mean /
+                           self.fast_scale, axis=1)
                 self.fast_model_loaded = True
         except Exception as e:
             logger.warning(f"Failed to load fast model parameters: {e}")
@@ -97,7 +100,8 @@ class TournamentSimulator:
         if self.predictor._check_and_reload():
             self.baseline_states = json.loads(
                 json.dumps(self.predictor.team_states))
-            self.fast_baseline_states = {k: v.copy() for k, v in self.baseline_states.items()}
+            self.fast_baseline_states = {k: v.copy()
+                                         for k, v in self.baseline_states.items()}
 
         self.predictor.team_states = json.loads(
             json.dumps(self.baseline_states))
@@ -106,7 +110,8 @@ class TournamentSimulator:
         """
         Extremely fast copy of team states for Monte Carlo runs.
         """
-        self.predictor.team_states = {k: v.copy() for k, v in self.fast_baseline_states.items()}
+        self.predictor.team_states = {
+            k: v.copy() for k, v in self.fast_baseline_states.items()}
 
     def _update_stats_after_match(
         self, home_team: str, away_team: str, home_goals: int, away_goals: int, result: str, is_neutral: int
@@ -242,10 +247,10 @@ class TournamentSimulator:
             lambda_a_et = lambda_a / 3.0
             et_home_goals = np.random.poisson(lambda_h_et)
             et_away_goals = np.random.poisson(lambda_a_et)
-            
+
             home_goals += et_home_goals
             away_goals += et_away_goals
-            
+
             if home_goals > away_goals:
                 result = "H"
                 winner = home_team
@@ -305,27 +310,6 @@ class TournamentSimulator:
             a_state["rank_points"],
             h_state["rank_points"] - a_state["rank_points"],
             is_neutral,
-            is_competitive
-        ]]) if 'is_competitive' in locals() else np.array([[
-            h_state["elo"],
-            a_state["elo"],
-            h_state["elo"] - a_state["elo"],
-            h_state["form"],
-            a_state["form"],
-            h_state["form"] - a_state["form"],
-            h_state["goals_scored_avg"],
-            h_state["goals_conceded_avg"],
-            h_state["goal_diff_avg"],
-            a_state["goals_scored_avg"],
-            a_state["goals_conceded_avg"],
-            a_state["goal_diff_avg"],
-            h_state["rank"],
-            a_state["rank"],
-            h_state["rank"] - a_state["rank"],
-            h_state["rank_points"],
-            a_state["rank_points"],
-            h_state["rank_points"] - a_state["rank_points"],
-            is_neutral,
             1  # is_competitive defaults to 1
         ]])
 
@@ -363,10 +347,10 @@ class TournamentSimulator:
             lambda_a_et = lambda_a / 3.0
             et_home_goals = np.random.poisson(lambda_h_et)
             et_away_goals = np.random.poisson(lambda_a_et)
-            
+
             home_goals += et_home_goals
             away_goals += et_away_goals
-            
+
             if home_goals > away_goals:
                 result = "H"
                 winner = home_team
@@ -446,7 +430,7 @@ class TournamentSimulator:
                     else:
                         table[team_a]["pts"] += 1
                         table[team_b]["pts"] += 1
-            
+
             sorted_teams = sorted(
                 table.items(),
                 key=lambda x: (x[1]["pts"], x[1]["gd"], x[1]["gf"]),
@@ -492,10 +476,11 @@ class TournamentSimulator:
                 "gd": third_info["gd"],
                 "gf": third_info["gf"]
             })
-            
-        third_place_teams.sort(key=lambda x: (x["pts"], x["gd"], x["gf"]), reverse=True)
+
+        third_place_teams.sort(key=lambda x: (
+            x["pts"], x["gd"], x["gf"]), reverse=True)
         best_thirds = third_place_teams[:8]
-        
+
         available_thirds = list(best_thirds)
         match_requirements = {
             3: {"A", "B", "C", "D", "F"},
@@ -507,7 +492,7 @@ class TournamentSimulator:
             13: {"E", "F", "G", "I", "J"},
             16: {"D", "E", "I", "J", "L"}
         }
-        
+
         assigned_thirds = {}
         for match_num, allowed_groups in match_requirements.items():
             matched_team = None
@@ -525,7 +510,7 @@ class TournamentSimulator:
                     available_thirds.remove(matched_team)
                 else:
                     assigned_thirds[match_num] = "Unknown"
-                    
+
         ko_teams = []
         ko_teams.extend([standings["A"][1]["team"], standings["B"][1]["team"]])
         ko_teams.extend([standings["C"][0]["team"], standings["F"][1]["team"]])
@@ -543,7 +528,7 @@ class TournamentSimulator:
         ko_teams.extend([standings["D"][1]["team"], standings["G"][1]["team"]])
         ko_teams.extend([standings["J"][0]["team"], standings["H"][1]["team"]])
         ko_teams.extend([standings["K"][0]["team"], assigned_thirds[16]])
-        
+
         return ko_teams
 
     def simulate_tournament(self) -> str:
@@ -635,9 +620,10 @@ class TournamentSimulator:
                 "gf": gf
             })
 
-        third_place_teams.sort(key=lambda x: (x["pts"], x["gd"], x["gf"]), reverse=True)
+        third_place_teams.sort(key=lambda x: (
+            x["pts"], x["gd"], x["gf"]), reverse=True)
         best_thirds = third_place_teams[:8]
-        
+
         available_thirds = list(best_thirds)
         match_requirements = {
             3: {"A", "B", "C", "D", "F"},
@@ -649,7 +635,7 @@ class TournamentSimulator:
             13: {"E", "F", "G", "I", "J"},
             16: {"D", "E", "I", "J", "L"}
         }
-        
+
         assigned_thirds = {}
         for match_num, allowed_groups in match_requirements.items():
             matched_team = None
@@ -657,7 +643,7 @@ class TournamentSimulator:
                 if t["group"] in allowed_groups:
                     matched_team = t
                     break
-            
+
             if matched_team:
                 assigned_thirds[match_num] = matched_team["team"]
                 available_thirds.remove(matched_team)
@@ -670,21 +656,29 @@ class TournamentSimulator:
                     assigned_thirds[match_num] = "Unknown"
 
         ko_teams = []
-        ko_teams.extend([standings["A"].loc[1, "team"], standings["B"].loc[1, "team"]])
-        ko_teams.extend([standings["C"].loc[0, "team"], standings["F"].loc[1, "team"]])
+        ko_teams.extend([standings["A"].loc[1, "team"],
+                        standings["B"].loc[1, "team"]])
+        ko_teams.extend([standings["C"].loc[0, "team"],
+                        standings["F"].loc[1, "team"]])
         ko_teams.extend([standings["E"].loc[0, "team"], assigned_thirds[3]])
-        ko_teams.extend([standings["F"].loc[0, "team"], standings["C"].loc[1, "team"]])
-        ko_teams.extend([standings["E"].loc[1, "team"], standings["I"].loc[1, "team"]])
+        ko_teams.extend([standings["F"].loc[0, "team"],
+                        standings["C"].loc[1, "team"]])
+        ko_teams.extend([standings["E"].loc[1, "team"],
+                        standings["I"].loc[1, "team"]])
         ko_teams.extend([standings["I"].loc[0, "team"], assigned_thirds[6]])
         ko_teams.extend([standings["A"].loc[0, "team"], assigned_thirds[7]])
         ko_teams.extend([standings["L"].loc[0, "team"], assigned_thirds[8]])
         ko_teams.extend([standings["G"].loc[0, "team"], assigned_thirds[9]])
         ko_teams.extend([standings["D"].loc[0, "team"], assigned_thirds[10]])
-        ko_teams.extend([standings["H"].loc[0, "team"], standings["J"].loc[1, "team"]])
-        ko_teams.extend([standings["K"].loc[1, "team"], standings["L"].loc[1, "team"]])
+        ko_teams.extend([standings["H"].loc[0, "team"],
+                        standings["J"].loc[1, "team"]])
+        ko_teams.extend([standings["K"].loc[1, "team"],
+                        standings["L"].loc[1, "team"]])
         ko_teams.extend([standings["B"].loc[0, "team"], assigned_thirds[13]])
-        ko_teams.extend([standings["D"].loc[1, "team"], standings["G"].loc[1, "team"]])
-        ko_teams.extend([standings["J"].loc[0, "team"], standings["H"].loc[1, "team"]])
+        ko_teams.extend([standings["D"].loc[1, "team"],
+                        standings["G"].loc[1, "team"]])
+        ko_teams.extend([standings["J"].loc[0, "team"],
+                        standings["H"].loc[1, "team"]])
         ko_teams.extend([standings["K"].loc[0, "team"], assigned_thirds[16]])
 
         return ko_teams
@@ -696,20 +690,20 @@ class TournamentSimulator:
         """
         self.predictor.clear_prediction_cache()
         self._reset_states()
-        
+
         group_matches = []
         group_standings_data = {}
-        
+
         # 1. Simulate Group Stage and capture details
         for group_letter, teams in GROUPS.items():
             table = {team: {"pts": 0, "gd": 0, "gf": 0} for team in teams}
-            
+
             for i in range(len(teams)):
                 for j in range(i + 1, len(teams)):
                     team_a, team_b = teams[i], teams[j]
                     gf_a, gf_b, winner = self._simulate_match(
                         team_a, team_b, is_knockout=False)
-                    
+
                     # Log match details
                     group_matches.append({
                         "group": group_letter,
@@ -719,12 +713,12 @@ class TournamentSimulator:
                         "away_goals": int(gf_b),
                         "winner": winner
                     })
-                    
+
                     table[team_a]["gf"] += gf_a
                     table[team_b]["gf"] += gf_b
                     table[team_a]["gd"] += (gf_a - gf_b)
                     table[team_b]["gd"] += (gf_b - gf_a)
-                    
+
                     if winner == team_a:
                         table[team_a]["pts"] += 3
                     elif winner == team_b:
@@ -732,21 +726,24 @@ class TournamentSimulator:
                     else:
                         table[team_a]["pts"] += 1
                         table[team_b]["pts"] += 1
-                        
+
             # Convert to DataFrame and sort by points -> GD -> GF
-            group_df = pd.DataFrame.from_dict(table, orient="index").reset_index()
+            group_df = pd.DataFrame.from_dict(
+                table, orient="index").reset_index()
             group_df.columns = ["team", "pts", "gd", "gf"]
             group_df = group_df.sort_values(
                 by=["pts", "gd", "gf"], ascending=False).reset_index(drop=True)
-                
-            group_standings_data[group_letter] = group_df.to_dict(orient="records")
-            
+
+            group_standings_data[group_letter] = group_df.to_dict(
+                orient="records")
+
         standings_dfs = {}
         for group_letter in GROUPS.keys():
-            standings_dfs[group_letter] = pd.DataFrame(group_standings_data[group_letter])
+            standings_dfs[group_letter] = pd.DataFrame(
+                group_standings_data[group_letter])
 
         ko_teams = self._get_knockout_bracket_teams(standings_dfs)
-        
+
         # 3. Simulate Knockout Rounds
         knockout_rounds = {
             "r32": [],
@@ -755,20 +752,21 @@ class TournamentSimulator:
             "sf": [],
             "final": []
         }
-        
+
         def run_knockout_stage(teams_list, round_key):
             next_round_teams = []
             for i in range(0, len(teams_list), 2):
                 team_a = teams_list[i]
                 team_b = teams_list[i+1]
-                
+
                 # Run match
-                gf_a, gf_b, winner = self._simulate_match(team_a, team_b, is_knockout=True)
-                
+                gf_a, gf_b, winner = self._simulate_match(
+                    team_a, team_b, is_knockout=True)
+
                 shootout_winner = None
                 if gf_a == gf_b:
                     shootout_winner = winner
-                
+
                 knockout_rounds[round_key].append({
                     "home_team": team_a,
                     "away_team": team_b,
@@ -779,13 +777,13 @@ class TournamentSimulator:
                 })
                 next_round_teams.append(winner)
             return next_round_teams
-            
+
         r32_winners = run_knockout_stage(ko_teams, "r32")
         r16_winners = run_knockout_stage(r32_winners, "r16")
         qf_winners = run_knockout_stage(r16_winners, "qf")
         sf_winners = run_knockout_stage(qf_winners, "sf")
         champion = run_knockout_stage(sf_winners, "final")[0]
-        
+
         return {
             "group_matches": group_matches,
             "group_standings": group_standings_data,
