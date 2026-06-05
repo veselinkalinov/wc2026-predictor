@@ -470,17 +470,17 @@ Performance of model architectures on the test set (matches from 2022 onwards) e
 
 | Model / Baseline                      | Holdout Accuracy | Holdout Log Loss | Holdout Brier Score | Status             |
 | ------------------------------------- | ---------------- | ---------------- | ------------------- | ------------------ |
-| **HistGradientBoosting (Calibrated)** | 60.68%           | **0.8623**       | **0.1691**          | 🏆 **Active Best** |
-| **Stacking Ensemble (Calibrated)**    | **60.78%**       | 0.8685           | **0.1699**          | Inactive           |
-| **LightGBM (Calibrated)**             | 60.71%           | 0.8697           | 0.1698              | Inactive           |
-| **CatBoost (Calibrated)**             | 60.71%           | 0.8726           | 0.1703              | Inactive           |
-| **XGBoost (Calibrated)**              | 60.68%           | 0.8725           | 0.1704              | Inactive           |
-| **Random Forest (Calibrated)**        | 60.16%           | 0.8798           | 0.1718              | Inactive           |
-| **Logistic Regression (Calibrated)**  | 60.32%           | 0.8800           | 0.1723              | Inactive           |
+| **HistGradientBoosting (Calibrated)** | 60.55%           | **0.8605**       | **0.1688**          | 🏆 **Active Best** |
+| **LightGBM (Calibrated)**             | 60.68%           | 0.8668           | 0.1692              | Inactive           |
+| **Stacking Ensemble (Calibrated)**    | 60.42%           | 0.8658           | 0.1694              | Inactive           |
+| **XGBoost (Calibrated)**              | 60.55%           | 0.8683           | 0.1696              | Inactive           |
+| **CatBoost (Calibrated)**             | **60.88%**       | 0.8702           | 0.1698              | Inactive           |
+| **Logistic Regression (Calibrated)**  | 60.39%           | 0.8726           | 0.1710              | Inactive           |
+| **Random Forest (Calibrated)**        | 60.39%           | 0.8766           | 0.1711              | Inactive           |
 | **Elo Heuristic Baseline**            | 59.22%           | 0.9589           | 0.1887              | Baseline Floor     |
 | Uniform Random Guessing               | 33.33%           | 1.0986           | 0.2222              | Reference          |
 
-_Note: HistGradientBoosting is selected as the best model because it minimizes Log Loss (0.8623) and Brier Score (0.1691) on the holdout test set (matches post-July 2023) after Sigmoid (Platt) calibration, providing highly calibrated probabilities for tournament simulation._
+_Note: HistGradientBoosting is selected as the best model because it minimizes Log Loss (0.8605) and Brier Score (0.1688) on the holdout test set (matches post-July 2023) after Sigmoid (Platt) calibration, providing highly calibrated probabilities for tournament simulation._
 
 ---
 
@@ -503,13 +503,13 @@ paths:
 data:
   matches_file: "matches.csv"
   rankings_file: "fifa_rankings.csv"
-  date_from: "2000-01-01"
+  date_from: "2010-01-01"
   date_to: "2026-06-10"
   min_matches: 10
 
 features:
-  form_window: 5
-  goals_window: 10
+  form_window: 10
+  goals_window: 15
   elo_k_factor: 32
   elo_initial: 1500
 
@@ -535,6 +535,7 @@ api:
   host: "0.0.0.0"
   port: 5000
   debug: false
+  cache_ttl_hours: 2
 ```
 
 ---

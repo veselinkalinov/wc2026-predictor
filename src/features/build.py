@@ -48,6 +48,20 @@ def build_feature_matrix() -> None:
     # 4. Standardize boolean features
     df["is_neutral"] = df["neutral"].astype(int)
 
+    # 4b. Apply configuration filters (deferred from clean.py to avoid Elo cold-start)
+    # Filter by date range
+    date_from = pd.to_datetime(config["data"]["date_from"])
+    date_to = pd.to_datetime(config["data"]["date_to"])
+    df = df[(df["date"] >= date_from) & (df["date"] <= date_to)].copy()
+    logger.info(f"Filtered date range ({date_from.date()} to {date_to.date()}). Matches: {len(df)}")
+
+    # Filter teams with minimum matches
+    min_matches = config["data"]["min_matches"]
+    team_counts = pd.concat([df["home_team"], df["away_team"]]).value_counts()
+    valid_teams = team_counts[team_counts >= min_matches].index
+    df = df[df["home_team"].isin(valid_teams) & df["away_team"].isin(valid_teams)].copy()
+    logger.info(f"Filtered teams with < {min_matches} matches. Remaining: {len(df)}")
+
     # Check for NaNs
     null_counts = df.isnull().sum()
     columns_with_nulls = null_counts[null_counts > 0]

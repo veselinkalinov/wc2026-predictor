@@ -8,6 +8,7 @@ if offline, no credentials are set, or request limits are reached.
 
 import os
 import json
+import time
 from pathlib import Path
 from datetime import datetime
 import requests
@@ -47,6 +48,16 @@ GROUPS = {
 def _ensure_cache_dir():
     """Ensure the cache directory exists."""
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _is_cache_valid(cache_path: Path) -> bool:
+    """Check if the cache file exists and has not expired according to the configured TTL."""
+    if not cache_path.exists():
+        return False
+    from src.utils.config import config
+    ttl_hours = float(config.get("api", {}).get("cache_ttl_hours", 2.0))
+    mtime = cache_path.stat().st_mtime
+    return (time.time() - mtime) <= (ttl_hours * 3600)
 
 
 def _generate_mock_standings():
@@ -430,9 +441,9 @@ def get_standings(bypass_cache: bool = False) -> dict:
     """
     _ensure_cache_dir()
 
-    if not bypass_cache and STANDINGS_CACHE.exists():
+    if not bypass_cache and _is_cache_valid(STANDINGS_CACHE):
         try:
-            logger.info("Loading standings from local cache.")
+            logger.info("Loading standings from valid local cache.")
             with open(STANDINGS_CACHE, "r", encoding="utf-8") as f:
                 cached_data = json.load(f)
                 response = cached_data.get("response", [])
@@ -478,8 +489,22 @@ def get_standings(bypass_cache: bool = False) -> dict:
                     logger.error(f"Failed to write standings cache: {str(e)}")
                     return api_data
 
+    # Fallback to expired cache first if it exists
+    if STANDINGS_CACHE.exists():
+        try:
+            logger.warning("API standings fetch failed. Utilizing expired standings cache.")
+            with open(STANDINGS_CACHE, "r", encoding="utf-8") as f:
+                cached_data = json.load(f)
+                response = cached_data.get("response", [])
+                if response:
+                    standings = response[0].get("league", {}).get("standings", [])
+                    if standings and any(len(group) > 0 for group in standings):
+                        return cached_data
+        except Exception as e:
+            logger.error(f"Failed to load expired standings cache: {str(e)}")
+
     # Fallback to Mock
-    logger.info("API standings fetch failed or returned empty. Utilizing default mock standings.")
+    logger.info("API standings fetch failed and no cache available. Utilizing default mock standings.")
     mock_standings = _generate_mock_standings()
     
     try:
@@ -501,9 +526,9 @@ def get_fixtures(bypass_cache: bool = False) -> dict:
     """
     _ensure_cache_dir()
 
-    if not bypass_cache and FIXTURES_CACHE.exists():
+    if not bypass_cache and _is_cache_valid(FIXTURES_CACHE):
         try:
-            logger.info("Loading fixtures from local cache.")
+            logger.info("Loading fixtures from valid local cache.")
             with open(FIXTURES_CACHE, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
@@ -536,15 +561,23 @@ def get_fixtures(bypass_cache: bool = False) -> dict:
             logger.error(f"Failed to write fixtures cache: {str(e)}")
             return api_data
 
+    # Fallback to expired cache first if it exists
+    if FIXTURES_CACHE.exists():
+        try:
+            logger.warning("API fixtures fetch failed. Utilizing expired fixtures cache.")
+            with open(FIXTURES_CACHE, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Failed to load expired fixtures cache: {str(e)}")
+
     # Fallback to Mock
-    logger.info("API fixtures fetch failed. Utilizing default mock fixtures.")
+    logger.info("API fixtures fetch failed and no cache available. Utilizing default mock fixtures.")
     mock_fixtures = _generate_mock_fixtures()
     
-    if not FIXTURES_CACHE.exists():
-        try:
-            with open(FIXTURES_CACHE, "w", encoding="utf-8") as f:
-                json.dump(mock_fixtures, f, indent=4)
-        except Exception:
-            pass
+    try:
+        with open(FIXTURES_CACHE, "w", encoding="utf-8") as f:
+            json.dump(mock_fixtures, f, indent=4)
+    except Exception:
+        pass
 
     return mock_fixtures

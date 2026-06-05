@@ -152,28 +152,11 @@ def run_cleaning() -> None:
     matches["away_rank"] = matches["away_rank"].fillna(211.0)
     matches["away_rank_points"] = matches["away_rank_points"].fillna(0.0)
 
-    # 7. Apply configuration filters
-    # Filter by date range (from config: 2000-01-01 to 2025-12-31)
-    date_from = pd.to_datetime(config["data"]["date_from"])
-    date_to = pd.to_datetime(config["data"]["date_to"])
-
-    matches = matches[(matches["date"] >= date_from) &
-                      (matches["date"] <= date_to)].copy()
-    logger.info(
-        f"Filtered date range ({date_from.date()} to {date_to.date()}). Matches: {len(matches)}")
-
-    # Filter teams with minimum matches (config: min_matches = 10)
-    min_matches = config["data"]["min_matches"]
-    team_counts = pd.concat(
-        [matches["home_team"], matches["away_team"]]).value_counts()
-    valid_teams = team_counts[team_counts >= min_matches].index
-
-    matches = matches[
-        matches["home_team"].isin(
-            valid_teams) & matches["away_team"].isin(valid_teams)
-    ].copy()
-    logger.info(
-        f"Filtered teams with < {min_matches} matches. Remaining: {len(matches)}")
+    # 7. Configuration filters deferred
+    # We defer filtering by date range and min_matches to build.py so that
+    # Elo, form, and goal averages are calculated on all historical matches
+    # to avoid the cold-start problem.
+    logger.info("Deferring date and team count filtering to feature builder (build.py)...")
 
     # 8. Save cleaned matches
     out_path = processed_dir / "matches_clean.csv"

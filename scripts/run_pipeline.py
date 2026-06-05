@@ -40,7 +40,7 @@ def main() -> None:
         build_feature_matrix()
 
         # Step 5: Model training
-        logger.info("[STEP 5/6] Training Logistic Regression model...")
+        logger.info("[STEP 5/6] Training and tuning all ML models...")
         train_model()
 
         # Step 6: Model evaluation

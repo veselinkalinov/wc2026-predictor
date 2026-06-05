@@ -251,9 +251,6 @@ class MatchPredictor:
         # Ensure latest model states are loaded if updated on disk
         self._check_and_reload()
 
-        # Ensure latest model states are loaded if updated on disk
-        self._check_and_reload()
-
         # Build rounded cache key to optimize batch simulation runs
         h_state = self.get_team_state(home_team)
         a_state = self.get_team_state(away_team)
@@ -263,6 +260,8 @@ class MatchPredictor:
             away_team,
             round((h_state["elo"] - a_state["elo"]) / 15.0) * 15.0,
             round((h_state["form"] - a_state["form"]) / 0.05) * 0.05,
+            round((h_state["goals_scored_avg"] - a_state["goals_conceded_avg"]) / 0.2) * 0.2,
+            round((a_state["goals_scored_avg"] - h_state["goals_conceded_avg"]) / 0.2) * 0.2,
             is_neutral,
             is_competitive
         )

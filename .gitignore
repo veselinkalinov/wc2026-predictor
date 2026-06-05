@@ -24,6 +24,7 @@ env/
 data/raw/
 data/processed/
 data/features/
+data/live_cache/
 
 # Models - serialised model files are not committed
 models/registry/

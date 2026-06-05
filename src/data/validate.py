@@ -29,7 +29,7 @@ REQUIRED_COLUMNS = {
         "home_score", "away_score", "tournament", "neutral"
     ],
     "fifa_rankings.csv": [
-        "date", "rank", "team", "total.points"
+        "date", "semester", "rank", "team", "total.points"
     ],
     "elo_ratings.csv": [
         "date", "team", "rating"

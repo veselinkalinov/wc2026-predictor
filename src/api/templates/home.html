@@ -172,7 +172,7 @@
                     <h2 class="font-headline-lg text-headline-lg text-on-surface mb-2">The Engine</h2>
                     <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">Our ML pipeline processes thousands of variables to simulate match environments with unprecedented accuracy.</p>
                 </div>
-                <div class="font-label-mono text-secondary text-xs uppercase tracking-widest border-b border-secondary pb-1">Technical Stack: HistGradientBoosting + Python</div>
+                <div class="font-label-mono text-secondary text-xs uppercase tracking-widest border-b border-secondary pb-1" id="tech-stack-label">Technical Stack: HistGradientBoosting + Python</div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
                 <!-- Card 1 -->
@@ -234,11 +234,11 @@
                                 </div>
                                 <div>
                                     <div class="flex justify-between mb-2">
-                                        <span class="font-label-mono text-xs uppercase text-on-surface-variant">HistGradientBoosting Accuracy</span>
-                                        <span class="font-stat-value text-tertiary">60.0%</span>
+                                        <span class="font-label-mono text-xs uppercase text-on-surface-variant" id="model-accuracy-title">HistGradientBoosting Accuracy</span>
+                                        <span class="font-stat-value text-tertiary" id="model-accuracy-value">60.0%</span>
                                     </div>
                                     <div class="h-1 bg-surface-container-high w-full relative">
-                                        <div class="absolute top-0 left-0 h-full bg-tertiary" style="width: 60%"></div>
+                                        <div class="absolute top-0 left-0 h-full bg-tertiary" id="model-accuracy-bar" style="width: 60%"></div>
                                     </div>
                                 </div>
                                 <div>
@@ -355,6 +355,26 @@
             });
         });
         document.querySelectorAll('.h-1 div').forEach(bar => observeProgress.observe(bar));
+
+        // Fetch model metadata to make Home Page stats dynamic
+        document.addEventListener("DOMContentLoaded", async () => {
+            try {
+                const res = await fetch("/api/model-meta");
+                if (res.ok) {
+                    const data = await res.json();
+                    const modelType = data.model_type || "HistGradientBoosting";
+                    const accuracy = data.test_metrics ? data.test_metrics.accuracy : 0.6055;
+                    const accuracyPct = (accuracy * 100).toFixed(1) + "%";
+                    
+                    document.getElementById("tech-stack-label").innerText = `Technical Stack: ${modelType} + Python`;
+                    document.getElementById("model-accuracy-title").innerText = `${modelType} Accuracy`;
+                    document.getElementById("model-accuracy-value").innerText = accuracyPct;
+                    document.getElementById("model-accuracy-bar").style.width = accuracyPct;
+                }
+            } catch (err) {
+                console.error("Failed to load model diagnostics for home page:", err);
+            }
+        });
     </script>
 </body>
 </html>

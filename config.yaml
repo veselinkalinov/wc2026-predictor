@@ -56,3 +56,4 @@ api:
   host: "0.0.0.0"
   port: 5000
   debug: false
+  cache_ttl_hours: 2 # Configurable cache expiration in hours for standings/fixtures

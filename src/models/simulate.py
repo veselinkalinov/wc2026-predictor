@@ -62,10 +62,6 @@ class TournamentSimulator:
         self.fast_baseline_states = {k: v.copy()
                                      for k, v in self.baseline_states.items()}
 
-        # Load logistic regression for fast Monte Carlo path
-        self.fast_model_loaded = False
-        self._load_fast_model_params()
-
     def _load_fast_model_params(self) -> None:
         try:
             import joblib
@@ -802,19 +798,10 @@ class TournamentSimulator:
             f"Starting Monte Carlo simulation of {n_sims} tournament runs...")
         champions = []
 
-        if not self.fast_model_loaded:
-            self._load_fast_model_params()
-
-        if self.fast_model_loaded:
-            for i in range(n_sims):
-                if (i + 1) % 250 == 0:
-                    logger.info(f"Simulated {i + 1}/{n_sims} tournaments...")
-                champions.append(self.simulate_tournament_fast())
-        else:
-            for i in range(n_sims):
-                if (i + 1) % 250 == 0:
-                    logger.info(f"Simulated {i + 1}/{n_sims} tournaments...")
-                champions.append(self.simulate_tournament())
+        for i in range(n_sims):
+            if (i + 1) % 250 == 0:
+                logger.info(f"Simulated {i + 1}/{n_sims} tournaments...")
+            champions.append(self.simulate_tournament())
 
         self.predictor.disable_reload = False
         counts = pd.Series(champions).value_counts()

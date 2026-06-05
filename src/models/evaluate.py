@@ -145,21 +145,47 @@ def generate_evaluation_report() -> None:
         ax2.invert_yaxis()
     elif hasattr(base_est, "estimators_") and hasattr(base_est, "final_estimator_"):
         # For Stacking Classifier: display coefficients of the final meta-learner
-        meta_coef = np.mean(np.abs(base_est.final_estimator_.coef_), axis=0)
+        meta_coef = base_est.final_estimator_.coef_  # Shape (3, 3 * len(estimators))
         base_names = [name for name, _ in base_est.estimators]
-
-        # Meta-learner receives predictions from base models (3 classes each, so 3 * len(estimators) features)
+        n_est = len(base_names)
+        
+        # Reshape and average across classes (axis 0) and predictions (axis 2)
+        # to get a single weight for each base model
+        coef_reshaped = np.abs(meta_coef).reshape(3, n_est, 3)
+        model_weights = np.mean(coef_reshaped, axis=(0, 2))
+        
         ax2.barh(
             [f"{name} prediction scale" for name in base_names],
-            meta_coef[:len(base_names)],
+            model_weights,
             color="purple"
         )
-        ax2.set_xlabel("Meta-learner Coefficient Weight")
+        ax2.set_xlabel("Meta-learner Coefficient Weight (Averaged)")
         ax2.set_title(f"Stacking Meta-Learner Model Contributions")
         ax2.invert_yaxis()
     else:
-        ax2.text(0.5, 0.5, "Feature importance not available for this model type.",
-                 ha="center", va="center", transform=ax2.transAxes)
+        # Fallback to Permutation Feature Importance for HistGradientBoosting (Finding #8)
+        logger.info("Computing permutation feature importance on holdout test set...")
+        try:
+            from sklearn.inspection import permutation_importance
+            result = permutation_importance(
+                model, X_test_scaled, y_test, n_repeats=5, random_state=config["model"]["random_state"], n_jobs=-1
+            )
+            importances = result.importances_mean
+            indices = np.argsort(importances)[::-1]
+
+            ax2.barh(
+                [FEATURE_COLUMNS[i] for i in indices],
+                importances[indices],
+                color="teal"
+            )
+            ax2.set_xlabel("Mean Decrease in Holdout Accuracy")
+            ax2.set_title(
+                f"Feature Importance (Permutation) — {meta.get('model_type', 'Model')}")
+            ax2.invert_yaxis()
+        except Exception as pe:
+            logger.error(f"Failed to calculate permutation importance: {pe}")
+            ax2.text(0.5, 0.5, "Feature importance not available for this model type.",
+                     ha="center", va="center", transform=ax2.transAxes)
 
     plt.tight_layout()
     fi_path = vis_dir / "feature_importance.png"
