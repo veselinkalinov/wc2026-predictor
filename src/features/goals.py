@@ -1,7 +1,8 @@
 """
 goals.py
 Responsibility: Compute rolling goal-based statistics (scored, conceded, differences)
-to represent team offensive and defensive capabilities.
+to represent team offensive and defensive capabilities, enhanced with
+Exponentially Weighted Moving Average (EWMA) decay.
 """
 
 from pathlib import Path
@@ -10,6 +11,26 @@ from src.utils.config import config
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
+
+
+def compute_ewma_goals(history: list, alpha: float, default: float) -> float:
+    """
+    Compute exponentially weighted moving average of goals.
+    history: list of goals (scored or conceded).
+    alpha: exponential decay factor.
+    default: cold-start value if history is empty.
+    """
+    if not history:
+        return default
+
+    # Weights: (1-alpha)^age, where age is 0 for the most recent match
+    n = len(history)
+    weights = [(1.0 - alpha) ** i for i in range(n - 1, -1, -1)]
+
+    total_weight = sum(weights)
+    weighted_sum = sum(w * g for w, g in zip(weights, history))
+
+    return weighted_sum / total_weight
 
 
 def compute_goal_features(matches_df: pd.DataFrame) -> pd.DataFrame:
@@ -24,18 +45,19 @@ def compute_goal_features(matches_df: pd.DataFrame) -> pd.DataFrame:
       - away_goals_conceded_avg
       - away_goal_diff_avg
     """
-
-    logger.info("Compute rolling goal features...")
+    logger.info("Computing advanced EWMA rolling goal features...")
 
     # Read params from config
     window = config["features"]["goals_window"]
+    alpha = config["features"].get("goals_alpha", 0.25)
 
     # Sort matches chronologically to process goal stats in order
     df = matches_df.sort_values("date").copy()
 
-    # Track goals scored and conceded history for each team: {team_name: [goals1, goals2, ...]}
+    # Track goals scored and conceded history for each team
     goals_scored_history = {}
     goals_conceded_history = {}
+
     home_scored_avgs = []
     home_conceded_avgs = []
     away_scored_avgs = []
@@ -57,23 +79,22 @@ def compute_goal_features(matches_df: pd.DataFrame) -> pd.DataFrame:
             if team not in goals_conceded_history:
                 goals_conceded_history[team] = []
 
-                # 1. Calculate averages BEFORE the match (historical averages)
-        for team, scored_list, conceded_list in [(home_team, home_scored_avgs, home_conceded_avgs), (away_team, away_scored_avgs, away_conceded_avgs)]:
-            scored_hist = goals_scored_history[team]
-            conceded_hist = goals_conceded_history[team]
+        # 1. Calculate averages BEFORE the match (historical averages) using EWMA
+        # Home Team averages
+        h_scored_hist = goals_scored_history[home_team][-window:]
+        h_conceded_hist = goals_conceded_history[home_team][-window:]
+        home_scored_avgs.append(compute_ewma_goals(
+            h_scored_hist, alpha, DEFAULT_GOALS))
+        home_conceded_avgs.append(compute_ewma_goals(
+            h_conceded_hist, alpha, DEFAULT_GOALS))
 
-            if len(scored_hist) == 0:
-                # Cold-start defaults
-                scored_list.append(DEFAULT_GOALS)
-                conceded_list.append(DEFAULT_GOALS)
-            else:
-                # Take last N matches
-                recent_scored = scored_hist[-window:]
-                recent_conceded = conceded_hist[-window:]
-
-                scored_list.append(sum(recent_scored) / len(recent_scored))
-                conceded_list.append(
-                    sum(recent_conceded) / len(recent_conceded))
+        # Away Team averages
+        a_scored_hist = goals_scored_history[away_team][-window:]
+        a_conceded_hist = goals_conceded_history[away_team][-window:]
+        away_scored_avgs.append(compute_ewma_goals(
+            a_scored_hist, alpha, DEFAULT_GOALS))
+        away_conceded_avgs.append(compute_ewma_goals(
+            a_conceded_hist, alpha, DEFAULT_GOALS))
 
         # 2. Append current match details to history for future matches
         # For Home Team: scored = home_score, conceded = away_score
@@ -95,5 +116,5 @@ def compute_goal_features(matches_df: pd.DataFrame) -> pd.DataFrame:
     df["away_goal_diff_avg"] = df["away_goals_scored_avg"] - \
         df["away_goals_conceded_avg"]
 
-    logger.info("Finished rolling goal features computation.")
+    logger.info("Finished advanced EWMA rolling goal features computation.")
     return df

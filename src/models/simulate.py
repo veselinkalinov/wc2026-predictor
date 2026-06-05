@@ -1,23 +1,27 @@
 """
 simulate.py
-
 Responsibility: Run Monte Carlo simulations of the FIFA World Cup 2026,
 updating team states (Elo, form, goals) dynamically after every match.
-"""
 
+Upgrades:
+1. Dynamic K-factors (K=60 for World Cup) and goal margin multipliers.
+2. Home-field advantage Elo adjustment for hosting nations.
+3. Configurable EWMA decay factors.
+"""
 from pathlib import Path
 import json
 import random
 import numpy as np
 import pandas as pd
 from src.models.predict import MatchPredictor
+from src.features.elo import get_k_factor, goal_margin_multiplier
 from src.utils.config import config
 from src.utils.logger import get_logger
+
 
 logger = get_logger(__name__)
 
 # Official World Cup 2026 groups and team mappings
-# Standardised to matches.csv team names!
 GROUPS = {
     "A": ["Mexico", "South Africa", "South Korea", "Czech Republic"],
     "B": ["Canada", "Bosnia and Herzegovina", "Qatar", "Switzerland"],
@@ -58,46 +62,68 @@ class TournamentSimulator:
             json.dumps(self.baseline_states))
 
     def _update_stats_after_match(
-        self, home_team: str, away_team: str, home_goals: int, away_goals: int, result: str
+        self, home_team: str, away_team: str, home_goals: int, away_goals: int, result: str, is_neutral: int
     ) -> None:
         """
         Dynamic State Update: Updates Elo, form, and goal averages for both teams
         in the predictor's state registry immediately after a simulated game.
         """
-        k_factor = config["features"]["elo_k_factor"]
+        # Overridden dynamically: World Cup matches use Tier 1 K-factor (60)
+        k_factor = get_k_factor("FIFA World Cup")
+
+        # Read form and goal parameters from config
         form_window = config["features"]["form_window"]
         goals_window = config["features"]["goals_window"]
+        alpha_form = config["features"].get("form_alpha", 0.3)
+        alpha_goals = config["features"].get("goals_alpha", 0.25)
+        hfa_bonus = config["features"].get("elo_home_advantage", 100)
 
         # Get current states
         h_state = self.predictor.get_team_state(home_team).copy()
         a_state = self.predictor.get_team_state(away_team).copy()
 
-        # --- 1. Update Elo ---
+        # --- 1. Update Elo with HFA and Goal Margin scaling ---
+        h_elo_adjusted = h_state["elo"]
+        if is_neutral == 0:
+            h_elo_adjusted += hfa_bonus
+
         expected_home = 1.0 / \
-            (1.0 + 10.0 ** ((a_state["elo"] - h_state["elo"]) / 400.0))
+            (1.0 + 10.0 ** ((a_state["elo"] - h_elo_adjusted) / 400.0))
         actual_home = 1.0 if result == "H" else (0.5 if result == "D" else 0.0)
 
-        h_state["elo"] = h_state["elo"] + \
-            k_factor * (actual_home - expected_home)
-        a_state["elo"] = a_state["elo"] + k_factor * \
+        # Calculate goal difference and margin multiplier
+        goal_diff = int(home_goals - away_goals)
+        multiplier = goal_margin_multiplier(goal_diff)
+
+        h_state["elo"] = h_state["elo"] + k_factor * \
+            multiplier * (actual_home - expected_home)
+        a_state["elo"] = a_state["elo"] + k_factor * multiplier * \
             ((1.0 - actual_home) - (1.0 - expected_home))
+
         h_state["elo_diff"] = h_state["elo"] - a_state["elo"]
         a_state["elo_diff"] = a_state["elo"] - h_state["elo"]
 
-        # --- 2. Update Form (approximate update via rolling factor) ---
-        # Instead of storing full list histories in memory during MC, we update form
-        # using a simple exponential smoothing factor equivalent to a rolling window.
-        alpha_form = 1.0 / form_window
-        h_pts = 3 if result == "H" else (1 if result == "D" else 0)
-        a_pts = 3 if result == "A" else (1 if result == "D" else 0)
+        # --- 2. Update Form via EWMA smoothing ---
+        h_pts = 3.0 if result == "H" else (1.0 if result == "D" else 0.0)
+        a_pts = 3.0 if result == "A" else (1.0 if result == "D" else 0.0)
+
+        # Apply opponent-adjusted points formula (just like in form.py)
+        home_opp_factor = max(1.0 + (a_state["elo"] - 1500.0) / 1000.0, 0.5)
+        away_opp_factor = max(1.0 + (h_state["elo"] - 1500.0) / 1000.0, 0.5)
+
+        h_pts_adj = h_pts * home_opp_factor
+        a_pts_adj = a_pts * away_opp_factor
 
         h_state["form"] = (1.0 - alpha_form) * \
-            h_state["form"] + alpha_form * (h_pts / 3.0)
+            h_state["form"] + alpha_form * (h_pts_adj / 3.0)
         a_state["form"] = (1.0 - alpha_form) * \
-            a_state["form"] + alpha_form * (a_pts / 3.0)
+            a_state["form"] + alpha_form * (a_pts_adj / 3.0)
 
-        # --- 3. Update Goals (approximate update) ---
-        alpha_goals = 1.0 / goals_window
+        # Clamp form to [0.0, 1.0]
+        h_state["form"] = min(max(h_state["form"], 0.0), 1.0)
+        a_state["form"] = min(max(a_state["form"], 0.0), 1.0)
+
+        # --- 3. Update Goals via EWMA smoothing ---
         h_state["goals_scored_avg"] = (
             1.0 - alpha_goals) * h_state["goals_scored_avg"] + alpha_goals * home_goals
         h_state["goals_conceded_avg"] = (
@@ -133,7 +159,7 @@ class TournamentSimulator:
             home_team, away_team = team_a, team_b
             is_neutral = 1
 
-        # Predict outcome probabilities
+        # Predict outcome probabilities (loads and uses the calibrated ensemble model automatically)
         pred = self.predictor.predict_match(
             home_team, away_team, is_neutral=is_neutral, is_competitive=1)
         probs = pred["probabilities"]
@@ -167,7 +193,7 @@ class TournamentSimulator:
 
         # Update stats in predictor's temporary state
         self._update_stats_after_match(
-            home_team, away_team, home_goals, away_goals, result)
+            home_team, away_team, home_goals, away_goals, result, is_neutral)
 
         # Map back to original team names in case of host swap
         if result == "H":

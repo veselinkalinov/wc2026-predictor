@@ -19,21 +19,26 @@ paths:
 data:
   matches_file: "matches.csv"
   rankings_file: "fifa_rankings.csv"
-  date_from: "2000-01-01"
+  date_from: "2010-01-01" # Updated from 2000-01-01, so we focus the machine learning model on modern football dynamics while still computing the Elo ratings from the beginning of the dataset to ensure they are fully warmed up.
   date_to: "2026-06-10"
   min_matches: 10 # Minimum matches a team must have to be included
 
 features:
-  form_window: 5 # Number of recent matches used to calculate form
-  goals_window: 10 # Number of recent matches used for goals averages
-  elo_k_factor: 32 # K-factor used in Elo rating updates
-  elo_initial: 1500 # Starting Elo rating for all teams
+  form_window: 10 # Increased from 5
+  goals_window: 15 # Increased from 10
+  elo_k_factor: 32
+  elo_initial: 1500
+  elo_home_advantage: 100 # NEW: Home advantage Elo adjustment
+  form_alpha: 0.3 # NEW: Decay factor for form (EWMA)
+  goals_alpha: 0.25 # NEW: Decay factor for goals (EWMA)
 
 model:
-  train_cutoff: "2022-01-01" # Matches before this date = train, after = test
-  random_state: 42 # Ensures reproducible results
-  test_size: 0.2 # Fallback if not using temporal split
-  target_column: "result" # Column name for match outcome: H / D / A
+  train_cutoff: "2022-01-01"
+  calibration_cutoff: "2023-07-01" # NEW: Split for probability calibration
+  random_state: 42
+  test_size: 0.2
+  target_column: "result"
+  cv_splits: 5 # NEW: 5-fold temporal cross validation
   random_forest:
     n_estimators: 100
     max_depth: 10

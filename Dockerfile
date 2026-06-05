@@ -9,6 +9,11 @@ ENV PYTHONPATH=/app
 # Set the working directory in the container
 WORKDIR /app
 
+# Install system dependencies needed by LightGBM (OpenMP library)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the requirements file into the container
 COPY requirements.txt .
 

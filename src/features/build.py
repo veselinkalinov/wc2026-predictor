@@ -36,7 +36,7 @@ def build_feature_matrix() -> None:
 
     # 2. Chain feature calculators
     # Since each function returns the DataFrame with new columns, we chain them
-    df = compute_elo_ratings(df)
+    df, _ = compute_elo_ratings(df)
     df = compute_form_features(df)
     df = compute_goal_features(df)
 
