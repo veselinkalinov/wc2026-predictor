@@ -35,3 +35,6 @@ Desktop.ini
 
 # Logs
 logs/
+
+# cat_boost training folder
+catboost_info/
