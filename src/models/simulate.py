@@ -1,3 +1,4 @@
+from multiprocessing import Pool
 from src.utils.logger import get_logger
 from src.utils.config import config
 from src.features.elo import get_k_factor, goal_margin_multiplier
@@ -8,6 +9,8 @@ import random
 import json
 from pathlib import Path
 import os
+
+
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
@@ -99,8 +102,10 @@ class TournamentSimulator:
             self.fast_baseline_states = {k: v.copy()
                                          for k, v in self.baseline_states.items()}
 
-        self.predictor.team_states = json.loads(
-            json.dumps(self.baseline_states))
+        # Fast dictionary copy instead of slow JSON serialization
+        self.predictor.team_states = {
+            k: v.copy() for k, v in self.fast_baseline_states.items()
+        }
 
     def _reset_states_fast(self) -> None:
         """
@@ -796,17 +801,36 @@ class TournamentSimulator:
         self.predictor.disable_reload = True
         logger.info(
             f"Starting Monte Carlo simulation of {n_sims} tournament runs...")
-        champions = []
 
-        for i in range(n_sims):
-            if (i + 1) % 250 == 0:
-                logger.info(f"Simulated {i + 1}/{n_sims} tournaments...")
-            champions.append(self.simulate_tournament())
+        # Determine number of worker processes (leave 1 core free for system stability)
+        num_workers = max(1, os.cpu_count() - 1)
+        logger.info(f"Spawning {num_workers} parallel worker processes...")
+
+        # Run simulations concurrently across all cores
+        with Pool(processes=num_workers, initializer=_init_worker) as pool:
+            champions = pool.map(_run_single_sim, range(n_sims))
 
         self.predictor.disable_reload = False
         counts = pd.Series(champions).value_counts()
         probabilities = counts / n_sims
         return probabilities
+
+
+# --- Multiprocessing Workers ---
+_worker_simulator = None
+
+
+def _init_worker():
+    global _worker_simulator
+    # Initialize a single simulator per process (loads the model once)
+    _worker_simulator = TournamentSimulator()
+    # Disable auto-reload inside workers to maximize loop speed
+    _worker_simulator.predictor.disable_reload = True
+
+
+def _run_single_sim(_):
+    # Runs a single tournament simulation and returns the champion
+    return _worker_simulator.simulate_tournament()
 
 
 if __name__ == "__main__":

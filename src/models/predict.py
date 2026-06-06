@@ -47,7 +47,8 @@ class MatchPredictor:
         self.team_states = self._build_latest_team_states()
 
         # Track file modification time for auto-reloads
-        self.last_loaded_time = self.model_path.stat().st_mtime if self.model_path.exists() else 0
+        self.last_loaded_time = self.model_path.stat(
+        ).st_mtime if self.model_path.exists() else 0
         self.last_check_time = 0.0
         self.prediction_cache = {}
 
@@ -74,7 +75,8 @@ class MatchPredictor:
             return False
         mtime = self.model_path.stat().st_mtime
         if mtime > self.last_loaded_time:
-            logger.info("Model file update detected on disk. Reloading model artifacts and team states...")
+            logger.info(
+                "Model file update detected on disk. Reloading model artifacts and team states...")
             try:
                 self.model = joblib.load(self.model_path)
                 self.scaler = joblib.load(self.scaler_path)
@@ -85,7 +87,8 @@ class MatchPredictor:
 
                 # Reload feature matrix and team states
                 self.feature_matrix = pd.read_csv(self.feature_matrix_path)
-                self.feature_matrix["date"] = pd.to_datetime(self.feature_matrix["date"])
+                self.feature_matrix["date"] = pd.to_datetime(
+                    self.feature_matrix["date"])
                 self.team_states = self._build_latest_team_states()
 
                 self.last_loaded_time = mtime
@@ -254,33 +257,44 @@ class MatchPredictor:
         # Build rounded cache key to optimize batch simulation runs
         h_state = self.get_team_state(home_team)
         a_state = self.get_team_state(away_team)
-        
+
         cache_key = (
             home_team,
             away_team,
             round((h_state["elo"] - a_state["elo"]) / 15.0) * 15.0,
             round((h_state["form"] - a_state["form"]) / 0.05) * 0.05,
-            round((h_state["goals_scored_avg"] - a_state["goals_conceded_avg"]) / 0.2) * 0.2,
-            round((a_state["goals_scored_avg"] - h_state["goals_conceded_avg"]) / 0.2) * 0.2,
+            round((h_state["goals_scored_avg"] -
+                  a_state["goals_conceded_avg"]) / 0.2) * 0.2,
+            round((a_state["goals_scored_avg"] -
+                  h_state["goals_conceded_avg"]) / 0.2) * 0.2,
             is_neutral,
             is_competitive
         )
-        
+
         if cache_key in self.prediction_cache:
             return self.prediction_cache[cache_key]
 
-        # 1. Forward direction: Team A as Home, Team B as Away (optimized using numpy)
+            # 1. Forward direction: Team A as Home, Team B as Away (optimized using numpy)
         feat_forward = self._construct_features_numpy(
             home_team, away_team, is_neutral, is_competitive)
-        feat_forward_scaled = self.scaler.transform(feat_forward)
+
+        # Direct NumPy math instead of slow Scikit-learn wrapper
+        feat_forward_scaled = (
+            feat_forward - self.scaler.mean_) / self.scaler.scale_
+
         probs_forward = self.model.predict_proba(feat_forward_scaled)[
             0]  # [p_H, p_D, p_A]
 
         if is_neutral == 1:
+
             # 2. Reverse direction: Team B as Home, Team A as Away
             feat_reverse = self._construct_features_numpy(
                 away_team, home_team, is_neutral, is_competitive)
-            feat_reverse_scaled = self.scaler.transform(feat_reverse)
+
+            # Direct NumPy math instead of slow Scikit-learn wrapper
+            feat_reverse_scaled = (
+                feat_reverse - self.scaler.mean_) / self.scaler.scale_
+
             probs_reverse = self.model.predict_proba(feat_reverse_scaled)[0]
 
             # Invert the reverse probabilities: swap index 0 (H) and index 2 (A)
