@@ -36,10 +36,10 @@ def ensure_dummy_models():
     if not best_model_path.exists() or not scaler_path.exists() or not meta_path.exists():
         print("\n[conftest.py] Core model files missing. Generating toy models for test execution...")
 
-        # 1. Toy data: 10 samples with 27 features
+        # 1. Toy data: 100 samples with 27 features (to allow tree classifier splits)
         np.random.seed(42)
-        X = np.random.randn(10, 27)
-        y = np.random.choice([0, 1, 2], size=10)  # Classes: H (0), D (1), A (2)
+        X = np.random.randn(100, 27)
+        y = np.random.choice([0, 1, 2], size=100)  # Classes: H (0), D (1), A (2)
 
         # 2. Scaler fit and dump
         scaler = StandardScaler()

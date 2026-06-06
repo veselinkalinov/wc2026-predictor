@@ -58,9 +58,31 @@ class MatchPredictor:
         self.meta_path = models_dir / "meta.json"
         self.feature_matrix_path = features_dir / "feature_matrix.csv"
 
-        # Load artifacts
-        self.model = joblib.load(self.model_path)
+        # Load scaler
         self.scaler = joblib.load(self.scaler_path)
+
+        # Load model with fallback safety for missing packages (e.g. xgboost in containers)
+        try:
+            self.model = joblib.load(self.model_path)
+        except (ModuleNotFoundError, ImportError) as e:
+            logger.warning(f"Failed to load model {self.model_filename} due to missing package: {e}. Attempting fallback to standard models...")
+            # Try to fall back to scikit-learn models that don't need external packages
+            fallback_options = ["histgradientboosting.pkl", "logistic_regression.pkl", "best_model.pkl"]
+            loaded = False
+            for fallback in fallback_options:
+                fallback_path = models_dir / fallback
+                if fallback_path.exists() and fallback != self.model_filename:
+                    try:
+                        self.model = joblib.load(fallback_path)
+                        self.model_path = fallback_path
+                        self.model_filename = fallback
+                        logger.info(f"Successfully fell back to {fallback}")
+                        loaded = True
+                        break
+                    except (ModuleNotFoundError, ImportError):
+                        continue
+            if not loaded:
+                raise e
 
         with open(self.meta_path, "r") as f:
             meta = json.load(f)
@@ -124,7 +146,14 @@ class MatchPredictor:
             logger.info(
                 f"Model file update detected on disk for {self.model_filename}. Reloading model artifacts and team states...")
             try:
-                self.model = joblib.load(self.model_path)
+                # Load new model with package presence checks
+                try:
+                    new_model = joblib.load(self.model_path)
+                except (ModuleNotFoundError, ImportError) as e:
+                    logger.warning(f"Failed to hot-reload updated model file due to missing package: {e}. Keeping current model.")
+                    return False
+                
+                self.model = new_model
                 self.scaler = joblib.load(self.scaler_path)
                 with open(self.meta_path, "r") as f:
                     meta = json.load(f)
