@@ -36,9 +36,9 @@ def ensure_dummy_models():
     if not best_model_path.exists() or not scaler_path.exists() or not meta_path.exists():
         print("\n[conftest.py] Core model files missing. Generating toy models for test execution...")
 
-        # 1. Toy data: 10 samples with 20 features
+        # 1. Toy data: 10 samples with 27 features
         np.random.seed(42)
-        X = np.random.randn(10, 20)
+        X = np.random.randn(10, 27)
         y = np.random.choice([0, 1, 2], size=10)  # Classes: H (0), D (1), A (2)
 
         # 2. Scaler fit and dump
@@ -74,7 +74,10 @@ def ensure_dummy_models():
                 "away_goals_scored_avg", "away_goals_conceded_avg", "away_goal_diff_avg",
                 "home_rank", "away_rank", "rank_diff",
                 "home_rank_points", "away_rank_points", "rank_points_diff",
-                "is_neutral", "is_competitive"
+                "is_neutral", "is_competitive",
+                "home_rest_days", "away_rest_days", "rest_days_diff",
+                "home_is_home_continent", "away_is_home_continent", "continent_diff",
+                "match_stake"
             ],
             "best_params": {
                 "learning_rate": 0.1,

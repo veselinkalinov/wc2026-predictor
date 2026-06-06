@@ -1,59 +1,46 @@
-# =============================================================================
-# WC 2026 Match Outcome Predictor — Central Configuration
-# =============================================================================
-# This is the single source of truth for all project parameters.
-# Never hardcode these values inside src/ files — always import from here.
-# =============================================================================
-
 project:
-  name: "wc2026-predictor"
-  version: "0.1.0"
-
+  name: wc2026-predictor
+  version: 0.1.0
 paths:
-  raw_data: "data/raw"
-  processed_data: "data/processed"
-  features: "data/features"
-  models: "models/registry"
-  visualisations: "visualisations"
-
+  raw_data: data/raw
+  processed_data: data/processed
+  features: data/features
+  models: models/registry
+  visualisations: visualisations
 data:
-  matches_file: "matches.csv"
-  rankings_file: "fifa_rankings.csv"
-  date_from: "2010-01-01" # Updated from 2000-01-01, so we focus the machine learning model on modern football dynamics while still computing the Elo ratings from the beginning of the dataset to ensure they are fully warmed up.
-  date_to: "2026-06-10"
-  min_matches: 10 # Minimum matches a team must have to be included
-
+  matches_file: matches.csv
+  rankings_file: fifa_rankings.csv
+  date_from: '2010-01-01'
+  date_to: '2026-06-10'
+  min_matches: 10
 features:
-  form_window: 10 # Increased from 5
-  goals_window: 15 # Increased from 10
+  form_window: 10
+  goals_window: 15
   elo_k_factor: 32
   elo_initial: 1500
-  elo_home_advantage: 100 # NEW: Home advantage Elo adjustment
-  form_alpha: 0.3 # NEW: Decay factor for form (EWMA)
-  goals_alpha: 0.25 # NEW: Decay factor for goals (EWMA)
-
+  elo_home_advantage: 50
+  form_alpha: 0.15
+  goals_alpha: 0.15
 model:
-  train_cutoff: "2022-01-01"
-  calibration_cutoff: "2023-07-01" # NEW: Split for probability calibration
+  train_cutoff: '2022-01-01'
+  calibration_cutoff: '2023-07-01'
   random_state: 42
   test_size: 0.2
-  target_column: "result"
-  cv_splits: 5 # NEW: 5-fold temporal cross validation
+  target_column: result
+  cv_splits: 5
   random_forest:
     n_estimators: 100
     max_depth: 10
   hist_gradient_boosting:
     max_iter: 100
     learning_rate: 0.1
-
 evaluation:
   metrics:
-    - "accuracy"
-    - "log_loss"
-    - "brier_score"
-
+  - accuracy
+  - log_loss
+  - brier_score
 api:
-  host: "0.0.0.0"
+  host: 0.0.0.0
   port: 5000
   debug: false
-  cache_ttl_hours: 2 # Configurable cache expiration in hours for standings/fixtures
+  cache_ttl_hours: 2

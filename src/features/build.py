@@ -16,6 +16,117 @@ from src.features.goals import compute_goal_features
 logger = get_logger(__name__)
 
 
+def compute_advanced_features(df: pd.DataFrame) -> pd.DataFrame:
+    logger.info("Computing rest days, travel continent, and match stake features...")
+    # Sort chronologically
+    df = df.sort_values("date").copy()
+    
+    # 1. Rest days calculation
+    last_match_date = {}
+    home_rest_days = []
+    away_rest_days = []
+    
+    for idx, row in df.iterrows():
+        date = row["date"]
+        h_team = row["home_team"]
+        a_team = row["away_team"]
+        
+        # Home team rest
+        if h_team in last_match_date:
+            h_rest = (date - last_match_date[h_team]).days
+        else:
+            h_rest = 30 # Default
+        
+        # Away team rest
+        if a_team in last_match_date:
+            a_rest = (date - last_match_date[a_team]).days
+        else:
+            a_rest = 30 # Default
+            
+        # Clamp to max 30 days
+        h_rest = min(h_rest, 30)
+        a_rest = min(a_rest, 30)
+        
+        home_rest_days.append(h_rest)
+        away_rest_days.append(a_rest)
+        
+        # Update last match dates
+        last_match_date[h_team] = date
+        last_match_date[a_team] = date
+        
+    df["home_rest_days"] = home_rest_days
+    df["away_rest_days"] = away_rest_days
+    df["rest_days_diff"] = df["home_rest_days"] - df["away_rest_days"]
+    
+    # 2. Travel Fatigue / Continent
+    CONTINENT_MAP = {
+        # Europe (UEFA)
+        "Germany": "Europe", "France": "Europe", "England": "Europe", "Italy": "Europe", "Spain": "Europe",
+        "Netherlands": "Europe", "Portugal": "Europe", "Belgium": "Europe", "Croatia": "Europe", "Denmark": "Europe",
+        "Sweden": "Europe", "Switzerland": "Europe", "Poland": "Europe", "Austria": "Europe", "Ukraine": "Europe",
+        "Turkey": "Europe", "Russia": "Europe", "Wales": "Europe", "Scotland": "Europe", "Republic of Ireland": "Europe",
+        # South America (CONMEBOL)
+        "Brazil": "South America", "Argentina": "South America", "Uruguay": "South America", "Colombia": "South America",
+        "Chile": "South America", "Peru": "South America", "Ecuador": "South America", "Paraguay": "South America",
+        "Venezuela": "South America", "Bolivia": "South America",
+        # North/Central America (CONCACAF)
+        "United States": "North America", "Mexico": "North America", "Canada": "North America", "Costa Rica": "North America",
+        "Jamaica": "North America", "Honduras": "North America", "Panama": "North America", "El Salvador": "North America",
+        # Africa (CAF)
+        "Senegal": "Africa", "Morocco": "Africa", "Algeria": "Africa", "Nigeria": "Africa", "Egypt": "Africa",
+        "Cameroon": "Africa", "Ghana": "Africa", "Ivory Coast": "Africa", "Tunisia": "Africa", "Mali": "Africa",
+        # Asia (AFC)
+        "Japan": "Asia", "South Korea": "Asia", "Iran": "Asia", "Australia": "Asia", "Saudi Arabia": "Asia",
+        "Qatar": "Asia", "Iraq": "Asia", "United Arab Emirates": "Asia", "China PR": "Asia",
+        # Oceania (OFC)
+        "New Zealand": "Oceania"
+    }
+    
+    home_is_home_continent = []
+    away_is_home_continent = []
+    
+    for idx, row in df.iterrows():
+        h_team = row["home_team"]
+        a_team = row["away_team"]
+        country = row.get("country", "")
+        
+        h_cont = CONTINENT_MAP.get(h_team)
+        a_cont = CONTINENT_MAP.get(a_team)
+        m_cont = CONTINENT_MAP.get(country) if isinstance(country, str) else None
+        
+        if h_cont is not None and m_cont is not None and h_cont == m_cont:
+            home_is_home_continent.append(1)
+        else:
+            home_is_home_continent.append(0)
+            
+        if a_cont is not None and m_cont is not None and a_cont == m_cont:
+            away_is_home_continent.append(1)
+        else:
+            away_is_home_continent.append(0)
+            
+    df["home_is_home_continent"] = home_is_home_continent
+    df["away_is_home_continent"] = away_is_home_continent
+    df["continent_diff"] = df["home_is_home_continent"] - df["away_is_home_continent"]
+    
+    # 3. Match Stake / Tier
+    def get_match_stake(tourn):
+        t = str(tourn).lower()
+        if t == "fifa world cup":
+            return 4
+        elif any(comp in t for comp in ["uefa euro", "copa américa", "african cup of nations",
+                                        "afc asian cup", "concacaf gold cup",
+                                        "confederations cup"]):
+            return 3
+        elif "qualification" in t or "nations league" in t:
+            return 2
+        else:
+            return 1
+            
+    df["match_stake"] = df["tournament"].apply(get_match_stake)
+    
+    return df
+
+
 def build_feature_matrix() -> None:
     processed_dir = Path(config["paths"]["processed_data"])
     features_dir = Path(config["paths"]["features"])
@@ -35,10 +146,10 @@ def build_feature_matrix() -> None:
     df["date"] = pd.to_datetime(df["date"])
 
     # 2. Chain feature calculators
-    # Since each function returns the DataFrame with new columns, we chain them
     df, _ = compute_elo_ratings(df)
     df = compute_form_features(df)
     df = compute_goal_features(df)
+    df = compute_advanced_features(df)
 
     # 3. Add ranking differences
     logger.info("Computing ranking difference features...")

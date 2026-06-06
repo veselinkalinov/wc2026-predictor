@@ -200,7 +200,7 @@
                         <span class="font-label-mono text-outline text-xs">03</span>
                     </div>
                     <h3 class="font-headline-md text-headline-md text-on-surface mb-4 border-b border-outline-variant pb-4 uppercase tracking-tighter">ML Prediction</h3>
-                    <p class="font-body-md text-body-md text-on-surface-variant">A tuned HistGradientBoosting model utilizes temporal folds to determine outcomes, feeding into a 10,000-run Monte Carlo World Cup simulator.</p>
+                    <p class="font-body-md text-body-md text-on-surface-variant">A tuned <span id="model-desc-type">HistGradientBoosting</span> model utilizes temporal folds to determine outcomes, feeding into a 10,000-run Monte Carlo World Cup simulator.</p>
                 </div>
             </div>
         </section>
@@ -367,6 +367,7 @@
                     const accuracyPct = (accuracy * 100).toFixed(1) + "%";
                     
                     document.getElementById("tech-stack-label").innerText = `Technical Stack: ${modelType} + Python`;
+                    document.getElementById("model-desc-type").innerText = modelType;
                     document.getElementById("model-accuracy-title").innerText = `${modelType} Accuracy`;
                     document.getElementById("model-accuracy-value").innerText = accuracyPct;
                     document.getElementById("model-accuracy-bar").style.width = accuracyPct;

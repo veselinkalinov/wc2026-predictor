@@ -23,6 +23,7 @@ matplotlib.use("Agg")
 
 logger = get_logger(__name__)
 
+# Extended list of features matching train.py
 FEATURE_COLUMNS = [
     "home_elo", "away_elo", "elo_diff",
     "home_form", "away_form", "form_diff",
@@ -30,8 +31,22 @@ FEATURE_COLUMNS = [
     "away_goals_scored_avg", "away_goals_conceded_avg", "away_goal_diff_avg",
     "home_rank", "away_rank", "rank_diff",
     "home_rank_points", "away_rank_points", "rank_points_diff",
-    "is_neutral", "is_competitive"
+    "is_neutral", "is_competitive",
+    "home_rest_days", "away_rest_days", "rest_days_diff",
+    "home_is_home_continent", "away_is_home_continent", "continent_diff",
+    "match_stake"
 ]
+
+
+def predict_classes_with_threshold(y_probs: np.ndarray, theta: float) -> np.ndarray:
+    preds = []
+    for prob in y_probs:
+        p_home, p_draw, p_away = prob[0], prob[1], prob[2]
+        if p_draw >= theta and theta < 1.0:
+            preds.append(1)  # Draw
+        else:
+            preds.append(0 if p_home >= p_away else 2)
+    return np.array(preds)
 
 
 def generate_evaluation_report() -> None:
@@ -42,12 +57,13 @@ def generate_evaluation_report() -> None:
 
     # 1. Load artifacts
     logger.info("Loading model artifacts for evaluation...")
-    # Calibrated winning model
     model = joblib.load(models_dir / "best_model.pkl")
     scaler = joblib.load(models_dir / "scaler.pkl")
 
     with open(models_dir / "meta.json", "r") as f:
         meta = json.load(f)
+
+    draw_threshold = meta.get("draw_threshold", 1.0)
 
     # 2. Load feature matrix and split
     df = pd.read_csv(features_dir / "feature_matrix.csv")
@@ -67,8 +83,8 @@ def generate_evaluation_report() -> None:
     X_test_scaled = scaler.transform(X_test)
 
     # 3. Predictions
-    y_preds = model.predict(X_test_scaled)
     y_pred_probs = model.predict_proba(X_test_scaled)
+    y_preds = predict_classes_with_threshold(y_pred_probs, draw_threshold)
 
     # 4. Classification Report
     class_names = ["H (Home)", "D (Draw)", "A (Away)"]
@@ -111,7 +127,6 @@ def generate_evaluation_report() -> None:
     logger.info(f"Saved confusion matrix to {cm_path}")
 
     # 7. Feature Importance Plot
-    # Access the underlying model inside CalibratedClassifierCV
     base_est = model.estimator if hasattr(model, "estimator") else model
 
     fig2, ax2 = plt.subplots(figsize=(10, 8))
@@ -144,13 +159,11 @@ def generate_evaluation_report() -> None:
             f"Feature Coefficients — {meta.get('model_type', 'Model')}")
         ax2.invert_yaxis()
     elif hasattr(base_est, "estimators_") and hasattr(base_est, "final_estimator_"):
-        # For Stacking Classifier: display coefficients of the final meta-learner
-        meta_coef = base_est.final_estimator_.coef_  # Shape (3, 3 * len(estimators))
+        # For Stacking Classifier
+        meta_coef = base_est.final_estimator_.coef_
         base_names = [name for name, _ in base_est.estimators]
         n_est = len(base_names)
         
-        # Reshape and average across classes (axis 0) and predictions (axis 2)
-        # to get a single weight for each base model
         coef_reshaped = np.abs(meta_coef).reshape(3, n_est, 3)
         model_weights = np.mean(coef_reshaped, axis=(0, 2))
         
@@ -163,7 +176,7 @@ def generate_evaluation_report() -> None:
         ax2.set_title(f"Stacking Meta-Learner Model Contributions")
         ax2.invert_yaxis()
     else:
-        # Fallback to Permutation Feature Importance for HistGradientBoosting (Finding #8)
+        # Fallback to Permutation Feature Importance
         logger.info("Computing permutation feature importance on holdout test set...")
         try:
             from sklearn.inspection import permutation_importance
@@ -201,7 +214,6 @@ def generate_evaluation_report() -> None:
         y_true_binary = y_test_one_hot[:, c_idx]
         y_prob = y_pred_probs[:, c_idx]
 
-        # Calculate reliability curve
         prob_true, prob_pred = calibration_curve(
             y_true_binary, y_prob, n_bins=10, strategy="uniform")
 
@@ -210,7 +222,6 @@ def generate_evaluation_report() -> None:
             label=f"{class_name} (Brier: {brier_scores[c_idx]:.4f})"
         )
 
-    # Add perfectly calibrated identity line
     ax3.plot([0, 1], [0, 1], "k--", label="Perfectly Calibrated")
     ax3.set_xlabel("Mean Predicted Probability")
     ax3.set_ylabel("True Probability in Bin")
@@ -238,8 +249,7 @@ def generate_evaluation_report() -> None:
     with open(models_dir / "meta.json", "w") as f:
         json.dump(meta, f, indent=4)
 
-    logger.info(
-        "Evaluation complete. Updated meta.json with calibrated holdout results.")
+    logger.info("Evaluation complete. Updated meta.json with calibrated holdout results.")
 
 
 if __name__ == "__main__":

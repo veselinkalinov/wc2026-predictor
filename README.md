@@ -73,13 +73,17 @@ It processes international match history from Kaggle datasets, engineers domain-
 
 | Category                      | Details                                                                                                                                                                                  |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Elo Rating System**         | Advanced Elo ratings computed from scratch with Home-Field Advantage (+100 Elo), logarithmic goal-margin scaling, and dynamic K-factors (K=60 for World Cup down to K=20 for friendlies) |
-| **Team Form Tracking**        | Opponent-adjusted EWMA (alpha=0.3) form tracking that rewards beating higher-Elo teams                                                                                                   |
-| **Goal Statistics**           | EWMA rolling goal averages (alpha=0.25) for goals scored, conceded, and goal difference                                                                                                  |
+| **Elo Rating System**         | Advanced Elo ratings computed from scratch with optimized Home-Field Advantage (+50 Elo), logarithmic goal-margin scaling, and dynamic K-factors (K=60 for World Cup down to K=20 for friendlies) |
+| **Team Form Tracking**        | Opponent-adjusted EWMA (alpha=0.15) form tracking that rewards beating higher-Elo teams                                                                                                   |
+| **Goal Statistics**           | EWMA rolling goal averages (alpha=0.15) for goals scored, conceded, and goal difference                                                                                                  |
 | **FIFA Rankings Integration** | Historical FIFA ranking snapshots merged via temporal join (`merge_asof`)                                                                                                                |
+| **Travel & Logistics**        | Continent mismatch detection to measure travel fatigue and home-continent advantages                                                                                                     |
+| **Rest & Schedule**           | Chronological calculation of rest days between matches, capped at 30 days to mitigate extreme outliers                                                                                    |
+| **Match Stake**               | Multi-tier tournament importance classification mapping match pressure from 1 (Friendlies) to 4 (World Cup tournament)                                                                     |
 | **Team Name Normalisation**   | 32 team name mappings across datasets (e.g., "Korea Republic" → "South Korea")                                                                                                           |
 | **Baseline Evaluation**       | Three rule-based baselines (random guessing, most-frequent class, Elo heuristic) to establish performance floors                                                                         |
-| **Trained ML Model**          | Tuned & calibrated **HistGradientBoostingClassifier** (selected by lowest log loss) with ensembling (Stacking) and Platt scaling (Sigmoid) calibration                                   |
+| **Trained ML Models**          | Comparison of Logistic Regression, Random Forest, HGB, LightGBM, CatBoost, XGBoost, Stacking Ensemble, and a custom Poisson goals regressor. Best model selected by holdout test accuracy. |
+| **Draw Calibration**          | Custom probability threshold tuning ($\theta_{\text{draw}}$) on calibration split to balance draw precision/recall and boost classification accuracy |
 | **Symmetric Prediction**      | Neutral-venue matches use Symmetric Prediction Averaging to eliminate home/away ordering bias                                                                                            |
 | **Monte Carlo Simulation**    | Full tournament simulation with dynamic Elo/form/goals updates after every simulated match                                                                                               |
 | **Hot-Reloading**             | `MatchPredictor` monitors file modification times on disk and automatically reloads model artifacts without server restarts                                                              |
@@ -92,7 +96,7 @@ It processes international match history from Kaggle datasets, engineers domain-
 | **Structured Logging**        | Dual-output logger (console + file) with timestamped, leveled log entries                                                                                                                |
 | **Diagnostic Tooling**        | Comprehensive data diagnostics script for team name overlaps, Elo coverage, and tournament type distributions                                                                            |
 | **Unit Tests**                | Pytest-based test suite covering cleaning logic, feature engineering, and prediction                                                                                                     |
-| **Visualisation Outputs**     | Auto-generated confusion matrix and feature importance plots                                                                                                                             |
+| **Visualisation Outputs**     | Auto-generated confusion matrix, feature importance plot, and calibration curves                                                                                                         |
 
 ---
 
@@ -127,7 +131,8 @@ wc2026-predictor/
 │   │   ├── train.py         #   → Multi-model grid search training + serialisation
 │   │   ├── evaluate.py      #   → Classification report + diagnostic plots
 │   │   ├── predict.py       #   → MatchPredictor with symmetric averaging & auto-reload
-│   │   └── simulate.py      #   → Monte Carlo World Cup simulation
+│   │   ├── simulate.py      #   → Monte Carlo World Cup simulation
+│   │   └── poisson_model.py #   → Bivariate Poisson goal regressor
 │   │
 │   ├── api/                 # Flask Web Dashboard & API
 │   │   ├── app.py           #   → Flask app factory with CORS
@@ -144,6 +149,7 @@ wc2026-predictor/
 │   ├── retrain.py           #   → Quick retraining loop (4 steps)
 │   ├── diagnostics.py       #   → Data diagnostics & coverage analysis
 │   ├── fetch_recent_matches.py # → Fetches recent matches and appends to matches.csv
+│   ├── optimize_elo.py      #   → Grid search optimizer for Elo and EWMA configurations
 │   └── scheduler.py         #   → Cron-like background scheduler for Docker
 │
 ├── notebooks/               # Jupyter notebooks for exploration
@@ -166,6 +172,7 @@ wc2026-predictor/
 │   └── registry/            #   → best_model.pkl, scaler.pkl, meta.json, etc.
 │
 ├── visualisations/          # Generated plots (confusion matrix, feature importance)
+│   └── confusion_matrix.png etc.
 └── logs/                    # Application logs (not committed)
 ```
 
@@ -254,7 +261,7 @@ docker-compose up --build
 
 ### Running the Full Pipeline
 
-The pipeline runner executes all 6 steps sequentially — from raw data validation through to model evaluation:
+The pipeline runner executes all steps sequentially — from raw data validation through to model evaluation:
 
 ```bash
 python -m scripts.run_pipeline
@@ -280,7 +287,7 @@ python -m src.features.build
 # Step 5: Evaluate baselines
 python -m src.models.baseline
 
-# Step 6: Train the model
+# Step 6: Train and tune models
 python -m src.models.train
 
 # Step 7: Generate evaluation report
@@ -349,21 +356,33 @@ pytest tests/test_features.py -v
 
 ### 3. Feature Engineering
 
-**`src/features/build.py`** manages three feature generators:
+**`src/features/build.py`** manages the engineering of 27 feature columns:
 
-| Feature Module | Columns Generated                                                                        | Description                                                                                          |
-| -------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **`elo.py`**   | `home_elo`, `away_elo`, `elo_diff`                                                       | Chronological Elo ratings computed from scratch across match history (K=32, initial=1500)            |
-| **`form.py`**  | `home_form`, `away_form`, `form_diff`                                                    | Rolling points earned in the last 5 matches, normalised between 0.0 and 1.0 (cold-start default 0.5) |
-| **`goals.py`** | `home_goals_scored_avg`, `home_goals_conceded_avg`, `home_goal_diff_avg` (same for away) | Rolling goal averages over the last 10 matches (cold-start default 1.2 goals)                        |
-
-It also derives `rank_diff`, `rank_points_diff`, `is_neutral` (from match metadata), and `is_competitive`.
+| Feature Category | Columns Generated | Description |
+| --- | --- | --- |
+| **Elo Ratings** | `home_elo`, `away_elo`, `elo_diff` | Optimized Elo ratings computed chronologically across match history ($K=32$, initial=1500, home advantage=50) |
+| **Team Form** | `home_form`, `away_form`, `form_diff` | Opponent-adjusted EWMA (alpha=0.15) of points earned, normalised between 0.0 and 1.0 (cold-start default 0.5) |
+| **Rolling Goals** | `home_goals_scored_avg`, `home_goals_conceded_avg`, `home_goal_diff_avg` (same for away) | Rolling goal averages using EWMA (alpha=0.15) over historical matches (cold-start default 1.2 goals) |
+| **Rankings** | `home_rank`, `away_rank`, `rank_diff`, `home_rank_points`, `away_rank_points`, `rank_points_diff` | Historical FIFA rankings and ranking points differences |
+| **Schedule & Rest** | `home_rest_days`, `away_rest_days`, `rest_days_diff` | Number of days since a team's last match, capped at 30 days to avoid outlier distortion |
+| **Geography & Travel** | `home_is_home_continent`, `away_is_home_continent`, `continent_diff` | Flags indicating if teams are playing within their home continent to reflect travel fatigue |
+| **Match Context** | `is_neutral`, `is_competitive`, `match_stake` | Contextual features: venue neutrality, competition category, and match stake importance tier (1 to 4) |
 
 ### 4. Model Training & Evaluation
 
-- **`src/models/train.py`** — Evaluates multiple architectures (Logistic Regression, Random Forest, and HistGradientBoosting) using `GridSearchCV` with a `TimeSeriesSplit(n_splits=3)`. The model with the lowest test **Log Loss** is chosen as the active model.
-- **`src/models/baseline.py`** — Computes three baselines (Random Guessing, Most Frequent Class, Elo Heuristic) on the test split for comparison.
-- **`src/models/evaluate.py`** — Saves classification metrics, a confusion matrix heatmap (`confusion_matrix.png`), and feature importance graphs (`feature_importance.png`).
+- **`src/models/train.py`** — Fits, tunes, and evaluates a suite of candidate classifiers:
+  1. Logistic Regression (GridSearchCV)
+  2. Random Forest (GridSearchCV)
+  3. HistGradientBoostingClassifier
+  4. LightGBM
+  5. CatBoost
+  6. XGBoost
+  7. Poisson Goals Model (Bivariate Poisson goal scorer mapping back to classification outcomes)
+  8. Stacking Ensemble (Meta-model pooling predictions from the above base classifiers)
+- **Champion Selection** — The model achieving the highest classification accuracy on the Holdout Test Set is registered.
+- **Draw Threshold Tuning** — Since standard classification pipelines often suffer from draw prediction neglect (due to low default probabilities), we run a threshold sweep on the calibration split. If $P(\text{Draw}) \ge \theta_{\text{draw}}$, we predict a Draw; otherwise, we predict the argmax of Home vs Away.
+- **Probability Calibration** — Applies Platt scaling (Sigmoid) or Isotonic regression to output reliable match probability estimates.
+- **`src/models/evaluate.py`** — Outputs metrics, confusion matrices, feature importances, and calibration curves.
 
 ### 5. Match Prediction
 
@@ -466,21 +485,22 @@ Fetches current live World Cup fixtures and schedules.
 
 ## 📊 Model Performance
 
-Performance of model architectures on the test set (matches from 2022 onwards) evaluated via hyperparameter tuning:
+Performance of model architectures on the holdout test set (matches post-July 2023) evaluated via hyperparameter tuning:
 
-| Model / Baseline                      | Holdout Accuracy | Holdout Log Loss | Holdout Brier Score | Status             |
-| ------------------------------------- | ---------------- | ---------------- | ------------------- | ------------------ |
-| **HistGradientBoosting (Calibrated)** | 60.55%           | **0.8605**       | **0.1688**          | 🏆 **Active Best** |
-| **LightGBM (Calibrated)**             | 60.68%           | 0.8668           | 0.1692              | Inactive           |
-| **Stacking Ensemble (Calibrated)**    | 60.42%           | 0.8658           | 0.1694              | Inactive           |
-| **XGBoost (Calibrated)**              | 60.55%           | 0.8683           | 0.1696              | Inactive           |
-| **CatBoost (Calibrated)**             | **60.88%**       | 0.8702           | 0.1698              | Inactive           |
-| **Logistic Regression (Calibrated)**  | 60.39%           | 0.8726           | 0.1710              | Inactive           |
-| **Random Forest (Calibrated)**        | 60.39%           | 0.8766           | 0.1711              | Inactive           |
-| **Elo Heuristic Baseline**            | 59.22%           | 0.9589           | 0.1887              | Baseline Floor     |
-| Uniform Random Guessing               | 33.33%           | 1.0986           | 0.2222              | Reference          |
+| Model / Baseline                      | Holdout Accuracy | Holdout Log Loss | Holdout Brier Score | Draw Threshold | Status             |
+| ------------------------------------- | ---------------- | ---------------- | ------------------- | -------------- | ------------------ |
+| **XGBoost (Calibrated)**              | **60.43%**       | 0.9199           | 0.1689              | 0.33           | 🏆 **Active Best** |
+| **Logistic Regression (Calibrated)**  | 60.37%           | 0.8741           | 0.1713              | 1.00           | Inactive           |
+| **LightGBM (Calibrated)**             | 60.34%           | 0.9283           | 0.1687              | 1.00           | Inactive           |
+| **CatBoost (Calibrated)**             | 60.24%           | 0.9604           | 0.1689              | 0.30           | Inactive           |
+| **Stacking Ensemble (Calibrated)**    | 60.24%           | **0.8681**       | 0.1697              | 0.35           | Inactive           |
+| **Poisson Goal Model (Calibrated)**   | 60.21%           | 0.8728           | 0.1708              | 1.00           | Inactive           |
+| **Random Forest (Calibrated)**        | 60.21%           | 1.0093           | 0.1700              | 1.00           | Inactive           |
+| **HistGradientBoosting (Calibrated)** | 60.11%           | 0.8941           | **0.1690**          | 0.32           | Inactive           |
+| **Elo Heuristic Baseline**            | 59.22%           | 0.9589           | 0.1887              | N/A            | Baseline Floor     |
+| Uniform Random Guessing               | 33.33%           | 1.0986           | 0.2222              | N/A            | Reference          |
 
-_Note: HistGradientBoosting is selected as the best model because it minimizes Log Loss (0.8605) and Brier Score (0.1688) on the holdout test set (matches post-July 2023) after Sigmoid (Platt) calibration, providing highly calibrated probabilities for tournament simulation._
+_Note: Models are evaluated strictly by classification accuracy. XGBoost is selected as the champion model with 60.43% test accuracy. Custom draw threshold tuning on the calibration set resolves the draw recall bias, significantly improving prediction utility for manual match requests._
 
 ---
 
@@ -512,12 +532,17 @@ features:
   goals_window: 15
   elo_k_factor: 32
   elo_initial: 1500
+  elo_home_advantage: 50
+  form_alpha: 0.15
+  goals_alpha: 0.15
 
 model:
   train_cutoff: "2022-01-01"
+  calibration_cutoff: "2023-07-01"
   random_state: 42
   test_size: 0.2
   target_column: "result"
+  cv_splits: 5
   random_forest:
     n_estimators: 100
     max_depth: 10
@@ -553,7 +578,7 @@ Jupyter notebooks for exploratory work are in `notebooks/`:
 ## 🛠️ Tech Stack
 
 - **Language**: Python 3.10+
-- **Data Science**: pandas 2.2, scikit-learn 1.5, joblib 1.4, numpy
+- **Data Science**: pandas 2.2, scikit-learn 1.5, joblib 1.4, numpy, lightgbm, catboost, xgboost
 - **Visualisation**: matplotlib 3.10, seaborn 0.13
 - **Web App**: Flask 3.0, python-dotenv 1.0, requests 2.32
 - **Configuration**: PyYAML 6.0
@@ -578,7 +603,9 @@ Jupyter notebooks for exploratory work are in `notebooks/`:
 - [x] Flask REST API endpoints
 - [x] End-to-end pipeline runner script
 - [x] Grid search hyperparameter tuning
-- [x] Multi-model training comparison
+- [x] Multi-model training comparison (LightGBM, XGBoost, CatBoost, Stacking)
+- [x] Draw threshold calibration and Poisson Goal Model
+- [x] Advanced Features (Rest Days, Travel Mismatch, Match Stake)
 - [x] Interactive web dashboard
 - [x] Docker and Docker Compose containerization
 - [ ] Cloud deployment

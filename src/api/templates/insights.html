@@ -34,6 +34,7 @@
       .bento-grid {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
+        border-collapse: collapse;
         gap: 24px;
       }
       .glass-card {
@@ -354,7 +355,7 @@
                 class="flex justify-between items-center border-b border-outline-variant/30 pb-2"
               >
                 <span class="text-on-surface-variant">Feature Count</span>
-                <span class="font-label-mono text-on-surface">20 columns</span>
+                <span class="font-label-mono text-on-surface" id="featureCount">27 columns</span>
               </div>
               <div
                 class="flex flex-col gap-1 border-t border-outline-variant/30 pt-3 pb-2"
@@ -678,6 +679,8 @@
           document.getElementById("testBrier").innerText = (
             data.test_metrics.brier_score || 0.1707
           ).toFixed(4);
+          document.getElementById("featureCount").innerText =
+            `${(data.features || []).length} columns`;
           document.getElementById("bestParamsVal").innerText = JSON.stringify(
             data.best_params || {},
           );

@@ -173,7 +173,7 @@
                         <div class="border-b border-outline-variant px-6 py-3 flex items-center justify-between bg-surface-container"><span class="text-label-mono font-label-mono text-secondary flex items-center gap-2"><span class="material-symbols-outlined text-sm">troubleshoot</span> AI TACTICAL ADVANTAGE</span><span class="text-label-mono font-label-mono text-outline text-[10px]">ANALYSIS ENGINE GENERATED</span></div>
                         <div class="p-8 grid md:grid-cols-2 gap-8">
                             <div class="space-y-4"><h3 class="text-headline-md font-headline-md text-on-surface" id="insightsTitle">Tactical Advantage: Calculating...</h3><p class="text-body-md text-on-surface-variant leading-relaxed" id="insightsText">The pipeline parses structural features to calculate advantage profiles...</p></div>
-                            <div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-lg"><div class="flex items-center gap-4 mb-4"><div class="p-2 bg-primary-container text-secondary rounded"><span class="material-symbols-outlined">analytics</span></div><span class="text-label-mono font-label-mono">Simulation Parameters</span></div><ul class="space-y-2 text-label-mono font-label-mono text-sm text-on-surface-variant"><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Neutral Ground Factor</span><span class="text-on-surface" id="paramNeutralVal">Active</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Recent Form Window</span><span class="text-on-surface">5 matches</span></li></ul></div>
+                            <div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-lg"><div class="flex items-center gap-4 mb-4"><div class="p-2 bg-primary-container text-secondary rounded"><span class="material-symbols-outlined">analytics</span></div><span class="text-label-mono font-label-mono">Simulation Parameters</span></div><ul class="space-y-2 text-label-mono font-label-mono text-sm text-on-surface-variant"><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Neutral Ground Factor</span><span class="text-on-surface" id="paramNeutralVal">Active</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Recent Form Window</span><span class="text-on-surface">5 matches</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Rest Days / Fatigue</span><span class="text-on-surface">Dynamic Rest Days</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Travel Mismatch Factor</span><span class="text-on-surface">Active (Continent Check)</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Match Stake Importance</span><span class="text-on-surface" id="paramMatchStakeVal">Competitive (Tier 3)</span></li></ul></div>
                         </div>
                     </div>
                 </div>
@@ -224,7 +224,7 @@
             const homeParam = urlParams.get('home');
             const awayParam = urlParams.get('away');
             const neutralParam = urlParams.get('neutral');
- 
+  
             if(sA.options.length>0){
                 let fi = -1;
                 let bi = -1;
@@ -310,6 +310,7 @@
                     document.getElementById('insightsTitle').innerText=winner==='Draw'?'Stalemate Projected':`Advantage: ${winner}`;
                     document.getElementById('insightsText').innerHTML=winner==='Draw'?`Closely matched — high likelihood (${pD}%) of a draw. ELO scores are within ${Math.abs(ed)} points.`:`<span class="text-secondary font-bold">${winner}</span> holds a ${winner===teamA?pH:pA}% win probability, backed by ${Math.abs(ed)} ELO points lead.`;
                     document.getElementById('paramNeutralVal').innerText=isNeutral===1?'Active (Symmetric)':`Inactive (Home advantage to ${teamA})`;
+                    document.getElementById('paramMatchStakeVal').innerText=isCompetitive===1?'Competitive (Tier 3)':'Friendly (Tier 1)';
                 },1200);
             }catch(e){console.error(e);btn.classList.remove('opacity-50','pointer-events-none');btn.innerText='Run Prediction';alert("API error - make sure Flask is running!");}
         });

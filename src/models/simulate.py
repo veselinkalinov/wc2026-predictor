@@ -2,7 +2,7 @@ from multiprocessing import Pool
 from src.utils.logger import get_logger
 from src.utils.config import config
 from src.features.elo import get_k_factor, goal_margin_multiplier
-from src.models.predict import MatchPredictor
+from src.models.predict import MatchPredictor, CONTINENT_MAP
 import pandas as pd
 import numpy as np
 import random
@@ -76,10 +76,10 @@ class TournamentSimulator:
                 scaler = joblib.load(scaler_path)
                 clf = model.calibrated_classifiers_[0]
 
-                self.fast_W = clf.estimator.coef_  # (3, 20)
+                self.fast_W = clf.estimator.coef_  # (3, 27) now 27 features
                 self.fast_intercept = clf.estimator.intercept_  # (3,)
-                self.fast_mean = scaler.mean_  # (20,)
-                self.fast_scale = scaler.scale_  # (20,)
+                self.fast_mean = scaler.mean_  # (27,)
+                self.fast_scale = scaler.scale_  # (27,)
                 self.fast_a = np.array([c.a_ for c in clf.calibrators])
                 self.fast_b = np.array([c.b_ for c in clf.calibrators])
 
@@ -198,7 +198,6 @@ class TournamentSimulator:
     def _simulate_match(self, team_a: str, team_b: str, is_knockout: bool = False) -> tuple:
         """
         Simulate a match between team A and team B using the best model.
-        Returns: (home_goals, away_goals, winner)
         """
         if team_a in HOSTS and team_b not in HOSTS:
             home_team, away_team = team_a, team_b
@@ -290,7 +289,18 @@ class TournamentSimulator:
         h_state = self.predictor.get_team_state(home_team)
         a_state = self.predictor.get_team_state(away_team)
 
-        # Feature array vectorised
+        # Compute travel continent features
+        h_cont = CONTINENT_MAP.get(home_team)
+        a_cont = CONTINENT_MAP.get(away_team)
+        if is_neutral == 0:
+            h_is_home_cont = 1
+            a_is_home_cont = 1 if h_cont == a_cont else 0
+        else:
+            host_continent = "North America"
+            h_is_home_cont = 1 if h_cont == host_continent else 0
+            a_is_home_cont = 1 if a_cont == host_continent else 0
+
+        # Feature array vectorised (27 features now)
         feat = np.array([[
             h_state["elo"],
             a_state["elo"],
@@ -311,7 +321,14 @@ class TournamentSimulator:
             a_state["rank_points"],
             h_state["rank_points"] - a_state["rank_points"],
             is_neutral,
-            1  # is_competitive defaults to 1
+            1,  # is_competitive defaults to 1
+            30.0,  # home_rest_days
+            30.0,  # away_rest_days
+            0.0,   # rest_days_diff
+            float(h_is_home_cont),
+            float(a_is_home_cont),
+            float(h_is_home_cont - a_is_home_cont),
+            4.0  # match_stake (WC matches are tier 4)
         ]])
 
         f = np.dot(feat, self.fast_W_scaled.T) + self.fast_intercept_scaled
@@ -376,7 +393,6 @@ class TournamentSimulator:
     def simulate_group_stage(self) -> dict:
         """
         Simulate the group stage for all 12 groups.
-        Returns: standings: {group_letter: pd.DataFrame of standings}
         """
         standings = {}
 
@@ -444,9 +460,6 @@ class TournamentSimulator:
         return standings
 
     def _determine_knockout_teams(self, standings: dict) -> list:
-        """
-        Collect group winners, runners-up, and 8 best 3rd-placed teams.
-        """
         knockout_teams = []
         third_place_teams = []
 
@@ -603,10 +616,6 @@ class TournamentSimulator:
         return champion
 
     def _get_knockout_bracket_teams(self, standings: dict) -> list:
-        """
-        Arrange the 32 qualifying teams into the official FIFA World Cup 2026 R32 bracket matchups.
-        Pairs group winners, runners-up, and the 8 best 3rd-placed teams.
-        """
         third_place_teams = []
         for group_letter, df in standings.items():
             third_team = df.loc[2, "team"]
@@ -686,8 +695,7 @@ class TournamentSimulator:
 
     def simulate_detailed_tournament(self) -> dict:
         """
-        Simulate a single end-to-end tournament and return full details:
-        group stage matches, final standings, and all knockout round pairings/results.
+        Simulate a single end-to-end tournament and return full details.
         """
         self.predictor.clear_prediction_cache()
         self._reset_states()
@@ -795,14 +803,13 @@ class TournamentSimulator:
     def run_monte_carlo(self, n_sims: int = 1000) -> pd.Series:
         """
         Run Monte Carlo simulations of the entire World Cup.
-        Returns a sorted Series of team win probabilities.
         """
         self.predictor.clear_prediction_cache()
         self.predictor.disable_reload = True
         logger.info(
             f"Starting Monte Carlo simulation of {n_sims} tournament runs...")
 
-        # Determine number of worker processes (leave 1 core free for system stability)
+        # Determine number of worker processes
         num_workers = max(1, os.cpu_count() - 1)
         logger.info(f"Spawning {num_workers} parallel worker processes...")
 

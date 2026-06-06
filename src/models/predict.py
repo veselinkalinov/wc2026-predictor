@@ -17,6 +17,30 @@ from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+# Geographic continent mapping for top national teams
+CONTINENT_MAP = {
+    # Europe (UEFA)
+    "Germany": "Europe", "France": "Europe", "England": "Europe", "Italy": "Europe", "Spain": "Europe",
+    "Netherlands": "Europe", "Portugal": "Europe", "Belgium": "Europe", "Croatia": "Europe", "Denmark": "Europe",
+    "Sweden": "Europe", "Switzerland": "Europe", "Poland": "Europe", "Austria": "Europe", "Ukraine": "Europe",
+    "Turkey": "Europe", "Russia": "Europe", "Wales": "Europe", "Scotland": "Europe", "Republic of Ireland": "Europe",
+    # South America (CONMEBOL)
+    "Brazil": "South America", "Argentina": "South America", "Uruguay": "South America", "Colombia": "South America",
+    "Chile": "South America", "Peru": "South America", "Ecuador": "South America", "Paraguay": "South America",
+    "Venezuela": "South America", "Bolivia": "South America",
+    # North/Central America (CONCACAF)
+    "United States": "North America", "Mexico": "North America", "Canada": "North America", "Costa Rica": "North America",
+    "Jamaica": "North America", "Honduras": "North America", "Panama": "North America", "El Salvador": "North America",
+    # Africa (CAF)
+    "Senegal": "Africa", "Morocco": "Africa", "Algeria": "Africa", "Nigeria": "Africa", "Egypt": "Africa",
+    "Cameroon": "Africa", "Ghana": "Africa", "Ivory Coast": "Africa", "Tunisia": "Africa", "Mali": "Africa",
+    # Asia (AFC)
+    "Japan": "Asia", "South Korea": "Asia", "Iran": "Asia", "Australia": "Asia", "Saudi Arabia": "Asia",
+    "Qatar": "Asia", "Iraq": "Asia", "United Arab Emirates": "Asia", "China PR": "Asia",
+    # Oceania (OFC)
+    "New Zealand": "Oceania"
+}
+
 
 class MatchPredictor:
     def __init__(self):
@@ -37,6 +61,7 @@ class MatchPredictor:
 
         self.features = meta["features"]
         self.classes = meta["classes"]
+        self.draw_threshold = meta.get("draw_threshold", 1.0)
 
         # Load the latest matches to get recent stats for teams
         self.feature_matrix = pd.read_csv(self.feature_matrix_path)
@@ -61,7 +86,6 @@ class MatchPredictor:
     def _check_and_reload(self) -> bool:
         """
         Check if the model file on disk has been updated, and reload if necessary.
-        Returns True if a reload occurred, and False otherwise.
         """
         if getattr(self, "disable_reload", False):
             return False
@@ -84,6 +108,7 @@ class MatchPredictor:
                     meta = json.load(f)
                 self.features = meta["features"]
                 self.classes = meta["classes"]
+                self.draw_threshold = meta.get("draw_threshold", 1.0)
 
                 # Reload feature matrix and team states
                 self.feature_matrix = pd.read_csv(self.feature_matrix_path)
@@ -150,8 +175,7 @@ class MatchPredictor:
 
     def update_team_state(self, team: str, state: dict) -> None:
         """
-        Updates the running state of a team. Used during tournament simulation
-        to update Elo/form after a game is simulated.
+        Updates the running state of a team.
         """
         self.team_states[team] = state
 
@@ -162,7 +186,6 @@ class MatchPredictor:
         if team in self.team_states:
             return self.team_states[team]
 
-        # Default state for unknown teams
         return {
             "elo": 1500.0,
             "form": 0.5,
@@ -181,6 +204,17 @@ class MatchPredictor:
         """
         h_state = self.get_team_state(home_team)
         a_state = self.get_team_state(away_team)
+
+        # Compute travel continent features
+        h_cont = CONTINENT_MAP.get(home_team)
+        a_cont = CONTINENT_MAP.get(away_team)
+        if is_neutral == 0:
+            h_is_home_cont = 1
+            a_is_home_cont = 1 if h_cont == a_cont else 0
+        else:
+            host_continent = "North America"
+            h_is_home_cont = 1 if h_cont == host_continent else 0
+            a_is_home_cont = 1 if a_cont == host_continent else 0
 
         row_map = {
             "home_elo": h_state["elo"],
@@ -203,6 +237,13 @@ class MatchPredictor:
             "rank_points_diff": h_state["rank_points"] - a_state["rank_points"],
             "is_neutral": is_neutral,
             "is_competitive": is_competitive,
+            "home_rest_days": 30.0,
+            "away_rest_days": 30.0,
+            "rest_days_diff": 0.0,
+            "home_is_home_continent": float(h_is_home_cont),
+            "away_is_home_continent": float(a_is_home_cont),
+            "continent_diff": float(h_is_home_cont - a_is_home_cont),
+            "match_stake": 4.0 if is_competitive == 1 else 1.0
         }
 
         # Build list in the exact order of self.features
@@ -218,7 +259,16 @@ class MatchPredictor:
         h_state = self.get_team_state(home_team)
         a_state = self.get_team_state(away_team)
 
-        # Assemble row dictionary matching the feature list order in train.py
+        h_cont = CONTINENT_MAP.get(home_team)
+        a_cont = CONTINENT_MAP.get(away_team)
+        if is_neutral == 0:
+            h_is_home_cont = 1
+            a_is_home_cont = 1 if h_cont == a_cont else 0
+        else:
+            host_continent = "North America"
+            h_is_home_cont = 1 if h_cont == host_continent else 0
+            a_is_home_cont = 1 if a_cont == host_continent else 0
+
         row = {
             "home_elo": h_state["elo"],
             "away_elo": a_state["elo"],
@@ -240,9 +290,15 @@ class MatchPredictor:
             "rank_points_diff": h_state["rank_points"] - a_state["rank_points"],
             "is_neutral": is_neutral,
             "is_competitive": is_competitive,
+            "home_rest_days": 30.0,
+            "away_rest_days": 30.0,
+            "rest_days_diff": 0.0,
+            "home_is_home_continent": float(h_is_home_cont),
+            "away_is_home_continent": float(a_is_home_cont),
+            "continent_diff": float(h_is_home_cont - a_is_home_cont),
+            "match_stake": 4.0 if is_competitive == 1 else 1.0
         }
 
-        # Convert to DataFrame to ensure feature ordering is matched via indexing
         return pd.DataFrame([row])[self.features]
 
     def predict_match(
@@ -251,10 +307,8 @@ class MatchPredictor:
         """
         Predict outcomes using Symmetric Prediction Averaging.
         """
-        # Ensure latest model states are loaded if updated on disk
         self._check_and_reload()
 
-        # Build rounded cache key to optimize batch simulation runs
         h_state = self.get_team_state(home_team)
         a_state = self.get_team_state(away_team)
 
@@ -274,42 +328,39 @@ class MatchPredictor:
         if cache_key in self.prediction_cache:
             return self.prediction_cache[cache_key]
 
-            # 1. Forward direction: Team A as Home, Team B as Away (optimized using numpy)
+        # 1. Forward direction: Team A as Home, Team B as Away
         feat_forward = self._construct_features_numpy(
             home_team, away_team, is_neutral, is_competitive)
 
-        # Direct NumPy math instead of slow Scikit-learn wrapper
         feat_forward_scaled = (
             feat_forward - self.scaler.mean_) / self.scaler.scale_
 
-        probs_forward = self.model.predict_proba(feat_forward_scaled)[
-            0]  # [p_H, p_D, p_A]
+        probs_forward = self.model.predict_proba(feat_forward_scaled)[0]
 
         if is_neutral == 1:
-
             # 2. Reverse direction: Team B as Home, Team A as Away
             feat_reverse = self._construct_features_numpy(
                 away_team, home_team, is_neutral, is_competitive)
 
-            # Direct NumPy math instead of slow Scikit-learn wrapper
             feat_reverse_scaled = (
                 feat_reverse - self.scaler.mean_) / self.scaler.scale_
 
             probs_reverse = self.model.predict_proba(feat_reverse_scaled)[0]
 
-            # Invert the reverse probabilities: swap index 0 (H) and index 2 (A)
             probs_reverse_inverted = np.array(
                 [probs_reverse[2], probs_reverse[1], probs_reverse[0]])
 
-            # 3. Average the forward and inverted reverse predictions
+            # 3. Average forward and inverted reverse predictions
             probs_final = (probs_forward + probs_reverse_inverted) / 2.0
         else:
-            # Keep asymmetric predictions if a host team actually has home field advantage
             probs_final = probs_forward
 
-        # Extract prediction class
-        pred_idx = np.argmax(probs_final)
-        prediction = self.classes[pred_idx]
+        # Extract prediction class with threshold
+        p_home, p_draw, p_away = probs_final[0], probs_final[1], probs_final[2]
+        if p_draw >= self.draw_threshold and self.draw_threshold < 1.0:
+            prediction = self.classes[1]  # "D"
+        else:
+            prediction = self.classes[0] if p_home >= p_away else self.classes[2]  # "H" or "A"
 
         res_dict = {
             "home_team": home_team,

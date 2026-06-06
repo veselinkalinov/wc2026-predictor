@@ -14,7 +14,7 @@ def test_predictor_initialisation():
     # Assert model artifacts are loaded
     assert predictor.model is not None
     assert predictor.scaler is not None
-    assert len(predictor.features) == 20
+    assert len(predictor.features) == 27
     assert list(predictor.classes) == ["H", "D", "A"]
 
     # Assert team states were parsed
