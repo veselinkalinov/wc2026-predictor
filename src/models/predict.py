@@ -43,11 +43,17 @@ CONTINENT_MAP = {
 
 
 class MatchPredictor:
-    def __init__(self):
+    def __init__(self, model_filename="best_model.pkl"):
         models_dir = Path(config["paths"]["models"])
         features_dir = Path(config["paths"]["features"])
 
-        self.model_path = models_dir / "best_model.pkl"
+        self.model_filename = model_filename
+        self.model_path = models_dir / model_filename
+        if not self.model_path.exists():
+            logger.warning(f"Requested model file {model_filename} not found. Falling back to best_model.pkl.")
+            self.model_path = models_dir / "best_model.pkl"
+            self.model_filename = "best_model.pkl"
+
         self.scaler_path = models_dir / "scaler.pkl"
         self.meta_path = models_dir / "meta.json"
         self.feature_matrix_path = features_dir / "feature_matrix.csv"
@@ -61,7 +67,23 @@ class MatchPredictor:
 
         self.features = meta["features"]
         self.classes = meta["classes"]
-        self.draw_threshold = meta.get("draw_threshold", 1.0)
+        
+        # Load draw threshold for this specific model if it exists in the meta comparison
+        model_display_name = {
+            "logistic_regression.pkl": "Logistic Regression",
+            "random_forest.pkl": "Random Forest",
+            "histgradientboosting.pkl": "HistGradientBoosting",
+            "lightgbm.pkl": "LightGBM",
+            "catboost.pkl": "CatBoost",
+            "xgboost.pkl": "XGBoost",
+            "poisson_goal_model.pkl": "Poisson Goal Model",
+            "stacking_ensemble.pkl": "Stacking Ensemble"
+        }.get(self.model_filename)
+        
+        if model_display_name and "comparison" in meta and model_display_name in meta["comparison"]:
+            self.draw_threshold = meta["comparison"][model_display_name].get("draw_threshold", 1.0)
+        else:
+            self.draw_threshold = meta.get("draw_threshold", 1.0)
 
         # Load the latest matches to get recent stats for teams
         self.feature_matrix = pd.read_csv(self.feature_matrix_path)
@@ -73,7 +95,7 @@ class MatchPredictor:
 
         # Track file modification time for auto-reloads
         self.last_loaded_time = self.model_path.stat(
-        ).st_mtime if self.model_path.exists() else 0
+            ).st_mtime if self.model_path.exists() else 0
         self.last_check_time = 0.0
         self.prediction_cache = {}
 
@@ -100,7 +122,7 @@ class MatchPredictor:
         mtime = self.model_path.stat().st_mtime
         if mtime > self.last_loaded_time:
             logger.info(
-                "Model file update detected on disk. Reloading model artifacts and team states...")
+                f"Model file update detected on disk for {self.model_filename}. Reloading model artifacts and team states...")
             try:
                 self.model = joblib.load(self.model_path)
                 self.scaler = joblib.load(self.scaler_path)
@@ -108,7 +130,22 @@ class MatchPredictor:
                     meta = json.load(f)
                 self.features = meta["features"]
                 self.classes = meta["classes"]
-                self.draw_threshold = meta.get("draw_threshold", 1.0)
+                
+                model_display_name = {
+                    "logistic_regression.pkl": "Logistic Regression",
+                    "random_forest.pkl": "Random Forest",
+                    "histgradientboosting.pkl": "HistGradientBoosting",
+                    "lightgbm.pkl": "LightGBM",
+                    "catboost.pkl": "CatBoost",
+                    "xgboost.pkl": "XGBoost",
+                    "poisson_goal_model.pkl": "Poisson Goal Model",
+                    "stacking_ensemble.pkl": "Stacking Ensemble"
+                }.get(self.model_filename)
+                
+                if model_display_name and "comparison" in meta and model_display_name in meta["comparison"]:
+                    self.draw_threshold = meta["comparison"][model_display_name].get("draw_threshold", 1.0)
+                else:
+                    self.draw_threshold = meta.get("draw_threshold", 1.0)
 
                 # Reload feature matrix and team states
                 self.feature_matrix = pd.read_csv(self.feature_matrix_path)
