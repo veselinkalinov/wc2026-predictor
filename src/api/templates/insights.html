@@ -234,9 +234,9 @@
           Model Architecture &amp; Insights
         </h1>
         <p class="text-body-lg font-body-lg text-on-surface-variant max-w-3xl">
-          Deep dive into the Scikit-Learn pipeline powering the 2026 World Cup
-          probabilities. Transparency in sports analytics leads to better
-          strategic decisions.
+          Deep dive into the probability-first pipeline powering the 2026 World Cup
+          probabilities. Log loss, Brier score, and calibration now drive model
+          selection for more reliable 1v1 match forecasts.
         </p>
       </header>
 
@@ -330,7 +330,15 @@
               <div
                 class="flex justify-between items-center border-b border-outline-variant/30 pb-2"
               >
-                <span class="text-on-surface-variant">Test Set Accuracy</span>
+                <span class="text-on-surface-variant">Selected By</span>
+                <span class="font-label-mono text-on-surface" id="selectedBy"
+                  >log_loss</span
+                >
+              </div>
+              <div
+                class="flex justify-between items-center border-b border-outline-variant/30 pb-2"
+              >
+                <span class="text-on-surface-variant">Accuracy Display</span>
                 <span class="font-label-mono text-on-surface" id="testAccuracy"
                   >0.0%</span
                 >
@@ -373,7 +381,7 @@
             <div
               class="text-label-mono text-[10px] uppercase text-outline mb-2"
             >
-              Live Probability Calibration
+              Probability-First Selection
             </div>
             <div class="flex items-center gap-1">
               <div class="w-1.5 h-4 bg-secondary rounded-sm"></div>
@@ -412,7 +420,7 @@
                     Model Architecture
                   </th>
                   <th class="py-3 px-4 uppercase font-semibold text-center">
-                    Accuracy Score
+                    Accuracy
                   </th>
                   <th class="py-3 px-4 uppercase font-semibold text-center">
                     Log Loss
@@ -672,6 +680,8 @@
             data.model_type;
           document.getElementById("activeModelFlowLabel").innerText =
             data.model_type;
+          document.getElementById("selectedBy").innerText =
+            data.selected_by || "log_loss";
           document.getElementById("testAccuracy").innerText =
             `${(data.test_metrics.accuracy * 100).toFixed(1)}%`;
           document.getElementById("testLogLoss").innerText =

@@ -189,7 +189,7 @@ class TournamentSimulator:
         a_state["goals_conceded_avg"] = (
             1.0 - alpha_goals) * a_state["goals_conceded_avg"] + alpha_goals * home_goals
         a_state["goal_diff_avg"] = a_state["goals_scored_avg"] - \
-            h_state["goals_conceded_avg"]
+            a_state["goals_conceded_avg"]
 
         # Save back into predictor
         self.predictor.update_team_state(home_team, h_state)
@@ -209,31 +209,31 @@ class TournamentSimulator:
             home_team, away_team = team_a, team_b
             is_neutral = 1
 
-        pred = self.predictor.predict_match(
-            home_team, away_team, is_neutral=is_neutral, is_competitive=1)
-        probs = pred["probabilities"]
+        scoreline = self.predictor.predict_scoreline(
+            home_team, away_team, is_neutral=is_neutral, is_competitive=1, match_stake=4.0)
+        grid = scoreline.get("scoreline_matrix")
+        if grid is None:
+            expected_goals = scoreline["expected_goals"]
+            lambda_h = expected_goals["home"]
+            lambda_a = expected_goals["away"]
+            home_goals = np.random.poisson(lambda_h)
+            away_goals = np.random.poisson(lambda_a)
+        else:
+            flat_idx = np.random.choice(grid.size, p=grid.ravel())
+            home_goals, away_goals = np.unravel_index(flat_idx, grid.shape)
+            home_goals = int(home_goals)
+            away_goals = int(away_goals)
 
-        outcomes = ["H", "D", "A"]
-        weights = [probs["home_win"], probs["draw"], probs["away_win"]]
-        result = random.choices(outcomes, weights=weights)[0]
+        expected_goals = scoreline["expected_goals"]
+        lambda_h = max(0.1, float(expected_goals["home"]))
+        lambda_a = max(0.1, float(expected_goals["away"]))
 
-        h_state = self.predictor.get_team_state(home_team)
-        a_state = self.predictor.get_team_state(away_team)
-
-        lambda_h = max(
-            0.5, (h_state["goals_scored_avg"] + a_state["goals_conceded_avg"]) / 2.0)
-        lambda_a = max(
-            0.5, (a_state["goals_scored_avg"] + h_state["goals_conceded_avg"]) / 2.0)
-
-        home_goals = np.random.poisson(lambda_h)
-        away_goals = np.random.poisson(lambda_a)
-
-        if result == "H" and home_goals <= away_goals:
-            home_goals = away_goals + random.randint(1, 2)
-        elif result == "A" and away_goals <= home_goals:
-            away_goals = home_goals + random.randint(1, 2)
-        elif result == "D":
-            home_goals = away_goals
+        if home_goals > away_goals:
+            result = "H"
+        elif away_goals > home_goals:
+            result = "A"
+        else:
+            result = "D"
 
         if result == "H":
             winner = home_team
@@ -276,6 +276,8 @@ class TournamentSimulator:
         """
         Extremely fast simulation of a match using pure NumPy Logistic Regression.
         """
+        return self._simulate_match(team_a, team_b, is_knockout=is_knockout)
+
         if team_a in HOSTS and team_b not in HOSTS:
             home_team, away_team = team_a, team_b
             is_neutral = 0

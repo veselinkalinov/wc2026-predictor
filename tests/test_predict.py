@@ -31,6 +31,9 @@ def test_prediction_output_and_probabilities():
     assert "away_team" in result
     assert "probabilities" in result
     assert "prediction" in result
+    assert "expected_goals" in result
+    assert "decision" in result
+    assert "model_info" in result
 
     probs = result["probabilities"]
     assert "home_win" in probs
@@ -43,6 +46,13 @@ def test_prediction_output_and_probabilities():
 
     # Target label must be one of H, D, A
     assert result["prediction"] in ["H", "D", "A"]
+    assert result["decision"]["argmax"] in ["H", "D", "A"]
+    assert result["decision"]["balanced"] in ["H", "D", "A"]
+    assert 0.0 <= result["decision"]["confidence"] <= 1.0
+    assert "home" in result["expected_goals"]
+    assert "away" in result["expected_goals"]
+    assert result["expected_goals"]["home"] > 0
+    assert result["expected_goals"]["away"] > 0
 
 
 def test_neutral_symmetric_prediction():
@@ -77,3 +87,20 @@ def test_non_neutral_asymmetric_prediction():
     # Therefore, swapping team order should not produce exact mirror probabilities.
     assert not np.isclose(
         forward["probabilities"]["home_win"], reverse["probabilities"]["away_win"])
+
+
+def test_prediction_context_defaults_match_explicit_values():
+    predictor = MatchPredictor()
+
+    default_result = predictor.predict_match("Brazil", "Argentina", is_neutral=1)
+    explicit_result = predictor.predict_match(
+        "Brazil",
+        "Argentina",
+        is_neutral=1,
+        is_competitive=1,
+        match_stake=4.0,
+        home_rest_days=30.0,
+        away_rest_days=30.0,
+    )
+
+    assert default_result["probabilities"] == explicit_result["probabilities"]

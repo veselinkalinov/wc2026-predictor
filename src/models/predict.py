@@ -9,11 +9,14 @@ auto-reload on disk file modification for zero-restart model updates.
 from pathlib import Path
 import time
 import json
+import os
 import pandas as pd
 import numpy as np
 import joblib
 from src.utils.config import config
 from src.utils.logger import get_logger
+
+os.environ.setdefault("LOKY_MAX_CPU_COUNT", "2")
 
 logger = get_logger(__name__)
 
@@ -56,6 +59,7 @@ class MatchPredictor:
 
         self.scaler_path = models_dir / "scaler.pkl"
         self.meta_path = models_dir / "meta.json"
+        self.score_model_path = models_dir / "score_model.pkl"
         self.feature_matrix_path = features_dir / "feature_matrix.csv"
 
         # Load scaler
@@ -87,8 +91,10 @@ class MatchPredictor:
         with open(self.meta_path, "r") as f:
             meta = json.load(f)
 
+        self.meta = meta
         self.features = meta["features"]
         self.classes = meta["classes"]
+        self.score_model = self._load_score_model()
         
         # Load draw threshold for this specific model if it exists in the meta comparison
         model_display_name = {
@@ -157,8 +163,10 @@ class MatchPredictor:
                 self.scaler = joblib.load(self.scaler_path)
                 with open(self.meta_path, "r") as f:
                     meta = json.load(f)
+                self.meta = meta
                 self.features = meta["features"]
                 self.classes = meta["classes"]
+                self.score_model = self._load_score_model()
                 
                 model_display_name = {
                     "logistic_regression.pkl": "Logistic Regression",
@@ -188,6 +196,17 @@ class MatchPredictor:
             except Exception as e:
                 logger.error(f"Failed to reload model artifacts: {str(e)}")
         return False
+
+    def _load_score_model(self):
+        """
+        Load the dedicated scoreline model for expected goals and score grids.
+        """
+        if self.score_model_path.exists():
+            try:
+                return joblib.load(self.score_model_path)
+            except Exception as e:
+                logger.warning(f"Failed to load score model: {e}")
+        return None
 
     def _build_team_state(self, team_name: str, team_matches: pd.DataFrame) -> dict:
         """
@@ -263,7 +282,14 @@ class MatchPredictor:
         }
 
     def _construct_features_numpy(
-        self, home_team: str, away_team: str, is_neutral: int, is_competitive: int
+        self,
+        home_team: str,
+        away_team: str,
+        is_neutral: int,
+        is_competitive: int,
+        match_stake: float | None = None,
+        home_rest_days: float = 30.0,
+        away_rest_days: float = 30.0,
     ) -> np.ndarray:
         """
         Build the feature row in the exact order the model expects using numpy (optimized).
@@ -281,6 +307,9 @@ class MatchPredictor:
             host_continent = "North America"
             h_is_home_cont = 1 if h_cont == host_continent else 0
             a_is_home_cont = 1 if a_cont == host_continent else 0
+
+        if match_stake is None:
+            match_stake = 4.0 if is_competitive == 1 else 1.0
 
         row_map = {
             "home_elo": h_state["elo"],
@@ -303,13 +332,13 @@ class MatchPredictor:
             "rank_points_diff": h_state["rank_points"] - a_state["rank_points"],
             "is_neutral": is_neutral,
             "is_competitive": is_competitive,
-            "home_rest_days": 30.0,
-            "away_rest_days": 30.0,
-            "rest_days_diff": 0.0,
+            "home_rest_days": float(home_rest_days),
+            "away_rest_days": float(away_rest_days),
+            "rest_days_diff": float(home_rest_days) - float(away_rest_days),
             "home_is_home_continent": float(h_is_home_cont),
             "away_is_home_continent": float(a_is_home_cont),
             "continent_diff": float(h_is_home_cont - a_is_home_cont),
-            "match_stake": 4.0 if is_competitive == 1 else 1.0
+            "match_stake": float(match_stake)
         }
 
         # Build list in the exact order of self.features
@@ -317,7 +346,14 @@ class MatchPredictor:
         return np.array([vals])
 
     def _construct_features(
-        self, home_team: str, away_team: str, is_neutral: int, is_competitive: int
+        self,
+        home_team: str,
+        away_team: str,
+        is_neutral: int,
+        is_competitive: int,
+        match_stake: float | None = None,
+        home_rest_days: float = 30.0,
+        away_rest_days: float = 30.0,
     ) -> pd.DataFrame:
         """
         Build the feature row in the exact order the model expects.
@@ -334,6 +370,9 @@ class MatchPredictor:
             host_continent = "North America"
             h_is_home_cont = 1 if h_cont == host_continent else 0
             a_is_home_cont = 1 if a_cont == host_continent else 0
+
+        if match_stake is None:
+            match_stake = 4.0 if is_competitive == 1 else 1.0
 
         row = {
             "home_elo": h_state["elo"],
@@ -356,19 +395,116 @@ class MatchPredictor:
             "rank_points_diff": h_state["rank_points"] - a_state["rank_points"],
             "is_neutral": is_neutral,
             "is_competitive": is_competitive,
-            "home_rest_days": 30.0,
-            "away_rest_days": 30.0,
-            "rest_days_diff": 0.0,
+            "home_rest_days": float(home_rest_days),
+            "away_rest_days": float(away_rest_days),
+            "rest_days_diff": float(home_rest_days) - float(away_rest_days),
             "home_is_home_continent": float(h_is_home_cont),
             "away_is_home_continent": float(a_is_home_cont),
             "continent_diff": float(h_is_home_cont - a_is_home_cont),
-            "match_stake": 4.0 if is_competitive == 1 else 1.0
+            "match_stake": float(match_stake)
         }
 
         return pd.DataFrame([row])[self.features]
 
+    def _scale_features(self, features: np.ndarray) -> np.ndarray:
+        return (features - self.scaler.mean_) / self.scaler.scale_
+
+    def _scoreline_payload_from_grid(self, grid: np.ndarray, top_n: int = 5) -> dict:
+        home_goals_axis = np.arange(grid.shape[0])[:, None]
+        away_goals_axis = np.arange(grid.shape[1])[None, :]
+        expected_home = float(np.sum(grid * home_goals_axis))
+        expected_away = float(np.sum(grid * away_goals_axis))
+
+        flat_order = np.argsort(grid.ravel())[::-1][:top_n]
+        top_scorelines = []
+        for flat_idx in flat_order:
+            h_goals, a_goals = np.unravel_index(flat_idx, grid.shape)
+            top_scorelines.append({
+                "home_goals": int(h_goals),
+                "away_goals": int(a_goals),
+                "probability": round(float(grid[h_goals, a_goals]), 4),
+            })
+
+        return {
+            "expected_goals": {
+                "home": round(expected_home, 3),
+                "away": round(expected_away, 3),
+            },
+            "scoreline_probabilities": top_scorelines,
+            "scoreline_matrix": grid,
+        }
+
+    def _fallback_scoreline_payload(self, home_team: str, away_team: str) -> dict:
+        h_state = self.get_team_state(home_team)
+        a_state = self.get_team_state(away_team)
+        expected_home = max(
+            0.5, (h_state["goals_scored_avg"] + a_state["goals_conceded_avg"]) / 2.0)
+        expected_away = max(
+            0.5, (a_state["goals_scored_avg"] + h_state["goals_conceded_avg"]) / 2.0)
+        return {
+            "expected_goals": {
+                "home": round(float(expected_home), 3),
+                "away": round(float(expected_away), 3),
+            },
+            "scoreline_probabilities": [],
+            "scoreline_matrix": None,
+        }
+
+    def predict_scoreline(
+        self,
+        home_team: str,
+        away_team: str,
+        is_neutral: int = 1,
+        is_competitive: int = 1,
+        match_stake: float | None = None,
+        home_rest_days: float = 30.0,
+        away_rest_days: float = 30.0,
+        top_n: int = 5,
+    ) -> dict:
+        """
+        Predict expected goals and a scoreline probability grid for a matchup.
+        Neutral matches are symmetrized by averaging the forward score grid with
+        the transposed reverse-order grid.
+        """
+        if self.score_model is None:
+            return self._fallback_scoreline_payload(home_team, away_team)
+
+        feat_forward = self._construct_features_numpy(
+            home_team, away_team, is_neutral, is_competitive,
+            match_stake=match_stake,
+            home_rest_days=home_rest_days,
+            away_rest_days=away_rest_days,
+        )
+        feat_forward_scaled = self._scale_features(feat_forward)
+        grid_forward = self.score_model.predict_scoreline_matrices(
+            feat_forward_scaled)[0]
+
+        if is_neutral == 1:
+            feat_reverse = self._construct_features_numpy(
+                away_team, home_team, is_neutral, is_competitive,
+                match_stake=match_stake,
+                home_rest_days=away_rest_days,
+                away_rest_days=home_rest_days,
+            )
+            feat_reverse_scaled = self._scale_features(feat_reverse)
+            grid_reverse = self.score_model.predict_scoreline_matrices(
+                feat_reverse_scaled)[0].T
+            grid = (grid_forward + grid_reverse) / 2.0
+            grid = grid / grid.sum()
+        else:
+            grid = grid_forward
+
+        return self._scoreline_payload_from_grid(grid, top_n=top_n)
+
     def predict_match(
-        self, home_team: str, away_team: str, is_neutral: int = 1, is_competitive: int = 1
+        self,
+        home_team: str,
+        away_team: str,
+        is_neutral: int = 1,
+        is_competitive: int = 1,
+        match_stake: float | None = None,
+        home_rest_days: float = 30.0,
+        away_rest_days: float = 30.0,
     ) -> dict:
         """
         Predict outcomes using Symmetric Prediction Averaging.
@@ -377,6 +513,9 @@ class MatchPredictor:
 
         h_state = self.get_team_state(home_team)
         a_state = self.get_team_state(away_team)
+
+        if match_stake is None:
+            match_stake = 4.0 if is_competitive == 1 else 1.0
 
         cache_key = (
             home_team,
@@ -388,7 +527,10 @@ class MatchPredictor:
             round((a_state["goals_scored_avg"] -
                   h_state["goals_conceded_avg"]) / 0.2) * 0.2,
             is_neutral,
-            is_competitive
+            is_competitive,
+            float(match_stake),
+            round(float(home_rest_days), 1),
+            round(float(away_rest_days), 1),
         )
 
         if cache_key in self.prediction_cache:
@@ -396,20 +538,24 @@ class MatchPredictor:
 
         # 1. Forward direction: Team A as Home, Team B as Away
         feat_forward = self._construct_features_numpy(
-            home_team, away_team, is_neutral, is_competitive)
+            home_team, away_team, is_neutral, is_competitive,
+            match_stake=match_stake,
+            home_rest_days=home_rest_days,
+            away_rest_days=away_rest_days)
 
-        feat_forward_scaled = (
-            feat_forward - self.scaler.mean_) / self.scaler.scale_
+        feat_forward_scaled = self._scale_features(feat_forward)
 
         probs_forward = self.model.predict_proba(feat_forward_scaled)[0]
 
         if is_neutral == 1:
             # 2. Reverse direction: Team B as Home, Team A as Away
             feat_reverse = self._construct_features_numpy(
-                away_team, home_team, is_neutral, is_competitive)
+                away_team, home_team, is_neutral, is_competitive,
+                match_stake=match_stake,
+                home_rest_days=away_rest_days,
+                away_rest_days=home_rest_days)
 
-            feat_reverse_scaled = (
-                feat_reverse - self.scaler.mean_) / self.scaler.scale_
+            feat_reverse_scaled = self._scale_features(feat_reverse)
 
             probs_reverse = self.model.predict_proba(feat_reverse_scaled)[0]
 
@@ -428,6 +574,21 @@ class MatchPredictor:
         else:
             prediction = self.classes[0] if p_home >= p_away else self.classes[2]  # "H" or "A"
 
+        argmax_prediction = self.classes[int(np.argmax(probs_final))]
+        confidence = float(np.max(probs_final))
+        draw_risk_threshold = float(self.meta.get("draw_risk_threshold", 0.30))
+        draw_risk = bool(p_draw >= draw_risk_threshold)
+        scoreline_payload = self.predict_scoreline(
+            home_team=home_team,
+            away_team=away_team,
+            is_neutral=is_neutral,
+            is_competitive=is_competitive,
+            match_stake=match_stake,
+            home_rest_days=home_rest_days,
+            away_rest_days=away_rest_days,
+            top_n=5,
+        )
+
         res_dict = {
             "home_team": home_team,
             "away_team": away_team,
@@ -437,6 +598,20 @@ class MatchPredictor:
                 "away_win": round(float(probs_final[2]), 4),
             },
             "prediction": prediction,
+            "expected_goals": scoreline_payload["expected_goals"],
+            "scoreline_probabilities": scoreline_payload["scoreline_probabilities"],
+            "decision": {
+                "argmax": argmax_prediction,
+                "balanced": prediction,
+                "confidence": round(confidence, 4),
+                "draw_risk": draw_risk,
+            },
+            "model_info": {
+                "type": self.meta.get("model_type", self.model_filename),
+                "selected_by": self.meta.get("selected_by", "accuracy"),
+                "log_loss": self.meta.get("test_metrics", {}).get("log_loss"),
+                "brier_score": self.meta.get("test_metrics", {}).get("brier_score"),
+            },
         }
         self.prediction_cache[cache_key] = res_dict
         return res_dict

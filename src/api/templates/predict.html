@@ -104,9 +104,11 @@
                 <p class="text-label-mono font-label-mono text-secondary mb-2 uppercase tracking-[0.2em]">Match Simulator v4.2</p>
                 <h1 class="text-display-lg font-display-lg text-on-surface">Match Prediction Engine</h1>
             </header>
-            <div class="flex justify-center gap-12 mb-8 bg-surface-container-low/50 py-4 border border-outline-variant/30 rounded-lg max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 bg-surface-container-low/50 p-4 border border-outline-variant/30 rounded-lg max-w-5xl mx-auto">
                 <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="isNeutral" checked class="rounded border-outline-variant bg-surface-container-lowest text-secondary focus:ring-secondary h-5 w-5"><span class="text-label-mono text-sm uppercase text-on-surface-variant font-semibold">Neutral Venue</span></label>
-                <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="isCompetitive" checked class="rounded border-outline-variant bg-surface-container-lowest text-secondary focus:ring-secondary h-5 w-5"><span class="text-label-mono text-sm uppercase text-on-surface-variant font-semibold">Competitive Match</span></label>
+                <label class="flex flex-col gap-1"><span class="text-label-mono text-[10px] uppercase text-outline">Match Stake</span><select id="matchStake" class="bg-surface-container-lowest border border-outline-variant text-on-surface rounded-sm text-sm font-label-mono"><option value="1">Friendly</option><option value="2">Qualifier / Nations League</option><option value="3">Continental Finals</option><option value="4" selected>World Cup</option></select></label>
+                <label class="flex flex-col gap-1"><span class="text-label-mono text-[10px] uppercase text-outline">Home Rest Days</span><input id="homeRestDays" type="number" min="0" max="30" value="30" class="bg-surface-container-lowest border border-outline-variant text-on-surface rounded-sm text-sm font-label-mono"></label>
+                <label class="flex flex-col gap-1"><span class="text-label-mono text-[10px] uppercase text-outline">Away Rest Days</span><input id="awayRestDays" type="number" min="0" max="30" value="30" class="bg-surface-container-lowest border border-outline-variant text-on-surface rounded-sm text-sm font-label-mono"></label>
             </div>
             <section class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center mb-12">
                 <div class="md:col-span-5">
@@ -152,7 +154,7 @@
             <div class="hidden opacity-0 translate-y-8 transition-all duration-700 space-y-12" id="resultsArea">
                 <div class="border-t border-outline-variant pt-12">
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-8">
-                        <div><h2 class="text-headline-lg text-headline-lg text-on-surface">Simulation Results</h2><p class="text-body-md text-on-surface-variant" id="engineVersionLabel">Processed via Scikit-Learn HistGradientBoosting Engine</p></div>
+                        <div><h2 class="text-headline-lg text-headline-lg text-on-surface">Simulation Results</h2><p class="text-body-md text-on-surface-variant" id="engineVersionLabel">Loading calibrated probability engine...</p></div>
                         <div class="flex items-center gap-8 bg-surface-container-high/50 p-6 border border-outline-variant rounded-lg">
                             <div class="text-right"><span class="text-label-mono font-label-mono text-outline uppercase text-[10px]">Model Certainty</span><div class="text-stat-value font-stat-value text-secondary" id="confidenceValue">0%</div></div>
                             <div class="gauge-container"><div class="gauge-bg"></div><div class="gauge-fill" id="gaugeFill"></div></div>
@@ -166,14 +168,14 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
                         <div class="bg-surface-container-low border border-outline-variant p-4 hover:scale-105 transition-transform rounded-lg"><p class="text-label-mono font-label-mono text-[10px] text-outline uppercase mb-2">ELO Strength Diff</p><div class="flex justify-between items-center"><span class="text-secondary font-bold" id="eloDiffVal">+0</span><span class="material-symbols-outlined text-secondary text-sm">trending_up</span></div></div>
                         <div class="bg-surface-container-low border border-outline-variant p-4 hover:scale-105 transition-transform rounded-lg"><p class="text-label-mono font-label-mono text-[10px] text-outline uppercase mb-2">Form Index Diff</p><div class="flex justify-between items-center"><span class="text-secondary font-bold" id="formDiffVal">+0.0</span><span class="material-symbols-outlined text-secondary text-sm">bolt</span></div></div>
-                        <div class="bg-surface-container-low border border-outline-variant p-4 hover:scale-105 transition-transform rounded-lg"><p class="text-label-mono font-label-mono text-[10px] text-outline uppercase mb-2">Goal Scoring Potential</p><div class="flex justify-between items-center"><span class="text-primary font-bold" id="goalsScoredVal">0.0 vs 0.0</span><span class="material-symbols-outlined text-primary text-sm">sports_soccer</span></div></div>
+                        <div class="bg-surface-container-low border border-outline-variant p-4 hover:scale-105 transition-transform rounded-lg"><p class="text-label-mono font-label-mono text-[10px] text-outline uppercase mb-2">Expected Score</p><div class="flex justify-between items-center"><span class="text-primary font-bold" id="goalsScoredVal">0.0 - 0.0</span><span class="material-symbols-outlined text-primary text-sm">sports_soccer</span></div></div>
                         <div class="bg-surface-container-low border border-outline-variant p-4 hover:scale-105 transition-transform rounded-lg"><p class="text-label-mono font-label-mono text-[10px] text-outline uppercase mb-2">FIFA Ranking Difference</p><div class="flex justify-between items-center"><span class="text-on-surface font-bold" id="rankDiffVal">0 Positions</span><span class="material-symbols-outlined text-on-surface-variant text-sm">format_list_numbered</span></div></div>
                     </div>
                     <div class="bg-surface-container-low border border-outline-variant overflow-hidden rounded-lg">
                         <div class="border-b border-outline-variant px-6 py-3 flex items-center justify-between bg-surface-container"><span class="text-label-mono font-label-mono text-secondary flex items-center gap-2"><span class="material-symbols-outlined text-sm">troubleshoot</span> AI TACTICAL ADVANTAGE</span><span class="text-label-mono font-label-mono text-outline text-[10px]">ANALYSIS ENGINE GENERATED</span></div>
                         <div class="p-8 grid md:grid-cols-2 gap-8">
                             <div class="space-y-4"><h3 class="text-headline-md font-headline-md text-on-surface" id="insightsTitle">Tactical Advantage: Calculating...</h3><p class="text-body-md text-on-surface-variant leading-relaxed" id="insightsText">The pipeline parses structural features to calculate advantage profiles...</p></div>
-                            <div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-lg"><div class="flex items-center gap-4 mb-4"><div class="p-2 bg-primary-container text-secondary rounded"><span class="material-symbols-outlined">analytics</span></div><span class="text-label-mono font-label-mono">Simulation Parameters</span></div><ul class="space-y-2 text-label-mono font-label-mono text-sm text-on-surface-variant"><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Neutral Ground Factor</span><span class="text-on-surface" id="paramNeutralVal">Active</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Recent Form Window</span><span class="text-on-surface">5 matches</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Rest Days / Fatigue</span><span class="text-on-surface">Dynamic Rest Days</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Travel Mismatch Factor</span><span class="text-on-surface">Active (Continent Check)</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Match Stake Importance</span><span class="text-on-surface" id="paramMatchStakeVal">Competitive (Tier 3)</span></li></ul></div>
+                            <div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-lg"><div class="flex items-center gap-4 mb-4"><div class="p-2 bg-primary-container text-secondary rounded"><span class="material-symbols-outlined">analytics</span></div><span class="text-label-mono font-label-mono">Simulation Parameters</span></div><ul class="space-y-2 text-label-mono font-label-mono text-sm text-on-surface-variant"><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Neutral Ground Factor</span><span class="text-on-surface" id="paramNeutralVal">Active</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Model Objective</span><span class="text-on-surface">Log Loss / Calibration</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Rest Days / Fatigue</span><span class="text-on-surface" id="paramRestVal">30 vs 30</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Travel Mismatch Factor</span><span class="text-on-surface">Active (Continent Check)</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Match Stake Importance</span><span class="text-on-surface" id="paramMatchStakeVal">World Cup (Tier 4)</span></li></ul></div>
                         </div>
                     </div>
                 </div>
@@ -263,7 +265,7 @@
             }
         });
         async function loadTeams(){try{const r=await fetch('/api/teams');const d=await r.json();['selectTeamA','selectTeamB'].forEach(id=>{const s=document.getElementById(id);s.innerHTML='';d.teams.forEach(t=>{const o=document.createElement('option');o.value=o.innerText=t;s.appendChild(o);});});}catch(e){console.error(e);}}
-        async function loadModelMeta(){try{const r=await fetch('/api/model-meta');const d=await r.json();document.getElementById('engineVersionLabel').innerText=`Processed via Scikit-Learn ${d.model_type} Engine`;}catch(e){}}
+        async function loadModelMeta(){try{const r=await fetch('/api/model-meta');const d=await r.json();document.getElementById('engineVersionLabel').innerText=`Processed via ${d.model_type} selected by ${d.selected_by||'log_loss'}`;}catch(e){}}
         function initCombobox(slot){
             const select=document.getElementById(`selectTeam${slot}`),search=document.getElementById(`search${slot}`),dropdown=document.getElementById(`dropdown${slot}`),arrow=document.getElementById(`arrow${slot}`);
             let hi=-1;
@@ -281,13 +283,17 @@
         document.getElementById('runPrediction').addEventListener('click',async function(){
             const btn=this,teamA=document.getElementById('selectTeamA').value,teamB=document.getElementById('selectTeamB').value;
             if(teamA===teamB){alert("Please select different teams!");return;}
-            const isNeutral=document.getElementById('isNeutral').checked?1:0,isCompetitive=document.getElementById('isCompetitive').checked?1:0;
+            const isNeutral=document.getElementById('isNeutral').checked?1:0;
+            const matchStake=Number(document.getElementById('matchStake').value||4);
+            const isCompetitive=matchStake>1?1:0;
+            const homeRestDays=Number(document.getElementById('homeRestDays').value||30);
+            const awayRestDays=Number(document.getElementById('awayRestDays').value||30);
             btn.classList.add('opacity-50','pointer-events-none');btn.innerText='Analyzing...';
             document.getElementById('simulatingLabel').classList.remove('opacity-0');
             ['flagAContainer','flagBContainer'].forEach(id=>document.getElementById(id).classList.add('scanning','pulse-container'));
             document.getElementById('vsLabel').classList.add('text-secondary','animate-pulse');
             try{
-                const r=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({home_team:teamA,away_team:teamB,is_neutral:isNeutral,is_competitive:isCompetitive})});
+                const r=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({home_team:teamA,away_team:teamB,is_neutral:isNeutral,is_competitive:isCompetitive,match_stake:matchStake,home_rest_days:homeRestDays,away_rest_days:awayRestDays})});
                 const pred=await r.json();
                 setTimeout(()=>{
                     btn.classList.remove('opacity-50','pointer-events-none');btn.innerText='Run Prediction';
@@ -304,13 +310,18 @@
                     const ed=Math.round(dA.elo-dB.elo),fd=(dA.form-dB.form).toFixed(2),rd=dA.rank-dB.rank;
                     document.getElementById('eloDiffVal').innerText=(ed>=0?'+':'')+ed;document.getElementById('eloDiffVal').className=ed>=0?'text-secondary font-bold':'text-error font-bold';
                     document.getElementById('formDiffVal').innerText=(fd>=0?'+':'')+fd;document.getElementById('formDiffVal').className=fd>=0?'text-secondary font-bold':'text-error font-bold';
-                    document.getElementById('goalsScoredVal').innerText=`${dA.goals_scored_avg.toFixed(1)} vs ${dB.goals_scored_avg.toFixed(1)}`;
+                    const xgHome=pred.expected_goals?pred.expected_goals.home:dA.goals_scored_avg;
+                    const xgAway=pred.expected_goals?pred.expected_goals.away:dB.goals_scored_avg;
+                    document.getElementById('goalsScoredVal').innerText=`${Number(xgHome).toFixed(2)} - ${Number(xgAway).toFixed(2)}`;
                     document.getElementById('rankDiffVal').innerText=`${Math.abs(rd)} positions`+(rd<0?` (${teamA} higher)`:rd>0?` (${teamB} higher)`:'');
                     const winner=pred.prediction==='H'?teamA:pred.prediction==='A'?teamB:'Draw';
-                    document.getElementById('insightsTitle').innerText=winner==='Draw'?'Stalemate Projected':`Advantage: ${winner}`;
-                    document.getElementById('insightsText').innerHTML=winner==='Draw'?`Closely matched — high likelihood (${pD}%) of a draw. ELO scores are within ${Math.abs(ed)} points.`:`<span class="text-secondary font-bold">${winner}</span> holds a ${winner===teamA?pH:pA}% win probability, backed by ${Math.abs(ed)} ELO points lead.`;
+                    const drawRisk=pred.decision&&pred.decision.draw_risk;
+                    document.getElementById('insightsTitle').innerText=winner==='Draw'?'Stalemate Projected':drawRisk?`Advantage: ${winner} / Draw Risk Elevated`:`Advantage: ${winner}`;
+                    document.getElementById('insightsText').innerHTML=winner==='Draw'?`Closely matched with a ${pD}% draw probability. Expected score: ${Number(xgHome).toFixed(2)} - ${Number(xgAway).toFixed(2)}.`:`<span class="text-secondary font-bold">${winner}</span> holds a ${winner===teamA?pH:pA}% win probability. Draw risk is ${drawRisk?'elevated':'normal'} at ${pD}%, and expected score is ${Number(xgHome).toFixed(2)} - ${Number(xgAway).toFixed(2)}.`;
                     document.getElementById('paramNeutralVal').innerText=isNeutral===1?'Active (Symmetric)':`Inactive (Home advantage to ${teamA})`;
-                    document.getElementById('paramMatchStakeVal').innerText=isCompetitive===1?'Competitive (Tier 3)':'Friendly (Tier 1)';
+                    const stakeLabels={1:'Friendly (Tier 1)',2:'Qualifier / Nations League (Tier 2)',3:'Continental Finals (Tier 3)',4:'World Cup (Tier 4)'};
+                    document.getElementById('paramMatchStakeVal').innerText=stakeLabels[matchStake]||`Tier ${matchStake}`;
+                    document.getElementById('paramRestVal').innerText=`${homeRestDays} vs ${awayRestDays}`;
                 },1200);
             }catch(e){console.error(e);btn.classList.remove('opacity-50','pointer-events-none');btn.innerText='Run Prediction';alert("API error - make sure Flask is running!");}
         });

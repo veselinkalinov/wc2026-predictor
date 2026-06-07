@@ -54,6 +54,9 @@ def predict_matchup():
       - away_team (str, required)
       - is_neutral (int, optional, default: 1)
       - is_competitive (int, optional, default: 1)
+      - match_stake (float, optional, default: 4 if competitive else 1)
+      - home_rest_days (float, optional, default: 30)
+      - away_rest_days (float, optional, default: 30)
     """
     data = request.get_json() or {}
 
@@ -61,6 +64,9 @@ def predict_matchup():
     away_team = data.get("away_team")
     is_neutral = data.get("is_neutral", 1)
     is_competitive = data.get("is_competitive", 1)
+    match_stake = data.get("match_stake")
+    home_rest_days = data.get("home_rest_days", 30.0)
+    away_rest_days = data.get("away_rest_days", 30.0)
 
     # Validation
     if not home_team or not away_team:
@@ -75,7 +81,10 @@ def predict_matchup():
             home_team=home_team,
             away_team=away_team,
             is_neutral=is_neutral,
-            is_competitive=is_competitive
+            is_competitive=is_competitive,
+            match_stake=match_stake,
+            home_rest_days=home_rest_days,
+            away_rest_days=away_rest_days,
         )
         return jsonify(prediction)
     except Exception as e:

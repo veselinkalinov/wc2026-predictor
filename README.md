@@ -82,8 +82,8 @@ It processes international match history from Kaggle datasets, engineers domain-
 | **Match Stake**               | Multi-tier tournament importance classification mapping match pressure from 1 (Friendlies) to 4 (World Cup tournament)                                                                     |
 | **Team Name Normalisation**   | 32 team name mappings across datasets (e.g., "Korea Republic" → "South Korea")                                                                                                           |
 | **Baseline Evaluation**       | Three rule-based baselines (random guessing, most-frequent class, Elo heuristic) to establish performance floors                                                                         |
-| **Trained ML Models**          | Comparison of Logistic Regression, Random Forest, HGB, LightGBM, CatBoost, XGBoost, Stacking Ensemble, and a custom Poisson goals regressor. Best model selected by holdout test accuracy. |
-| **Draw Calibration**          | Custom probability threshold tuning ($\theta_{\text{draw}}$) on calibration split to balance draw precision/recall and boost classification accuracy |
+| **Trained ML Models**          | Comparison of Logistic Regression, Random Forest, HGB, LightGBM, CatBoost, XGBoost, Stacking Ensemble, and a Dixon-Coles-style Poisson goals regressor. Best model selected by holdout log loss. |
+| **Draw Risk & Calibration**    | Probability calibration plus draw-risk surfacing so draws remain visible even when hard argmax predictions choose Home/Away |
 | **Symmetric Prediction**      | Neutral-venue matches use Symmetric Prediction Averaging to eliminate home/away ordering bias                                                                                            |
 | **Monte Carlo Simulation**    | Full tournament simulation with dynamic Elo/form/goals updates after every simulated match                                                                                               |
 | **Hot-Reloading**             | `MatchPredictor` monitors file modification times on disk and automatically reloads model artifacts without server restarts                                                              |
@@ -377,17 +377,19 @@ pytest tests/test_features.py -v
   4. LightGBM
   5. CatBoost
   6. XGBoost
-  7. Poisson Goals Model (Bivariate Poisson goal scorer mapping back to classification outcomes)
+  7. Dixon-Coles-style Poisson Goals Model (expected goals and scoreline probabilities)
   8. Stacking Ensemble (Meta-model pooling predictions from the above base classifiers)
-- **Champion Selection** — The model achieving the highest classification accuracy on the Holdout Test Set is registered.
-- **Draw Threshold Tuning** — Since standard classification pipelines often suffer from draw prediction neglect (due to low default probabilities), we run a threshold sweep on the calibration split. If $P(\text{Draw}) \ge \theta_{\text{draw}}$, we predict a Draw; otherwise, we predict the argmax of Home vs Away.
+- **Champion Selection** — The model with the lowest holdout log loss is registered, with Brier score and accuracy used as tie-breakers.
+- **Score Model** — A dedicated Dixon-Coles-style Poisson goal model is saved as `score_model.pkl` for expected goals, scoreline probabilities, and Monte Carlo score sampling.
+- **Draw Risk Surfacing** — The API reports draw risk separately from hard H/D/A labels so low-scoring draw probability is not hidden by argmax classification.
 - **Probability Calibration** — Applies Platt scaling (Sigmoid) or Isotonic regression to output reliable match probability estimates.
 - **`src/models/evaluate.py`** — Outputs metrics, confusion matrices, feature importances, and calibration curves.
 
 ### 5. Match Prediction
 
-- **`src/models/predict.py`** — The `MatchPredictor` loads the serialized scaler and best model. It maps the latest computed parameters (Elo, form, goals, rank) for each team.
+- **`src/models/predict.py`** — The `MatchPredictor` loads the serialized scaler, best calibrated 1X2 model, and dedicated score model. It maps the latest computed parameters (Elo, form, goals, rank) for each team.
 - **Symmetric Prediction Averaging** — In neutral-venue matches, it executes predictions twice (swapping home/away designations) and averages the forward and inverted probabilities to eliminate team ordering bias.
+- **Expected Goals & Scorelines** — Predictions include expected goals and the top scoreline probabilities from the score model.
 - **Hot-Reloading** — Tracks file modifications to the model pickle file, updating prediction parameters automatically without server restarts.
 
 ### 6. Tournament Simulation
@@ -395,7 +397,7 @@ pytest tests/test_features.py -v
 - **`src/models/simulate.py`** — The `TournamentSimulator` executes Monte Carlo simulations of the FIFA World Cup 2026.
 - It hardcodes the official 12-group World Cup group draw (48 teams total) and recognizes host nations (USA, Mexico, Canada) to apply home-field advantage.
 - **Dynamic State Updates** — During a tournament run, Elo, form, and goal stats are dynamically updated after each simulated match.
-- **Goal Simulation** — Simulates scorelines using Poisson distributions. Penalty shootouts in knockout matches are simulated using Elo-weighted probabilities.
+- **Goal Simulation** — Samples scorelines directly from the Dixon-Coles-style scoreline probability matrix. Penalty shootouts in knockout matches are simulated using Elo-weighted probabilities.
 
 ---
 
@@ -444,9 +446,14 @@ Predicts outcome probabilities for a specific match.
   "home_team": "Argentina",
   "away_team": "France",
   "is_neutral": 1,
-  "is_competitive": 1
+  "is_competitive": 1,
+  "match_stake": 4,
+  "home_rest_days": 30,
+  "away_rest_days": 30
 }
 ```
+
+The response keeps the original `home_team`, `away_team`, `probabilities`, and `prediction` fields and also includes `expected_goals`, `scoreline_probabilities`, `decision`, and `model_info`.
 
 #### `POST /api/simulate`
 
@@ -485,22 +492,22 @@ Fetches current live World Cup fixtures and schedules.
 
 ## 📊 Model Performance
 
-Performance of model architectures on the holdout test set (matches post-July 2023) evaluated via hyperparameter tuning:
+Performance of model architectures on the holdout test set (matches post-July 2023) is evaluated probability-first. The active model is selected by lowest log loss, not highest hard-label accuracy:
 
 | Model / Baseline                      | Holdout Accuracy | Holdout Log Loss | Holdout Brier Score | Draw Threshold | Status             |
 | ------------------------------------- | ---------------- | ---------------- | ------------------- | -------------- | ------------------ |
-| **XGBoost (Calibrated)**              | **60.43%**       | 0.9199           | 0.1689              | 0.33           | 🏆 **Active Best** |
-| **Logistic Regression (Calibrated)**  | 60.37%           | 0.8741           | 0.1713              | 1.00           | Inactive           |
-| **LightGBM (Calibrated)**             | 60.34%           | 0.9283           | 0.1687              | 1.00           | Inactive           |
-| **CatBoost (Calibrated)**             | 60.24%           | 0.9604           | 0.1689              | 0.30           | Inactive           |
-| **Stacking Ensemble (Calibrated)**    | 60.24%           | **0.8681**       | 0.1697              | 0.35           | Inactive           |
-| **Poisson Goal Model (Calibrated)**   | 60.21%           | 0.8728           | 0.1708              | 1.00           | Inactive           |
-| **Random Forest (Calibrated)**        | 60.21%           | 1.0093           | 0.1700              | 1.00           | Inactive           |
-| **HistGradientBoosting (Calibrated)** | 60.11%           | 0.8941           | **0.1690**          | 0.32           | Inactive           |
+| **Stacking Ensemble (Calibrated)**    | **60.76%**       | **0.8670**       | 0.1695              | 1.00           | **Active Best**    |
+| **Poisson Goal Model (Calibrated)**   | 60.31%           | 0.8719           | 0.1706              | 1.00           | Inactive           |
+| **Logistic Regression (Calibrated)**  | 60.47%           | 0.8737           | 0.1712              | 1.00           | Inactive           |
+| **LightGBM (Calibrated)**             | 60.76%           | 0.9174           | **0.1686**          | 1.00           | Inactive           |
+| **HistGradientBoosting (Calibrated)** | 59.89%           | 0.9247           | 0.1691              | 0.31           | Inactive           |
+| **CatBoost (Calibrated)**             | 60.31%           | 0.9279           | 0.1687              | 0.31           | Inactive           |
+| **Random Forest (Calibrated)**        | 60.66%           | 0.9375           | 0.1700              | 0.38           | Inactive           |
+| **XGBoost (Calibrated)**              | 59.76%           | 0.9608           | 0.1690              | 0.31           | Inactive           |
 | **Elo Heuristic Baseline**            | 59.22%           | 0.9589           | 0.1887              | N/A            | Baseline Floor     |
 | Uniform Random Guessing               | 33.33%           | 1.0986           | 0.2222              | N/A            | Reference          |
 
-_Note: Models are evaluated strictly by classification accuracy. XGBoost is selected as the champion model with 60.43% test accuracy. Custom draw threshold tuning on the calibration set resolves the draw recall bias, significantly improving prediction utility for manual match requests._
+_Note: Accuracy remains visible, but it is no longer the champion-selection metric. Log loss and calibration are more important for a probability app because they reward truthful probability estimates used by both the 1v1 predictor and tournament simulations._
 
 ---
 
@@ -539,6 +546,8 @@ features:
 model:
   train_cutoff: "2022-01-01"
   calibration_cutoff: "2023-07-01"
+  selection_metric: "log_loss"
+  draw_risk_threshold: 0.3
   random_state: 42
   test_size: 0.2
   target_column: "result"
@@ -549,6 +558,12 @@ model:
   hist_gradient_boosting:
     max_iter: 100
     learning_rate: 0.1
+
+score_model:
+  type: "dixon_coles_poisson"
+  alpha: 1.0
+  rho: 0.0
+  max_goals: 10
 
 evaluation:
   metrics:

@@ -82,6 +82,15 @@ def run_cleaning() -> None:
     )
     rankings = rankings.drop(columns=["month", "semester"])
 
+    latest_match_date = matches["date"].max()
+    latest_ranking_date = rankings["date"].max()
+    if latest_ranking_date < latest_match_date:
+        logger.warning(
+            "FIFA ranking snapshots are older than the newest match data: "
+            f"rankings end at {latest_ranking_date.date()}, matches end at {latest_match_date.date()}. "
+            "Update data/raw/fifa_rankings.csv for fresher rank_points features."
+        )
+
     # 3. Clean and Normalise Team Names
     logger.info("Normalising team names...")
     matches["home_team"] = matches["home_team"].apply(clean_team_name)

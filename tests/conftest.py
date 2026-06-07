@@ -16,6 +16,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
 from sklearn.calibration import CalibratedClassifierCV
 from src.utils.config import config
+from src.models.poisson_model import PoissonGoalModel
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -29,11 +30,14 @@ def ensure_dummy_models():
     models_dir.mkdir(parents=True, exist_ok=True)
 
     best_model_path = models_dir / "best_model.pkl"
+    score_model_path = models_dir / "score_model.pkl"
     scaler_path = models_dir / "scaler.pkl"
     meta_path = models_dir / "meta.json"
 
+    core_missing = not best_model_path.exists() or not scaler_path.exists() or not meta_path.exists()
+
     # If any core model artifact is missing, generate dummy replacements
-    if not best_model_path.exists() or not scaler_path.exists() or not meta_path.exists():
+    if core_missing:
         print("\n[conftest.py] Core model files missing. Generating toy models for test execution...")
 
         # 1. Toy data: 100 samples with 27 features (to allow tree classifier splits)
@@ -64,9 +68,19 @@ def ensure_dummy_models():
         calibrated_lr.fit(X_scaled, y)
         joblib.dump(calibrated_lr, models_dir / "logistic_regression.pkl")
 
-        # 6. Meta.json definition
+        # 6. Dedicated scoreline model for expected goals and score grids
+        y_goals = np.column_stack([
+            np.where(y == 0, 2, np.where(y == 1, 1, 0)),
+            np.where(y == 2, 2, np.where(y == 1, 1, 0)),
+        ])
+        score_model = PoissonGoalModel(alpha=1.0, rho=0.0, max_goals=10)
+        score_model.fit(X_scaled, y_goals)
+        joblib.dump(score_model, score_model_path)
+
+        # 7. Meta.json definition
         meta = {
             "model_type": "HistGradientBoosting",
+            "selected_by": "log_loss",
             "features": [
                 "home_elo", "away_elo", "elo_diff",
                 "home_form", "away_form", "form_diff",
@@ -89,6 +103,16 @@ def ensure_dummy_models():
                 "log_loss": 0.86,
                 "brier_score": 0.17
             },
+            "draw_threshold": 1.0,
+            "draw_risk_threshold": 0.30,
+            "score_model": {
+                "model_type": "Dixon-Coles Poisson Goal Model",
+                "artifact": "score_model.pkl",
+                "alpha": 1.0,
+                "rho": 0.0,
+                "max_goals": 10,
+                "calibration_score_nll": 0.0
+            },
             "classes": ["H", "D", "A"]
         }
 
@@ -96,3 +120,19 @@ def ensure_dummy_models():
             json.dump(meta, f, indent=4)
 
         print("[conftest.py] Toy model files successfully written to models/registry/.")
+    elif not score_model_path.exists():
+        print("\n[conftest.py] score_model.pkl missing. Generating toy score model only...")
+        scaler = joblib.load(scaler_path)
+        n_features = len(scaler.mean_)
+        np.random.seed(42)
+        X = np.random.randn(100, n_features)
+        X_scaled = scaler.transform(X)
+        y = np.random.choice([0, 1, 2], size=100)
+        y_goals = np.column_stack([
+            np.where(y == 0, 2, np.where(y == 1, 1, 0)),
+            np.where(y == 2, 2, np.where(y == 1, 1, 0)),
+        ])
+        score_model = PoissonGoalModel(alpha=1.0, rho=0.0, max_goals=10)
+        score_model.fit(X_scaled, y_goals)
+        joblib.dump(score_model, score_model_path)
+        print("[conftest.py] Toy score model file successfully written.")

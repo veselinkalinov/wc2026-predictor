@@ -58,6 +58,33 @@ FEATURE_COLUMNS = [
 ]
 
 
+def select_best_model(comparison_results: dict, selection_metric: str = "log_loss") -> str:
+    """
+    Select the champion model using probability-first ranking.
+
+    Lower log loss is preferred. Ties are resolved by lower Brier score, then
+    higher accuracy. Accuracy can still be selected explicitly for experiments.
+    """
+    if selection_metric == "accuracy":
+        return max(
+            comparison_results,
+            key=lambda k: (
+                comparison_results[k]["accuracy"],
+                -comparison_results[k]["log_loss"],
+                -comparison_results[k]["brier_score"],
+            )
+        )
+
+    return min(
+        comparison_results,
+        key=lambda k: (
+            comparison_results[k]["log_loss"],
+            comparison_results[k]["brier_score"],
+            -comparison_results[k]["accuracy"],
+        )
+    )
+
+
 def find_optimal_draw_threshold(y_probs: np.ndarray, y_true: np.ndarray) -> float:
     """
     Search for a draw threshold on the calibration set that maximizes accuracy.
@@ -232,6 +259,11 @@ def train_model() -> None:
             "max_depth": [3, 5, 7]
         }
 
+    selection_metric = config["model"].get("selection_metric", "log_loss")
+    grid_scoring = "accuracy" if selection_metric == "accuracy" else "neg_log_loss"
+    logger.info(f"Model selection metric: {selection_metric}")
+    logger.info(f"Grid-search scoring: {grid_scoring}")
+
     # 5. Tune and fit base models on training data
     cv = TimeSeriesSplit(n_splits=config["model"].get("cv_splits", 5))
     trained_base_models = {}
@@ -244,7 +276,7 @@ def train_model() -> None:
             estimator=clf,
             param_grid=grids[model_name],
             cv=cv,
-            scoring="accuracy",  # Target accuracy directly in tuning
+            scoring=grid_scoring,
             n_jobs=-1
         )
         grid_search.fit(X_train_scaled, y_train)
@@ -256,11 +288,26 @@ def train_model() -> None:
 
     # Train Poisson Goal Model
     logger.info("Training Poisson Goal Model...")
-    poisson_model = PoissonGoalModel(alpha=1.0)
+    score_model_config = config.get("score_model", {})
+    poisson_model = PoissonGoalModel(
+        alpha=score_model_config.get("alpha", 1.0),
+        rho=score_model_config.get("rho", 0.0),
+        max_goals=score_model_config.get("max_goals", 10),
+    )
     y_train_goals = np.column_stack([train_df["home_score"].values, train_df["away_score"].values])
     poisson_model.fit(X_train_scaled, y_train_goals)
+    y_cal_goals = np.column_stack([cal_df["home_score"].values, cal_df["away_score"].values])
+    rho_grid = score_model_config.get("rho_grid")
+    tuned_rho, rho_cal_nll = poisson_model.tune_rho(
+        X_cal_scaled, y_cal_goals, rho_grid=rho_grid)
+    logger.info(
+        f"  Poisson Goal Model Dixon-Coles rho: {tuned_rho:.3f} | Calibration score NLL: {rho_cal_nll:.4f}")
     trained_base_models["Poisson Goal Model"] = poisson_model
-    best_params_dict["Poisson Goal Model"] = {"alpha": 1.0}
+    best_params_dict["Poisson Goal Model"] = {
+        "alpha": poisson_model.alpha,
+        "rho": poisson_model.rho,
+        "max_goals": poisson_model.max_goals,
+    }
 
     # 6. Add Stacking Classifier
     stack_estimators = []
@@ -340,19 +387,21 @@ def train_model() -> None:
 
     # Log Comparison Table
     logger.info("\n" + "=" * 80 +
-                "\nTUNED & CALIBRATED MODEL HOLDOUT COMPARISON (ACCURACY CRITERION)\n" + "=" * 80)
+                f"\nTUNED & CALIBRATED MODEL HOLDOUT COMPARISON ({selection_metric.upper()} CRITERION)\n" + "=" * 80)
     for model_name, res in comparison_results.items():
         logger.info(
             f"{model_name:<25} | Accuracy: {res['accuracy']:.4f} | Log Loss: {res['log_loss']:.4f} | Brier: {res['brier_score']:.4f} | Draw Thresh: {res['draw_threshold']:.2f}"
         )
     logger.info("=" * 80)
 
-    # 8. Select the overall best model (maximizing Holdout Accuracy)
-    best_model_name = max(comparison_results,
-                          key=lambda k: comparison_results[k]["accuracy"])
+    # 8. Select the overall best model using the configured probability-first metric
+    best_model_name = select_best_model(comparison_results, selection_metric)
 
     logger.info(
-        f"Winning Model: {best_model_name} (Highest Holdout Accuracy: {comparison_results[best_model_name]['accuracy']:.4f})")
+        f"Winning Model: {best_model_name} (selected by {selection_metric}: "
+        f"accuracy={comparison_results[best_model_name]['accuracy']:.4f}, "
+        f"log_loss={comparison_results[best_model_name]['log_loss']:.4f}, "
+        f"brier={comparison_results[best_model_name]['brier_score']:.4f})")
 
     winning_calibrated_model = calibrated_models[best_model_name]
     winning_uncalibrated_base = trained_base_models[best_model_name]
@@ -362,6 +411,7 @@ def train_model() -> None:
     logger.info("Serialising winning models to registry...")
     joblib.dump(winning_calibrated_model, models_dir / "best_model.pkl")
     joblib.dump(winning_uncalibrated_base, models_dir / "best_model_uncalibrated.pkl")
+    joblib.dump(poisson_model, models_dir / "score_model.pkl")
     joblib.dump(scaler, models_dir / "scaler.pkl")
 
     # Save all individual calibrated models
@@ -378,9 +428,19 @@ def train_model() -> None:
     # Save meta.json
     meta = {
         "model_type": best_model_name,
+        "selected_by": selection_metric,
         "features": FEATURE_COLUMNS,
         "best_params": best_params_dict[best_model_name] if best_model_name in best_params_dict else {},
         "draw_threshold": winning_threshold,
+        "draw_risk_threshold": float(config["model"].get("draw_risk_threshold", 0.30)),
+        "score_model": {
+            "model_type": "Dixon-Coles Poisson Goal Model",
+            "artifact": "score_model.pkl",
+            "alpha": float(poisson_model.alpha),
+            "rho": float(poisson_model.rho),
+            "max_goals": int(poisson_model.max_goals),
+            "calibration_score_nll": float(rho_cal_nll),
+        },
         "test_metrics": {
             "accuracy": float(comparison_results[best_model_name]["accuracy"]),
             "log_loss": float(comparison_results[best_model_name]["log_loss"]),

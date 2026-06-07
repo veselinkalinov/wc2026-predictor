@@ -24,6 +24,8 @@ features:
 model:
   train_cutoff: '2022-01-01'
   calibration_cutoff: '2023-07-01'
+  selection_metric: log_loss
+  draw_risk_threshold: 0.3
   random_state: 42
   test_size: 0.2
   target_column: result
@@ -34,6 +36,53 @@ model:
   hist_gradient_boosting:
     max_iter: 100
     learning_rate: 0.1
+score_model:
+  type: dixon_coles_poisson
+  alpha: 1.0
+  rho: 0.0
+  max_goals: 10
+  rho_grid:
+  - -0.2
+  - -0.19
+  - -0.18
+  - -0.17
+  - -0.16
+  - -0.15
+  - -0.14
+  - -0.13
+  - -0.12
+  - -0.11
+  - -0.1
+  - -0.09
+  - -0.08
+  - -0.07
+  - -0.06
+  - -0.05
+  - -0.04
+  - -0.03
+  - -0.02
+  - -0.01
+  - 0.0
+  - 0.01
+  - 0.02
+  - 0.03
+  - 0.04
+  - 0.05
+  - 0.06
+  - 0.07
+  - 0.08
+  - 0.09
+  - 0.1
+  - 0.11
+  - 0.12
+  - 0.13
+  - 0.14
+  - 0.15
+  - 0.16
+  - 0.17
+  - 0.18
+  - 0.19
+  - 0.2
 evaluation:
   metrics:
   - accuracy

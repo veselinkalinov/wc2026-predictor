@@ -3,60 +3,145 @@ from scipy.stats import poisson
 from sklearn.base import BaseEstimator, ClassifierMixin
 from sklearn.linear_model import PoissonRegressor
 
+
 class PoissonGoalModel(BaseEstimator, ClassifierMixin):
-    def __init__(self, alpha=1.0):
+    """
+    Goal-count model that converts expected goals into H/D/A probabilities.
+
+    The model keeps two Poisson regressors for expected home and away goals,
+    then applies a Dixon-Coles style low-score correction to the scoreline
+    matrix. It remains a scikit-learn compatible classifier so it can be
+    calibrated and compared beside the other 1X2 models.
+    """
+
+    def __init__(self, alpha=1.0, rho=0.0, max_goals=10):
         self.alpha = alpha
+        self.rho = rho
+        self.max_goals = max_goals
         self.classes_ = np.array([0, 1, 2])  # H=0, D=1, A=2
         self.home_regressor = PoissonRegressor(alpha=self.alpha, max_iter=1000)
         self.away_regressor = PoissonRegressor(alpha=self.alpha, max_iter=1000)
-        
+
     def fit(self, X, y):
-        # We assume y is the 1D target (H/D/A), but we need the actual goals scored
-        # To avoid breaking sklearn pipelines, we require y_goals to be passed or we
-        # retrieve it. If y is 2D (scores), we use it. Otherwise, we expect y_goals to be passed.
-        # However, to be compatible with GridSearchCV, we can pass y_goals as y during fit!
-        if len(y.shape) == 2:
-            self.home_regressor.fit(X, y[:, 0])
-            self.away_regressor.fit(X, y[:, 1])
+        self.home_regressor = PoissonRegressor(
+            alpha=self.alpha, max_iter=1000)
+        self.away_regressor = PoissonRegressor(
+            alpha=self.alpha, max_iter=1000)
+
+        y_arr = np.asarray(y)
+        if len(y_arr.shape) == 2:
+            self.home_regressor.fit(X, y_arr[:, 0])
+            self.away_regressor.fit(X, y_arr[:, 1])
         else:
-            # Fallback if y is 1D target (we shouldn't call this directly without goals, but we add a fallback)
-            # This fallback assumes standard default goals if not available
-            dummy_home_goals = np.where(y == 0, 2, np.where(y == 1, 1, 0))
-            dummy_away_goals = np.where(y == 2, 2, np.where(y == 1, 1, 0))
+            dummy_home_goals = np.where(y_arr == 0, 2, np.where(y_arr == 1, 1, 0))
+            dummy_away_goals = np.where(y_arr == 2, 2, np.where(y_arr == 1, 1, 0))
             self.home_regressor.fit(X, dummy_home_goals)
             self.away_regressor.fit(X, dummy_away_goals)
         return self
-        
-    def predict_proba(self, X):
+
+    def predict_expected_goals(self, X) -> np.ndarray:
         lambda_h = self.home_regressor.predict(X)
         lambda_a = self.away_regressor.predict(X)
-        
-        # Ensure lambdas are positive and reasonable
         lambda_h = np.maximum(lambda_h, 0.1)
         lambda_a = np.maximum(lambda_a, 0.1)
-        
+        return np.column_stack([lambda_h, lambda_a])
+
+    def _dixon_coles_tau(self, home_goals: int, away_goals: int, lambda_h: float, lambda_a: float) -> float:
+        rho = getattr(self, "rho", 0.0)
+        if home_goals == 0 and away_goals == 0:
+            return 1.0 - (lambda_h * lambda_a * rho)
+        if home_goals == 0 and away_goals == 1:
+            return 1.0 + (lambda_h * rho)
+        if home_goals == 1 and away_goals == 0:
+            return 1.0 + (lambda_a * rho)
+        if home_goals == 1 and away_goals == 1:
+            return 1.0 - rho
+        return 1.0
+
+    def scoreline_matrix_for_lambdas(self, lambda_h: float, lambda_a: float) -> np.ndarray:
+        max_goals = int(getattr(self, "max_goals", 10))
+        goals = np.arange(max_goals + 1)
+        p_h = poisson.pmf(goals, lambda_h)
+        p_a = poisson.pmf(goals, lambda_a)
+        p_h = p_h / p_h.sum()
+        p_a = p_a / p_a.sum()
+
+        grid = np.outer(p_h, p_a)
+        for h in (0, 1):
+            for a in (0, 1):
+                grid[h, a] *= self._dixon_coles_tau(h, a, lambda_h, lambda_a)
+
+        grid = np.maximum(grid, 0.0)
+        total = grid.sum()
+        if total <= 0:
+            return np.outer(p_h, p_a)
+        return grid / total
+
+    def predict_scoreline_matrices(self, X) -> list[np.ndarray]:
+        expected_goals = self.predict_expected_goals(X)
+        return [
+            self.scoreline_matrix_for_lambdas(lambda_h, lambda_a)
+            for lambda_h, lambda_a in expected_goals
+        ]
+
+    def predict_proba(self, X):
+        matrices = self.predict_scoreline_matrices(X)
         probs = []
-        for lh, la in zip(lambda_h, lambda_a):
-            # Construct score grid up to 10 goals
-            max_goals = 10
-            x_range = np.arange(max_goals + 1)
-            p_h = poisson.pmf(x_range, lh)
-            p_a = poisson.pmf(x_range, la)
-            
-            # Normalize to sum to 1.0
-            p_h /= p_h.sum()
-            p_a /= p_a.sum()
-            
-            grid = np.outer(p_h, p_a)  # grid[x, y] is P(H=x, A=y)
-            
-            p_home_win = np.sum(np.tril(grid, -1))
-            p_draw = np.sum(np.diag(grid))
-            p_away_win = np.sum(np.triu(grid, 1))
-            
+        for grid in matrices:
+            p_home_win = float(np.sum(np.tril(grid, -1)))
+            p_draw = float(np.sum(np.diag(grid)))
+            p_away_win = float(np.sum(np.triu(grid, 1)))
             probs.append([p_home_win, p_draw, p_away_win])
-            
         return np.array(probs)
-        
+
     def predict(self, X):
         probs = self.predict_proba(X)
         return np.argmax(probs, axis=1)
+
+    def tune_rho(self, X_cal, y_goals, rho_grid=None):
+        if rho_grid is None:
+            rho_grid = np.round(np.arange(-0.20, 0.205, 0.01), 3)
+
+        y_arr = np.asarray(y_goals)
+        expected_goals = self.predict_expected_goals(X_cal)
+        best_rho = float(getattr(self, "rho", 0.0))
+        best_nll = float("inf")
+        max_goals = int(getattr(self, "max_goals", 10))
+
+        for rho in rho_grid:
+            self.rho = float(rho)
+            nll = 0.0
+            for (lambda_h, lambda_a), (home_goals, away_goals) in zip(expected_goals, y_arr):
+                grid = self.scoreline_matrix_for_lambdas(lambda_h, lambda_a)
+                h = int(min(max(home_goals, 0), max_goals))
+                a = int(min(max(away_goals, 0), max_goals))
+                nll -= np.log(max(grid[h, a], 1e-12))
+            if nll < best_nll:
+                best_nll = nll
+                best_rho = float(rho)
+
+        self.rho = best_rho
+        return best_rho, best_nll / max(len(y_arr), 1)
+
+    def scoreline_dict(self, X, top_n=5) -> list[dict]:
+        expected_goals = self.predict_expected_goals(X)
+        matrices = self.predict_scoreline_matrices(X)
+        payloads = []
+        for (lambda_h, lambda_a), grid in zip(expected_goals, matrices):
+            flat_order = np.argsort(grid.ravel())[::-1][:top_n]
+            top_scorelines = []
+            for flat_idx in flat_order:
+                h, a = np.unravel_index(flat_idx, grid.shape)
+                top_scorelines.append({
+                    "home_goals": int(h),
+                    "away_goals": int(a),
+                    "probability": round(float(grid[h, a]), 4),
+                })
+            payloads.append({
+                "expected_goals": {
+                    "home": round(float(lambda_h), 3),
+                    "away": round(float(lambda_a), 3),
+                },
+                "top_scorelines": top_scorelines,
+            })
+        return payloads
