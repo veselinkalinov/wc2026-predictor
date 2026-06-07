@@ -117,6 +117,10 @@ class MatchPredictor:
         self.feature_matrix = pd.read_csv(self.feature_matrix_path)
         self.feature_matrix["date"] = pd.to_datetime(
             self.feature_matrix["date"])
+        self.default_prediction_date = max(
+            self.feature_matrix["date"].max().normalize(),
+            pd.Timestamp.today().normalize(),
+        )
 
         # Build a lookup dictionary of the latest state for each team
         self.team_states = self._build_latest_team_states()
@@ -188,6 +192,10 @@ class MatchPredictor:
                 self.feature_matrix = pd.read_csv(self.feature_matrix_path)
                 self.feature_matrix["date"] = pd.to_datetime(
                     self.feature_matrix["date"])
+                self.default_prediction_date = max(
+                    self.feature_matrix["date"].max().normalize(),
+                    pd.Timestamp.today().normalize(),
+                )
                 self.team_states = self._build_latest_team_states()
 
                 self.last_loaded_time = mtime
@@ -281,6 +289,54 @@ class MatchPredictor:
             "rank_points": 0.0,
         }
 
+    def _resolve_prediction_date(self, match_date: str | pd.Timestamp | None = None) -> pd.Timestamp:
+        if match_date is None:
+            return self.default_prediction_date
+        date = pd.to_datetime(match_date, errors="coerce")
+        if pd.isna(date):
+            return self.default_prediction_date
+        return date.normalize()
+
+    def infer_rest_days(self, team: str, match_date: str | pd.Timestamp | None = None) -> float:
+        """
+        Infer rest days from the latest known match before the prediction date.
+        The value is capped at 30 to match training-time feature engineering.
+        """
+        prediction_date = self._resolve_prediction_date(match_date)
+        team_matches = self.feature_matrix[
+            ((self.feature_matrix["home_team"] == team) |
+             (self.feature_matrix["away_team"] == team)) &
+            (self.feature_matrix["date"] < prediction_date)
+        ]
+        if team_matches.empty:
+            return 30.0
+
+        last_match_date = team_matches["date"].max().normalize()
+        rest_days = max((prediction_date - last_match_date).days, 0)
+        return float(min(rest_days, 30))
+
+    def _resolve_rest_context(
+        self,
+        home_team: str,
+        away_team: str,
+        match_date: str | pd.Timestamp | None = None,
+        home_rest_days: float | None = None,
+        away_rest_days: float | None = None,
+    ) -> dict:
+        prediction_date = self._resolve_prediction_date(match_date)
+        inferred_home = self.infer_rest_days(home_team, prediction_date)
+        inferred_away = self.infer_rest_days(away_team, prediction_date)
+
+        home_value = inferred_home if home_rest_days is None else float(home_rest_days)
+        away_value = inferred_away if away_rest_days is None else float(away_rest_days)
+
+        return {
+            "prediction_date": prediction_date,
+            "home_rest_days": home_value,
+            "away_rest_days": away_value,
+            "source": "inferred" if home_rest_days is None and away_rest_days is None else "override",
+        }
+
     def _construct_features_numpy(
         self,
         home_team: str,
@@ -288,8 +344,9 @@ class MatchPredictor:
         is_neutral: int,
         is_competitive: int,
         match_stake: float | None = None,
-        home_rest_days: float = 30.0,
-        away_rest_days: float = 30.0,
+        home_rest_days: float | None = None,
+        away_rest_days: float | None = None,
+        match_date: str | pd.Timestamp | None = None,
     ) -> np.ndarray:
         """
         Build the feature row in the exact order the model expects using numpy (optimized).
@@ -310,6 +367,10 @@ class MatchPredictor:
 
         if match_stake is None:
             match_stake = 4.0 if is_competitive == 1 else 1.0
+        rest_context = self._resolve_rest_context(
+            home_team, away_team, match_date, home_rest_days, away_rest_days)
+        home_rest_days = rest_context["home_rest_days"]
+        away_rest_days = rest_context["away_rest_days"]
 
         row_map = {
             "home_elo": h_state["elo"],
@@ -352,8 +413,9 @@ class MatchPredictor:
         is_neutral: int,
         is_competitive: int,
         match_stake: float | None = None,
-        home_rest_days: float = 30.0,
-        away_rest_days: float = 30.0,
+        home_rest_days: float | None = None,
+        away_rest_days: float | None = None,
+        match_date: str | pd.Timestamp | None = None,
     ) -> pd.DataFrame:
         """
         Build the feature row in the exact order the model expects.
@@ -373,6 +435,10 @@ class MatchPredictor:
 
         if match_stake is None:
             match_stake = 4.0 if is_competitive == 1 else 1.0
+        rest_context = self._resolve_rest_context(
+            home_team, away_team, match_date, home_rest_days, away_rest_days)
+        home_rest_days = rest_context["home_rest_days"]
+        away_rest_days = rest_context["away_rest_days"]
 
         row = {
             "home_elo": h_state["elo"],
@@ -457,8 +523,9 @@ class MatchPredictor:
         is_neutral: int = 1,
         is_competitive: int = 1,
         match_stake: float | None = None,
-        home_rest_days: float = 30.0,
-        away_rest_days: float = 30.0,
+        home_rest_days: float | None = None,
+        away_rest_days: float | None = None,
+        match_date: str | pd.Timestamp | None = None,
         top_n: int = 5,
     ) -> dict:
         """
@@ -474,6 +541,7 @@ class MatchPredictor:
             match_stake=match_stake,
             home_rest_days=home_rest_days,
             away_rest_days=away_rest_days,
+            match_date=match_date,
         )
         feat_forward_scaled = self._scale_features(feat_forward)
         grid_forward = self.score_model.predict_scoreline_matrices(
@@ -485,6 +553,7 @@ class MatchPredictor:
                 match_stake=match_stake,
                 home_rest_days=away_rest_days,
                 away_rest_days=home_rest_days,
+                match_date=match_date,
             )
             feat_reverse_scaled = self._scale_features(feat_reverse)
             grid_reverse = self.score_model.predict_scoreline_matrices(
@@ -503,8 +572,9 @@ class MatchPredictor:
         is_neutral: int = 1,
         is_competitive: int = 1,
         match_stake: float | None = None,
-        home_rest_days: float = 30.0,
-        away_rest_days: float = 30.0,
+        home_rest_days: float | None = None,
+        away_rest_days: float | None = None,
+        match_date: str | pd.Timestamp | None = None,
     ) -> dict:
         """
         Predict outcomes using Symmetric Prediction Averaging.
@@ -516,6 +586,11 @@ class MatchPredictor:
 
         if match_stake is None:
             match_stake = 4.0 if is_competitive == 1 else 1.0
+        rest_context = self._resolve_rest_context(
+            home_team, away_team, match_date, home_rest_days, away_rest_days)
+        resolved_match_date = rest_context["prediction_date"]
+        resolved_home_rest_days = rest_context["home_rest_days"]
+        resolved_away_rest_days = rest_context["away_rest_days"]
 
         cache_key = (
             home_team,
@@ -529,8 +604,10 @@ class MatchPredictor:
             is_neutral,
             is_competitive,
             float(match_stake),
-            round(float(home_rest_days), 1),
-            round(float(away_rest_days), 1),
+            resolved_match_date.strftime("%Y-%m-%d"),
+            round(float(resolved_home_rest_days), 1),
+            round(float(resolved_away_rest_days), 1),
+            rest_context["source"],
         )
 
         if cache_key in self.prediction_cache:
@@ -540,8 +617,9 @@ class MatchPredictor:
         feat_forward = self._construct_features_numpy(
             home_team, away_team, is_neutral, is_competitive,
             match_stake=match_stake,
-            home_rest_days=home_rest_days,
-            away_rest_days=away_rest_days)
+            home_rest_days=resolved_home_rest_days,
+            away_rest_days=resolved_away_rest_days,
+            match_date=resolved_match_date)
 
         feat_forward_scaled = self._scale_features(feat_forward)
 
@@ -552,8 +630,9 @@ class MatchPredictor:
             feat_reverse = self._construct_features_numpy(
                 away_team, home_team, is_neutral, is_competitive,
                 match_stake=match_stake,
-                home_rest_days=away_rest_days,
-                away_rest_days=home_rest_days)
+                home_rest_days=resolved_away_rest_days,
+                away_rest_days=resolved_home_rest_days,
+                match_date=resolved_match_date)
 
             feat_reverse_scaled = self._scale_features(feat_reverse)
 
@@ -584,8 +663,9 @@ class MatchPredictor:
             is_neutral=is_neutral,
             is_competitive=is_competitive,
             match_stake=match_stake,
-            home_rest_days=home_rest_days,
-            away_rest_days=away_rest_days,
+            home_rest_days=resolved_home_rest_days,
+            away_rest_days=resolved_away_rest_days,
+            match_date=resolved_match_date,
             top_n=5,
         )
 
@@ -611,6 +691,15 @@ class MatchPredictor:
                 "selected_by": self.meta.get("selected_by", "accuracy"),
                 "log_loss": self.meta.get("test_metrics", {}).get("log_loss"),
                 "brier_score": self.meta.get("test_metrics", {}).get("brier_score"),
+            },
+            "context": {
+                "match_date": resolved_match_date.strftime("%Y-%m-%d"),
+                "rest_days": {
+                    "home": round(float(resolved_home_rest_days), 1),
+                    "away": round(float(resolved_away_rest_days), 1),
+                    "source": rest_context["source"],
+                },
+                "match_stake": float(match_stake),
             },
         }
         self.prediction_cache[cache_key] = res_dict

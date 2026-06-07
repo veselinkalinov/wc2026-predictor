@@ -78,7 +78,7 @@ It processes international match history from Kaggle datasets, engineers domain-
 | **Goal Statistics**           | EWMA rolling goal averages (alpha=0.15) for goals scored, conceded, and goal difference                                                                                                  |
 | **FIFA Rankings Integration** | Historical FIFA ranking snapshots merged via temporal join (`merge_asof`)                                                                                                                |
 | **Travel & Logistics**        | Continent mismatch detection to measure travel fatigue and home-continent advantages                                                                                                     |
-| **Rest & Schedule**           | Chronological calculation of rest days between matches, capped at 30 days to mitigate extreme outliers                                                                                    |
+| **Rest & Schedule**           | Chronological rest-day feature engineering during training, with live predictions inferring each team's rest from match history and capping values at 30 days                              |
 | **Match Stake**               | Multi-tier tournament importance classification mapping match pressure from 1 (Friendlies) to 4 (World Cup tournament)                                                                     |
 | **Team Name Normalisation**   | 32 team name mappings across datasets (e.g., "Korea Republic" → "South Korea")                                                                                                           |
 | **Baseline Evaluation**       | Three rule-based baselines (random guessing, most-frequent class, Elo heuristic) to establish performance floors                                                                         |
@@ -364,7 +364,7 @@ pytest tests/test_features.py -v
 | **Team Form** | `home_form`, `away_form`, `form_diff` | Opponent-adjusted EWMA (alpha=0.15) of points earned, normalised between 0.0 and 1.0 (cold-start default 0.5) |
 | **Rolling Goals** | `home_goals_scored_avg`, `home_goals_conceded_avg`, `home_goal_diff_avg` (same for away) | Rolling goal averages using EWMA (alpha=0.15) over historical matches (cold-start default 1.2 goals) |
 | **Rankings** | `home_rank`, `away_rank`, `rank_diff`, `home_rank_points`, `away_rank_points`, `rank_points_diff` | Historical FIFA rankings and ranking points differences |
-| **Schedule & Rest** | `home_rest_days`, `away_rest_days`, `rest_days_diff` | Number of days since a team's last match, capped at 30 days to avoid outlier distortion |
+| **Schedule & Rest** | `home_rest_days`, `away_rest_days`, `rest_days_diff` | Number of days since a team's last known match, capped at 30 days to avoid outlier distortion. Live predictions infer these values automatically unless API overrides are supplied. |
 | **Geography & Travel** | `home_is_home_continent`, `away_is_home_continent`, `continent_diff` | Flags indicating if teams are playing within their home continent to reflect travel fatigue |
 | **Match Context** | `is_neutral`, `is_competitive`, `match_stake` | Contextual features: venue neutrality, competition category, and match stake importance tier (1 to 4) |
 
@@ -448,12 +448,13 @@ Predicts outcome probabilities for a specific match.
   "is_neutral": 1,
   "is_competitive": 1,
   "match_stake": 4,
-  "home_rest_days": 30,
-  "away_rest_days": 30
+  "match_date": "2026-06-11"
 }
 ```
 
-The response keeps the original `home_team`, `away_team`, `probabilities`, and `prediction` fields and also includes `expected_goals`, `scoreline_probabilities`, `decision`, and `model_info`.
+`match_date` is optional. When omitted, the predictor uses the latest known/current date and infers each team's rest days from match history. Advanced API callers can still pass `home_rest_days` and `away_rest_days` as explicit overrides, but the web UI does not ask users for them.
+
+The response keeps the original `home_team`, `away_team`, `probabilities`, and `prediction` fields and also includes `expected_goals`, `scoreline_probabilities`, `decision`, `model_info`, and `context`.
 
 #### `POST /api/simulate`
 
@@ -620,7 +621,7 @@ Jupyter notebooks for exploratory work are in `notebooks/`:
 - [x] Grid search hyperparameter tuning
 - [x] Multi-model training comparison (LightGBM, XGBoost, CatBoost, Stacking)
 - [x] Draw threshold calibration and Poisson Goal Model
-- [x] Advanced Features (Rest Days, Travel Mismatch, Match Stake)
+- [x] Advanced Features (Auto-Inferred Rest Days, Travel Mismatch, Match Stake)
 - [x] Interactive web dashboard
 - [x] Docker and Docker Compose containerization
 - [ ] Cloud deployment

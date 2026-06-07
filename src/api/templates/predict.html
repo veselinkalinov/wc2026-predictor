@@ -104,11 +104,9 @@
                 <p class="text-label-mono font-label-mono text-secondary mb-2 uppercase tracking-[0.2em]">Match Simulator v4.2</p>
                 <h1 class="text-display-lg font-display-lg text-on-surface">Match Prediction Engine</h1>
             </header>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 bg-surface-container-low/50 p-4 border border-outline-variant/30 rounded-lg max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 bg-surface-container-low/50 p-4 border border-outline-variant/30 rounded-lg max-w-3xl mx-auto">
                 <label class="flex items-center gap-3 cursor-pointer"><input type="checkbox" id="isNeutral" checked class="rounded border-outline-variant bg-surface-container-lowest text-secondary focus:ring-secondary h-5 w-5"><span class="text-label-mono text-sm uppercase text-on-surface-variant font-semibold">Neutral Venue</span></label>
                 <label class="flex flex-col gap-1"><span class="text-label-mono text-[10px] uppercase text-outline">Match Stake</span><select id="matchStake" class="bg-surface-container-lowest border border-outline-variant text-on-surface rounded-sm text-sm font-label-mono"><option value="1">Friendly</option><option value="2">Qualifier / Nations League</option><option value="3">Continental Finals</option><option value="4" selected>World Cup</option></select></label>
-                <label class="flex flex-col gap-1"><span class="text-label-mono text-[10px] uppercase text-outline">Home Rest Days</span><input id="homeRestDays" type="number" min="0" max="30" value="30" class="bg-surface-container-lowest border border-outline-variant text-on-surface rounded-sm text-sm font-label-mono"></label>
-                <label class="flex flex-col gap-1"><span class="text-label-mono text-[10px] uppercase text-outline">Away Rest Days</span><input id="awayRestDays" type="number" min="0" max="30" value="30" class="bg-surface-container-lowest border border-outline-variant text-on-surface rounded-sm text-sm font-label-mono"></label>
             </div>
             <section class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center mb-12">
                 <div class="md:col-span-5">
@@ -175,7 +173,7 @@
                         <div class="border-b border-outline-variant px-6 py-3 flex items-center justify-between bg-surface-container"><span class="text-label-mono font-label-mono text-secondary flex items-center gap-2"><span class="material-symbols-outlined text-sm">troubleshoot</span> AI TACTICAL ADVANTAGE</span><span class="text-label-mono font-label-mono text-outline text-[10px]">ANALYSIS ENGINE GENERATED</span></div>
                         <div class="p-8 grid md:grid-cols-2 gap-8">
                             <div class="space-y-4"><h3 class="text-headline-md font-headline-md text-on-surface" id="insightsTitle">Tactical Advantage: Calculating...</h3><p class="text-body-md text-on-surface-variant leading-relaxed" id="insightsText">The pipeline parses structural features to calculate advantage profiles...</p></div>
-                            <div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-lg"><div class="flex items-center gap-4 mb-4"><div class="p-2 bg-primary-container text-secondary rounded"><span class="material-symbols-outlined">analytics</span></div><span class="text-label-mono font-label-mono">Simulation Parameters</span></div><ul class="space-y-2 text-label-mono font-label-mono text-sm text-on-surface-variant"><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Neutral Ground Factor</span><span class="text-on-surface" id="paramNeutralVal">Active</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Model Objective</span><span class="text-on-surface">Log Loss / Calibration</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Rest Days / Fatigue</span><span class="text-on-surface" id="paramRestVal">30 vs 30</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Travel Mismatch Factor</span><span class="text-on-surface">Active (Continent Check)</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Match Stake Importance</span><span class="text-on-surface" id="paramMatchStakeVal">World Cup (Tier 4)</span></li></ul></div>
+                            <div class="bg-surface-container-lowest p-6 border border-outline-variant rounded-lg"><div class="flex items-center gap-4 mb-4"><div class="p-2 bg-primary-container text-secondary rounded"><span class="material-symbols-outlined">analytics</span></div><span class="text-label-mono font-label-mono">Simulation Parameters</span></div><ul class="space-y-2 text-label-mono font-label-mono text-sm text-on-surface-variant"><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Neutral Ground Factor</span><span class="text-on-surface" id="paramNeutralVal">Active</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Model Objective</span><span class="text-on-surface">Log Loss / Calibration</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Rest Days / Fatigue</span><span class="text-on-surface" id="paramRestVal">Auto from match history</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Travel Mismatch Factor</span><span class="text-on-surface">Active (Continent Check)</span></li><li class="flex justify-between border-b border-outline-variant/30 pb-1"><span>Match Stake Importance</span><span class="text-on-surface" id="paramMatchStakeVal">World Cup (Tier 4)</span></li></ul></div>
                         </div>
                     </div>
                 </div>
@@ -286,14 +284,12 @@
             const isNeutral=document.getElementById('isNeutral').checked?1:0;
             const matchStake=Number(document.getElementById('matchStake').value||4);
             const isCompetitive=matchStake>1?1:0;
-            const homeRestDays=Number(document.getElementById('homeRestDays').value||30);
-            const awayRestDays=Number(document.getElementById('awayRestDays').value||30);
             btn.classList.add('opacity-50','pointer-events-none');btn.innerText='Analyzing...';
             document.getElementById('simulatingLabel').classList.remove('opacity-0');
             ['flagAContainer','flagBContainer'].forEach(id=>document.getElementById(id).classList.add('scanning','pulse-container'));
             document.getElementById('vsLabel').classList.add('text-secondary','animate-pulse');
             try{
-                const r=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({home_team:teamA,away_team:teamB,is_neutral:isNeutral,is_competitive:isCompetitive,match_stake:matchStake,home_rest_days:homeRestDays,away_rest_days:awayRestDays})});
+                const r=await fetch('/api/predict',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({home_team:teamA,away_team:teamB,is_neutral:isNeutral,is_competitive:isCompetitive,match_stake:matchStake})});
                 const pred=await r.json();
                 setTimeout(()=>{
                     btn.classList.remove('opacity-50','pointer-events-none');btn.innerText='Run Prediction';
@@ -321,7 +317,8 @@
                     document.getElementById('paramNeutralVal').innerText=isNeutral===1?'Active (Symmetric)':`Inactive (Home advantage to ${teamA})`;
                     const stakeLabels={1:'Friendly (Tier 1)',2:'Qualifier / Nations League (Tier 2)',3:'Continental Finals (Tier 3)',4:'World Cup (Tier 4)'};
                     document.getElementById('paramMatchStakeVal').innerText=stakeLabels[matchStake]||`Tier ${matchStake}`;
-                    document.getElementById('paramRestVal').innerText=`${homeRestDays} vs ${awayRestDays}`;
+                    const rest=pred.context&&pred.context.rest_days?pred.context.rest_days:null;
+                    document.getElementById('paramRestVal').innerText=rest?`Auto: ${rest.home} vs ${rest.away} days`:'Auto from match history';
                 },1200);
             }catch(e){console.error(e);btn.classList.remove('opacity-50','pointer-events-none');btn.innerText='Run Prediction';alert("API error - make sure Flask is running!");}
         });

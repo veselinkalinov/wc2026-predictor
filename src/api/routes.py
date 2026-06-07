@@ -55,8 +55,8 @@ def predict_matchup():
       - is_neutral (int, optional, default: 1)
       - is_competitive (int, optional, default: 1)
       - match_stake (float, optional, default: 4 if competitive else 1)
-      - home_rest_days (float, optional, default: 30)
-      - away_rest_days (float, optional, default: 30)
+      - match_date (str, optional, defaults to latest known/current date)
+      - home_rest_days / away_rest_days (float, optional override; normally inferred)
     """
     data = request.get_json() or {}
 
@@ -65,8 +65,9 @@ def predict_matchup():
     is_neutral = data.get("is_neutral", 1)
     is_competitive = data.get("is_competitive", 1)
     match_stake = data.get("match_stake")
-    home_rest_days = data.get("home_rest_days", 30.0)
-    away_rest_days = data.get("away_rest_days", 30.0)
+    match_date = data.get("match_date")
+    home_rest_days = data.get("home_rest_days")
+    away_rest_days = data.get("away_rest_days")
 
     # Validation
     if not home_team or not away_team:
@@ -85,6 +86,7 @@ def predict_matchup():
             match_stake=match_stake,
             home_rest_days=home_rest_days,
             away_rest_days=away_rest_days,
+            match_date=match_date,
         )
         return jsonify(prediction)
     except Exception as e:

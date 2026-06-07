@@ -89,18 +89,39 @@ def test_non_neutral_asymmetric_prediction():
         forward["probabilities"]["home_win"], reverse["probabilities"]["away_win"])
 
 
-def test_prediction_context_defaults_match_explicit_values():
+def test_prediction_context_infers_rest_days_by_default():
     predictor = MatchPredictor()
 
-    default_result = predictor.predict_match("Brazil", "Argentina", is_neutral=1)
-    explicit_result = predictor.predict_match(
+    result = predictor.predict_match("Brazil", "Argentina", is_neutral=1)
+
+    rest_context = result["context"]["rest_days"]
+    assert rest_context["source"] == "inferred"
+    assert 0.0 <= rest_context["home"] <= 30.0
+    assert 0.0 <= rest_context["away"] <= 30.0
+
+
+def test_prediction_context_allows_rest_day_override():
+    predictor = MatchPredictor()
+
+    result = predictor.predict_match(
         "Brazil",
         "Argentina",
         is_neutral=1,
         is_competitive=1,
         match_stake=4.0,
-        home_rest_days=30.0,
-        away_rest_days=30.0,
+        home_rest_days=6.0,
+        away_rest_days=4.0,
     )
 
-    assert default_result["probabilities"] == explicit_result["probabilities"]
+    rest_context = result["context"]["rest_days"]
+    assert rest_context["source"] == "override"
+    assert rest_context["home"] == 6.0
+    assert rest_context["away"] == 4.0
+
+
+def test_infer_rest_days_uses_match_history_cap():
+    predictor = MatchPredictor()
+
+    rest_days = predictor.infer_rest_days("Brazil")
+
+    assert 0.0 <= rest_days <= 30.0
