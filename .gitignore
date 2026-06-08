@@ -38,3 +38,6 @@ logs/
 
 # cat_boost training folder
 catboost_info/
+
+# wc2026-files folder
+wc2026-files/
