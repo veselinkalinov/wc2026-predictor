@@ -1,0 +1,146 @@
+{
+    "model_type": "Stacking Ensemble",
+    "selected_by": "log_loss",
+    "features": [
+        "home_elo",
+        "away_elo",
+        "elo_diff",
+        "home_form",
+        "away_form",
+        "form_diff",
+        "home_goals_scored_avg",
+        "home_goals_conceded_avg",
+        "home_goal_diff_avg",
+        "away_goals_scored_avg",
+        "away_goals_conceded_avg",
+        "away_goal_diff_avg",
+        "home_rank",
+        "away_rank",
+        "rank_diff",
+        "home_rank_points",
+        "away_rank_points",
+        "rank_points_diff",
+        "is_neutral",
+        "is_competitive",
+        "home_rest_days",
+        "away_rest_days",
+        "rest_days_diff",
+        "home_is_home_continent",
+        "away_is_home_continent",
+        "continent_diff",
+        "match_stake"
+    ],
+    "best_params": {},
+    "draw_threshold": 0.3500000000000002,
+    "draw_risk_threshold": 0.3,
+    "score_model": {
+        "model_type": "Dixon-Coles Poisson Goal Model",
+        "artifact": "score_model.pkl",
+        "alpha": 1.0,
+        "rho": 0.03,
+        "max_goals": 10,
+        "calibration_score_nll": 2.768186169639857
+    },
+    "test_metrics": {
+        "accuracy": 0.6076752299397399,
+        "log_loss": 0.8654659839010981,
+        "brier_score": 0.16917137378795802
+    },
+    "comparison": {
+        "Logistic Regression": {
+            "accuracy": 0.6057722803679035,
+            "log_loss": 0.873007253530636,
+            "brier_score": 0.17097044241670126,
+            "draw_threshold": 1.0
+        },
+        "Random Forest": {
+            "accuracy": 0.6026006977481764,
+            "log_loss": 0.9507082556603607,
+            "brier_score": 0.1690264400601584,
+            "draw_threshold": 0.3600000000000002
+        },
+        "HistGradientBoosting": {
+            "accuracy": 0.6035521725340945,
+            "log_loss": 0.9594954828618928,
+            "brier_score": 0.16843776509752284,
+            "draw_threshold": 0.3200000000000002
+        },
+        "LightGBM": {
+            "accuracy": 0.6083095464636854,
+            "log_loss": 0.9142093754790175,
+            "brier_score": 0.16825160216207438,
+            "draw_threshold": 1.0
+        },
+        "CatBoost": {
+            "accuracy": 0.6032350142721218,
+            "log_loss": 0.9625971460814169,
+            "brier_score": 0.1692007559377692,
+            "draw_threshold": 0.3200000000000002
+        },
+        "XGBoost": {
+            "accuracy": 0.602917856010149,
+            "log_loss": 0.9377998151338742,
+            "brier_score": 0.16854453973218123,
+            "draw_threshold": 0.31000000000000016
+        },
+        "Poisson Goal Model": {
+            "accuracy": 0.6032350142721218,
+            "log_loss": 0.8711294850570069,
+            "brier_score": 0.17037700221002605,
+            "draw_threshold": 1.0
+        },
+        "Stacking Ensemble": {
+            "accuracy": 0.6076752299397399,
+            "log_loss": 0.8654659839010981,
+            "brier_score": 0.16917137378795802,
+            "draw_threshold": 0.3500000000000002
+        }
+    },
+    "all_best_params": {
+        "Logistic Regression": {
+            "C": 0.01
+        },
+        "Random Forest": {
+            "max_depth": 15,
+            "n_estimators": 300
+        },
+        "HistGradientBoosting": {
+            "learning_rate": 0.01,
+            "max_depth": 3,
+            "max_iter": 300
+        },
+        "LightGBM": {
+            "learning_rate": 0.05,
+            "max_depth": 3,
+            "n_estimators": 100
+        },
+        "CatBoost": {
+            "depth": 5,
+            "iterations": 300,
+            "learning_rate": 0.05
+        },
+        "XGBoost": {
+            "learning_rate": 0.05,
+            "max_depth": 3,
+            "n_estimators": 100
+        },
+        "Poisson Goal Model": {
+            "alpha": 1.0,
+            "rho": 0.03,
+            "max_goals": 10
+        },
+        "Stacking Ensemble": {}
+    },
+    "classes": [
+        "H",
+        "D",
+        "A"
+    ],
+    "evaluation": {
+        "test_accuracy": 0.6076752299397399,
+        "test_log_loss": 0.8654659839010981,
+        "test_brier_score": 0.16917137378795802,
+        "test_samples": 3153,
+        "classification_report": "              precision    recall  f1-score   support\n\n    H (Home)       0.63      0.86      0.73      1493\n    D (Draw)       0.50      0.01      0.01       740\n    A (Away)       0.56      0.68      0.62       920\n\n    accuracy                           0.61      3153\n   macro avg       0.57      0.52      0.45      3153\nweighted avg       0.58      0.61      0.53      3153\n"
+    }
+}

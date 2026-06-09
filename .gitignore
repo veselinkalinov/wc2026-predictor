@@ -20,15 +20,6 @@ env/
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# Data - raw and processed files are not committed
-data/raw/
-data/processed/
-data/features/
-data/live_cache/
-
-# Models - serialised model files are not committed
-models/registry/
-
 # OS
 Thumbs.db
 Desktop.ini
