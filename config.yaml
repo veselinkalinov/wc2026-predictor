@@ -11,7 +11,7 @@ data:
   matches_file: matches.csv
   rankings_file: fifa_rankings.csv
   date_from: '2010-01-01'
-  date_to: '2026-06-10'
+  date_to: '2026-06-11'
   min_matches: 10
 features:
   form_window: 10
