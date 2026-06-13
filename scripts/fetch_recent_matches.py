@@ -27,21 +27,126 @@ load_dotenv()
 
 API_KEY = os.getenv("FOOTBALL_DATA_API_KEY", "")
 MATCHES_CSV_PATH = PROJECT_ROOT / config["paths"]["raw_data"] / config["data"]["matches_file"]
+MATCH_FIELDNAMES = [
+    "date", "home_team", "away_team", "home_score", "away_score",
+    "tournament", "city", "country", "neutral"
+]
 
 def load_existing_matches():
     """
-    Load existing matches into a set of (date, home_team, away_team) for fast deduplication.
+    Load existing matches as rows so finished API results can update
+    pre-seeded fixture rows that currently have blank scores.
     """
-    existing = set()
     if not MATCHES_CSV_PATH.exists():
         logger.warning(f"matches.csv not found at {MATCHES_CSV_PATH}. A new file will be created.")
-        return existing
+        return []
 
     with open(MATCHES_CSV_PATH, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        for row in reader:
-            existing.add((row["date"], row["home_team"], row["away_team"]))
-    return existing
+        return list(reader)
+
+
+def _has_missing_score(row):
+    return row.get("home_score") in ("", None) or row.get("away_score") in ("", None)
+
+
+def _parse_date(value):
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").date()
+    except (TypeError, ValueError):
+        return None
+
+
+def _same_world_cup_match(row, match):
+    return (
+        row.get("home_team") == match["home_team"]
+        and row.get("away_team") == match["away_team"]
+        and row.get("tournament") == match["tournament"]
+    )
+
+
+def _find_existing_match_index(rows, match):
+    """
+    Find an existing match row.
+
+    Football-Data.org dates are UTC, while the seeded World Cup schedule uses
+    local match dates. For late CONCACAF kickoffs this can be one day apart, so
+    fall back to the same teams/tournament within one day.
+    """
+    match_date = _parse_date(match["date"])
+
+    exact_matches = [
+        idx for idx, row in enumerate(rows)
+        if _same_world_cup_match(row, match) and row.get("date") == match["date"]
+    ]
+    if exact_matches:
+        return exact_matches[0]
+
+    nearby_matches = []
+    for idx, row in enumerate(rows):
+        row_date = _parse_date(row.get("date"))
+        if not row_date or not match_date or not _same_world_cup_match(row, match):
+            continue
+        if abs((row_date - match_date).days) <= 1:
+            nearby_matches.append(idx)
+
+    missing_nearby = [idx for idx in nearby_matches if _has_missing_score(rows[idx])]
+    if missing_nearby:
+        return missing_nearby[0]
+    if nearby_matches:
+        return nearby_matches[0]
+    return None
+
+
+def upsert_matches(matches):
+    """
+    Update blank fixture rows with final scores, append genuinely new matches,
+    and skip rows that already contain a score.
+    """
+    rows = load_existing_matches()
+    updated_count = 0
+    appended_count = 0
+    skipped_count = 0
+
+    for match in matches:
+        existing_idx = _find_existing_match_index(rows, match)
+
+        if existing_idx is None:
+            rows.append(match)
+            appended_count += 1
+            continue
+
+        existing_row = rows[existing_idx]
+        if not _has_missing_score(existing_row):
+            skipped_count += 1
+            continue
+
+        existing_row["home_score"] = str(match["home_score"])
+        existing_row["away_score"] = str(match["away_score"])
+        existing_row["tournament"] = existing_row.get("tournament") or match["tournament"]
+        for field in ("city", "country", "neutral"):
+            if existing_row.get(field) in ("", None):
+                existing_row[field] = match[field]
+        updated_count += 1
+
+    if updated_count == 0 and appended_count == 0:
+        logger.info(
+            "No new or blank World Cup match rows to update. "
+            f"Skipped {skipped_count} already-scored matches."
+        )
+        return False
+
+    MATCHES_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(MATCHES_CSV_PATH, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=MATCH_FIELDNAMES)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    logger.info(
+        "Successfully updated matches.csv "
+        f"(updated={updated_count}, appended={appended_count}, skipped={skipped_count})."
+    )
+    return True
 
 def query_world_cup_matches():
     """
@@ -122,8 +227,8 @@ def main():
     logger.info("STARTING WORLD CUP MATCHES FETCH & RETRAINING LOOP")
     logger.info("=" * 70)
 
-    existing_keys = load_existing_matches()
-    logger.info(f"Loaded {len(existing_keys)} existing matches from matches.csv")
+    existing_count = len(load_existing_matches())
+    logger.info(f"Loaded {existing_count} existing matches from matches.csv")
 
     fetched_matches = []
 
@@ -135,30 +240,10 @@ def main():
     else:
         logger.warning("FOOTBALL_DATA_API_KEY is not configured in .env. Skipping fetch.")
 
-    # Deduplicate and append
-    new_matches = []
-    for m in fetched_matches:
-        key = (m["date"], m["home_team"], m["away_team"])
-        if key not in existing_keys:
-            new_matches.append(m)
-            existing_keys.add(key)
-
-    if not new_matches:
-        logger.info("No new finished World Cup matches found. matches.csv is fully up to date.")
-    else:
-        logger.info(f"Appending {len(new_matches)} new matches to matches.csv...")
-        
-        file_exists = MATCHES_CSV_PATH.exists()
-        with open(MATCHES_CSV_PATH, "a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=[
-                "date", "home_team", "away_team", "home_score", "away_score", "tournament", "city", "country", "neutral"
-            ])
-            if not file_exists:
-                writer.writeheader()
-            for m in new_matches:
-                writer.writerow(m)
-                
-        logger.info("Successfully updated matches.csv")
+    match_data_changed = upsert_matches(fetched_matches)
+    if not match_data_changed:
+        logger.info("Skipping retraining because matches.csv did not change.")
+        return
 
     # Trigger the retraining pipeline steps
     logger.info("Triggering retraining pipeline steps...")

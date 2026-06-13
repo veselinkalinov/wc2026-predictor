@@ -110,6 +110,140 @@ def _generate_mock_standings():
     return {"response": response_data, "errors": [], "results": len(response_data)}
 
 
+def _stable_team_id(team_name: str) -> int:
+    return 1000 + (sum(ord(ch) for ch in team_name) % 1000)
+
+
+def _group_from_fixture(item: dict, home: str, away: str) -> str:
+    round_str = item.get("league", {}).get("round", "")
+    if "Group " in round_str:
+        return "Group " + round_str.split("Group ")[-1].strip()
+
+    for group_name, teams in GROUPS.items():
+        if home in teams and away in teams:
+            return f"Group {group_name}"
+    return "Group Stage"
+
+
+def _empty_standing_row(team: str, group_name: str) -> dict:
+    return {
+        "rank": 1,
+        "team": {
+            "id": _stable_team_id(team),
+            "name": team,
+            "logo": f"https://media.api-sports.io/football/teams/{_stable_team_id(team)}.png"
+        },
+        "points": 0,
+        "goalsDiff": 0,
+        "group": group_name,
+        "form": "",
+        "status": "same",
+        "description": "Possible Qualification",
+        "all": {
+            "played": 0,
+            "win": 0,
+            "draw": 0,
+            "lose": 0,
+            "goals": {
+                "for": 0,
+                "against": 0
+            }
+        },
+        "update": datetime.now().isoformat()
+    }
+
+
+def _apply_result(row: dict, goals_for: int, goals_against: int) -> None:
+    row["all"]["played"] += 1
+    row["all"]["goals"]["for"] += goals_for
+    row["all"]["goals"]["against"] += goals_against
+    row["goalsDiff"] = row["all"]["goals"]["for"] - row["all"]["goals"]["against"]
+
+    if goals_for > goals_against:
+        row["all"]["win"] += 1
+        row["points"] += 3
+        row["form"] += "W"
+    elif goals_for < goals_against:
+        row["all"]["lose"] += 1
+        row["form"] += "L"
+    else:
+        row["all"]["draw"] += 1
+        row["points"] += 1
+        row["form"] += "D"
+
+
+def _generate_standings_from_fixtures(fixtures_data: dict) -> dict:
+    """
+    Build group standings from finished fixture results when the dedicated
+    standings API is unavailable, stale, or not populated yet.
+    """
+    response = fixtures_data.get("response", []) if fixtures_data else []
+    if not response:
+        return {}
+
+    standings_by_group = {}
+    for group_name, teams in GROUPS.items():
+        display_group = f"Group {group_name}"
+        standings_by_group[display_group] = {
+            team: _empty_standing_row(team, display_group)
+            for team in teams
+        }
+
+    finished_count = 0
+    for item in response:
+        fixture = item.get("fixture", {})
+        status_short = fixture.get("status", {}).get("short", "").upper()
+        if status_short not in {"FT", "AET", "PEN"}:
+            continue
+
+        teams = item.get("teams", {})
+        home = clean_team_name(teams.get("home", {}).get("name"))
+        away = clean_team_name(teams.get("away", {}).get("name"))
+        goals = item.get("goals", {})
+        home_goals = goals.get("home")
+        away_goals = goals.get("away")
+        if not home or not away or home_goals is None or away_goals is None:
+            continue
+
+        group_name = _group_from_fixture(item, home, away)
+        standings_by_group.setdefault(group_name, {})
+        standings_by_group[group_name].setdefault(home, _empty_standing_row(home, group_name))
+        standings_by_group[group_name].setdefault(away, _empty_standing_row(away, group_name))
+
+        _apply_result(standings_by_group[group_name][home], int(home_goals), int(away_goals))
+        _apply_result(standings_by_group[group_name][away], int(away_goals), int(home_goals))
+        finished_count += 1
+
+    if finished_count == 0:
+        return {}
+
+    league_obj = {
+        "id": 1,
+        "name": "World Cup",
+        "country": "World",
+        "logo": "https://media.api-sports.io/football/leagues/1.png",
+        "flag": None,
+        "season": 2026,
+        "standings": []
+    }
+
+    for group_name in sorted(standings_by_group):
+        group_rows = list(standings_by_group[group_name].values())
+        group_rows.sort(
+            key=lambda row: (
+                -row["points"],
+                -row["goalsDiff"],
+                -row["all"]["goals"]["for"],
+                row["team"]["name"],
+            )
+        )
+        for rank, row in enumerate(group_rows, start=1):
+            row["rank"] = rank
+        league_obj["standings"].append(group_rows)
+
+    return {"response": [{"league": league_obj}], "errors": [], "results": 1}
+
+
 def _generate_mock_fixtures():
     """
     Generate round-robin fixtures schedule for group stages of World Cup 2026.
@@ -440,6 +574,16 @@ def get_standings(bypass_cache: bool = False) -> dict:
     Generates mock data if all credentials or calls fail or return empty.
     """
     _ensure_cache_dir()
+
+    fixture_standings = _generate_standings_from_fixtures(get_fixtures())
+    if fixture_standings:
+        try:
+            with open(STANDINGS_CACHE, "w", encoding="utf-8") as f:
+                json.dump(fixture_standings, f, indent=4)
+            logger.info("Saved standings derived from finished fixtures to cache.")
+        except Exception as e:
+            logger.error(f"Failed to write derived standings cache: {str(e)}")
+        return fixture_standings
 
     if not bypass_cache and _is_cache_valid(STANDINGS_CACHE):
         try:

@@ -28,6 +28,13 @@ simulator = TournamentSimulator()
 logger.info("API memory loaded.")
 
 
+def refresh_predictor_if_needed() -> None:
+    try:
+        predictor._check_and_reload()
+    except Exception as e:
+        logger.warning(f"Predictor hot-reload check failed: {str(e)}")
+
+
 @api_bp.route("/health", methods=["GET"])
 def health_check():
     """
@@ -41,6 +48,7 @@ def get_teams():
     """
     Get a list of all unique team names sorted alphabetically.
     """
+    refresh_predictor_if_needed()
     teams = sorted(list(predictor.team_states.keys()))
     return jsonify({"teams": teams, "count": len(teams)})
 
@@ -144,6 +152,7 @@ def get_team_details(team_name):
     """
     Get ELO, FIFA rank, form, and average goals for a specific team.
     """
+    refresh_predictor_if_needed()
     team_name = team_name.strip()
     state = predictor.get_team_state(team_name)
     if not state or (state["elo"] == 1500.0 and state["rank"] == 211.0):
@@ -196,6 +205,7 @@ def get_team_matches(team_name):
     """
     Get recent matches for a specific team.
     """
+    refresh_predictor_if_needed()
     team_name = team_name.strip()
     df = predictor.feature_matrix
     team_df = df[(df["home_team"] == team_name) | (df["away_team"] == team_name)]
