@@ -32,3 +32,6 @@ catboost_info/
 
 # wc2026-files folder
 wc2026-files/
+
+# Models (exceeds GitHub's file size limit)
+models/
