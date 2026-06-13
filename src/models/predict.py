@@ -113,23 +113,13 @@ class MatchPredictor:
         else:
             self.draw_threshold = meta.get("draw_threshold", 1.0)
 
-        # Load the latest matches to get recent stats for teams
-        self.feature_matrix = pd.read_csv(self.feature_matrix_path)
-        self.feature_matrix["date"] = pd.to_datetime(
-            self.feature_matrix["date"])
-        self.default_prediction_date = max(
-            self.feature_matrix["date"].max().normalize(),
-            pd.Timestamp.today().normalize(),
-        )
-
-        # Build a lookup dictionary of the latest state for each team
-        self.team_states = self._build_latest_team_states()
-
         # Track file modification time for auto-reloads
         self.last_loaded_time = self.model_path.stat(
             ).st_mtime if self.model_path.exists() else 0
+        self.last_feature_matrix_loaded_time = 0
         self.last_check_time = 0.0
         self.prediction_cache = {}
+        self._load_feature_matrix_state()
 
     def clear_prediction_cache(self) -> None:
         """
@@ -137,9 +127,33 @@ class MatchPredictor:
         """
         self.prediction_cache = {}
 
+    def _feature_matrix_mtime(self) -> float:
+        if not self.feature_matrix_path.exists():
+            return 0.0
+        return self.feature_matrix_path.stat().st_mtime
+
+    def _load_feature_matrix_state(self) -> None:
+        """
+        Reload the feature matrix and rebuild derived team analytics state.
+        """
+        self.feature_matrix = pd.read_csv(self.feature_matrix_path)
+        parsed_dates = pd.to_datetime(
+            self.feature_matrix["date"], errors="coerce", format="mixed")
+        if parsed_dates.isna().any():
+            bad_dates = self.feature_matrix.loc[parsed_dates.isna(), "date"].head(3).tolist()
+            raise ValueError(f"Invalid feature matrix date values: {bad_dates}")
+        self.feature_matrix["date"] = parsed_dates
+        self.default_prediction_date = max(
+            self.feature_matrix["date"].max().normalize(),
+            pd.Timestamp.today().normalize(),
+        )
+        self.team_states = self._build_latest_team_states()
+        self.last_feature_matrix_loaded_time = self._feature_matrix_mtime()
+        self.clear_prediction_cache()
+
     def _check_and_reload(self) -> bool:
         """
-        Check if the model file on disk has been updated, and reload if necessary.
+        Check if model artifacts or the feature matrix changed, and reload if necessary.
         """
         if getattr(self, "disable_reload", False):
             return False
@@ -149,10 +163,13 @@ class MatchPredictor:
             return False
         self.last_check_time = current_time
 
-        if not self.model_path.exists():
-            return False
-        mtime = self.model_path.stat().st_mtime
-        if mtime > self.last_loaded_time:
+        model_mtime = self.model_path.stat().st_mtime if self.model_path.exists() else 0
+        feature_matrix_mtime = self._feature_matrix_mtime()
+        model_updated = model_mtime > self.last_loaded_time
+        feature_matrix_updated = feature_matrix_mtime > self.last_feature_matrix_loaded_time
+        reloaded = False
+
+        if model_updated:
             logger.info(
                 f"Model file update detected on disk for {self.model_filename}. Reloading model artifacts and team states...")
             try:
@@ -161,49 +178,48 @@ class MatchPredictor:
                     new_model = joblib.load(self.model_path)
                 except (ModuleNotFoundError, ImportError) as e:
                     logger.warning(f"Failed to hot-reload updated model file due to missing package: {e}. Keeping current model.")
-                    return False
-                
-                self.model = new_model
-                self.scaler = joblib.load(self.scaler_path)
-                with open(self.meta_path, "r") as f:
-                    meta = json.load(f)
-                self.meta = meta
-                self.features = meta["features"]
-                self.classes = meta["classes"]
-                self.score_model = self._load_score_model()
-                
-                model_display_name = {
-                    "logistic_regression.pkl": "Logistic Regression",
-                    "random_forest.pkl": "Random Forest",
-                    "histgradientboosting.pkl": "HistGradientBoosting",
-                    "lightgbm.pkl": "LightGBM",
-                    "catboost.pkl": "CatBoost",
-                    "xgboost.pkl": "XGBoost",
-                    "poisson_goal_model.pkl": "Poisson Goal Model",
-                    "stacking_ensemble.pkl": "Stacking Ensemble"
-                }.get(self.model_filename)
-                
-                if model_display_name and "comparison" in meta and model_display_name in meta["comparison"]:
-                    self.draw_threshold = meta["comparison"][model_display_name].get("draw_threshold", 1.0)
                 else:
-                    self.draw_threshold = meta.get("draw_threshold", 1.0)
+                    self.model = new_model
+                    self.scaler = joblib.load(self.scaler_path)
+                    with open(self.meta_path, "r") as f:
+                        meta = json.load(f)
+                    self.meta = meta
+                    self.features = meta["features"]
+                    self.classes = meta["classes"]
+                    self.score_model = self._load_score_model()
 
-                # Reload feature matrix and team states
-                self.feature_matrix = pd.read_csv(self.feature_matrix_path)
-                self.feature_matrix["date"] = pd.to_datetime(
-                    self.feature_matrix["date"])
-                self.default_prediction_date = max(
-                    self.feature_matrix["date"].max().normalize(),
-                    pd.Timestamp.today().normalize(),
-                )
-                self.team_states = self._build_latest_team_states()
+                    model_display_name = {
+                        "logistic_regression.pkl": "Logistic Regression",
+                        "random_forest.pkl": "Random Forest",
+                        "histgradientboosting.pkl": "HistGradientBoosting",
+                        "lightgbm.pkl": "LightGBM",
+                        "catboost.pkl": "CatBoost",
+                        "xgboost.pkl": "XGBoost",
+                        "poisson_goal_model.pkl": "Poisson Goal Model",
+                        "stacking_ensemble.pkl": "Stacking Ensemble"
+                    }.get(self.model_filename)
 
-                self.last_loaded_time = mtime
-                logger.info("Reload completed successfully.")
-                return True
+                    if model_display_name and "comparison" in meta and model_display_name in meta["comparison"]:
+                        self.draw_threshold = meta["comparison"][model_display_name].get("draw_threshold", 1.0)
+                    else:
+                        self.draw_threshold = meta.get("draw_threshold", 1.0)
+
+                    self.last_loaded_time = model_mtime
+                    reloaded = True
             except Exception as e:
                 logger.error(f"Failed to reload model artifacts: {str(e)}")
-        return False
+
+        if feature_matrix_updated or reloaded:
+            try:
+                logger.info("Feature matrix update detected on disk. Reloading team states...")
+                self._load_feature_matrix_state()
+                reloaded = True
+            except Exception as e:
+                logger.error(f"Failed to reload feature matrix state: {str(e)}")
+
+        if reloaded:
+            logger.info("Reload completed successfully.")
+        return reloaded
 
     def _load_score_model(self):
         """

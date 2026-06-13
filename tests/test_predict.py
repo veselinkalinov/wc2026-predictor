@@ -5,6 +5,7 @@ Unit tests for the prediction pipeline in src/models/predict.py.
 """
 
 import numpy as np
+import pandas as pd
 from src.models.predict import MatchPredictor
 
 
@@ -125,3 +126,33 @@ def test_infer_rest_days_uses_match_history_cap():
     rest_days = predictor.infer_rest_days("Brazil")
 
     assert 0.0 <= rest_days <= 30.0
+
+
+def test_feature_matrix_reload_updates_team_states_without_model_change(tmp_path):
+    predictor = MatchPredictor()
+    matrix_path = tmp_path / "feature_matrix.csv"
+    predictor.feature_matrix.to_csv(matrix_path, index=False)
+    predictor.feature_matrix_path = matrix_path
+
+    new_row = predictor.feature_matrix.iloc[-1].copy()
+    new_row["date"] = (
+        predictor.feature_matrix["date"].max() + pd.Timedelta(days=1)
+    ).strftime("%Y-%m-%d")
+    new_row["home_team"] = "Reload Home"
+    new_row["away_team"] = "Reload Away"
+    new_row["home_score"] = 2
+    new_row["away_score"] = 0
+    new_row["result"] = "H"
+
+    updated_matrix = pd.concat(
+        [predictor.feature_matrix, pd.DataFrame([new_row])],
+        ignore_index=True,
+    )
+    updated_matrix.to_csv(matrix_path, index=False)
+
+    predictor.last_check_time = 0.0
+    predictor.last_feature_matrix_loaded_time = matrix_path.stat().st_mtime - 1
+
+    assert predictor._check_and_reload()
+    assert "Reload Home" in predictor.team_states
+    assert "Reload Away" in predictor.team_states
