@@ -241,8 +241,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -270,13 +270,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 1,
+                "away": 1
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 1,
+                    "away": 1
                 }
             }
         },
@@ -297,8 +297,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -326,13 +326,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 1,
+                "away": 1
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 1,
+                    "away": 1
                 }
             }
         },
@@ -353,8 +353,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -382,13 +382,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 0,
+                "away": 1
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 0,
+                    "away": 1
                 }
             }
         },
@@ -409,8 +409,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -438,13 +438,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 2,
+                "away": 0
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 2,
+                    "away": 0
                 }
             }
         },
@@ -465,8 +465,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -494,13 +494,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 7,
+                "away": 1
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 7,
+                    "away": 1
                 }
             }
         },
@@ -521,8 +521,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -550,13 +550,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 2,
+                "away": 2
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 2,
+                    "away": 2
                 }
             }
         },
@@ -577,8 +577,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -606,13 +606,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 1,
+                "away": 0
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 1,
+                    "away": 0
                 }
             }
         },
@@ -633,8 +633,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -662,13 +662,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 5,
+                "away": 1
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 5,
+                    "away": 1
                 }
             }
         },

@@ -33,7 +33,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.758702"
+                            "update": "2026-06-15T10:41:26.038790"
                         },
                         {
                             "rank": 2,
@@ -58,7 +58,7 @@
                                     "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038836"
                         },
                         {
                             "rank": 3,
@@ -83,7 +83,7 @@
                                     "against": 2
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038840"
                         },
                         {
                             "rank": 4,
@@ -108,7 +108,7 @@
                                     "against": 2
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038830"
                         }
                     ],
                     [
@@ -135,7 +135,7 @@
                                     "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038875"
                         },
                         {
                             "rank": 2,
@@ -160,7 +160,7 @@
                                     "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038869"
                         },
                         {
                             "rank": 3,
@@ -169,23 +169,23 @@
                                 "name": "Qatar",
                                 "logo": "https://media.api-sports.io/football/teams/1505.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": 0,
                             "group": "Group B",
-                            "form": "",
+                            "form": "D",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038878"
                         },
                         {
                             "rank": 4,
@@ -194,75 +194,75 @@
                                 "name": "Switzerland",
                                 "logo": "https://media.api-sports.io/football/teams/1175.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": 0,
                             "group": "Group B",
-                            "form": "",
+                            "form": "D",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038882"
                         }
                     ],
                     [
                         {
                             "rank": 1,
                             "team": {
-                                "id": 1612,
-                                "name": "Brazil",
-                                "logo": "https://media.api-sports.io/football/teams/1612.png"
+                                "id": 1824,
+                                "name": "Scotland",
+                                "logo": "https://media.api-sports.io/football/teams/1824.png"
                             },
-                            "points": 0,
-                            "goalsDiff": 0,
+                            "points": 3,
+                            "goalsDiff": 1,
                             "group": "Group C",
-                            "form": "",
+                            "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
-                                "win": 0,
+                                "played": 1,
+                                "win": 1,
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
+                                    "for": 1,
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038925"
                         },
                         {
                             "rank": 2,
                             "team": {
-                                "id": 1495,
-                                "name": "Haiti",
-                                "logo": "https://media.api-sports.io/football/teams/1495.png"
+                                "id": 1612,
+                                "name": "Brazil",
+                                "logo": "https://media.api-sports.io/football/teams/1612.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": 0,
                             "group": "Group C",
-                            "form": "",
+                            "form": "D",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038900"
                         },
                         {
                             "rank": 3,
@@ -271,48 +271,48 @@
                                 "name": "Morocco",
                                 "logo": "https://media.api-sports.io/football/teams/1722.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": 0,
                             "group": "Group C",
-                            "form": "",
+                            "form": "D",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038905"
                         },
                         {
                             "rank": 4,
                             "team": {
-                                "id": 1824,
-                                "name": "Scotland",
-                                "logo": "https://media.api-sports.io/football/teams/1824.png"
+                                "id": 1495,
+                                "name": "Haiti",
+                                "logo": "https://media.api-sports.io/football/teams/1495.png"
                             },
                             "points": 0,
-                            "goalsDiff": 0,
+                            "goalsDiff": -1,
                             "group": "Group C",
-                            "form": "",
+                            "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
                                 "draw": 0,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
                                     "for": 0,
-                                    "against": 0
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038920"
                         }
                     ],
                     [
@@ -339,7 +339,7 @@
                                     "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038930"
                         },
                         {
                             "rank": 2,
@@ -348,23 +348,23 @@
                                 "name": "Australia",
                                 "logo": "https://media.api-sports.io/football/teams/1934.png"
                             },
-                            "points": 0,
-                            "goalsDiff": 0,
+                            "points": 3,
+                            "goalsDiff": 2,
                             "group": "Group D",
-                            "form": "",
+                            "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
-                                "win": 0,
+                                "played": 1,
+                                "win": 1,
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
+                                    "for": 2,
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038937"
                         },
                         {
                             "rank": 3,
@@ -374,22 +374,22 @@
                                 "logo": "https://media.api-sports.io/football/teams/1644.png"
                             },
                             "points": 0,
-                            "goalsDiff": 0,
+                            "goalsDiff": -2,
                             "group": "Group D",
-                            "form": "",
+                            "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
                                 "draw": 0,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
                                     "for": 0,
-                                    "against": 0
+                                    "against": 2
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038953"
                         },
                         {
                             "rank": 4,
@@ -414,186 +414,186 @@
                                     "against": 4
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038934"
                         }
                     ],
                     [
                         {
                             "rank": 1,
                             "team": {
-                                "id": 1834,
-                                "name": "Cura\u00e7ao",
-                                "logo": "https://media.api-sports.io/football/teams/1834.png"
+                                "id": 1723,
+                                "name": "Germany",
+                                "logo": "https://media.api-sports.io/football/teams/1723.png"
                             },
-                            "points": 0,
-                            "goalsDiff": 0,
+                            "points": 3,
+                            "goalsDiff": 6,
                             "group": "Group E",
-                            "form": "",
+                            "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
-                                "win": 0,
+                                "played": 1,
+                                "win": 1,
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 7,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038959"
                         },
                         {
                             "rank": 2,
+                            "team": {
+                                "id": 1075,
+                                "name": "Ivory Coast",
+                                "logo": "https://media.api-sports.io/football/teams/1075.png"
+                            },
+                            "points": 3,
+                            "goalsDiff": 1,
+                            "group": "Group E",
+                            "form": "W",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 1,
+                                "win": 1,
+                                "draw": 0,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 1,
+                                    "against": 0
+                                }
+                            },
+                            "update": "2026-06-15T10:41:26.038967"
+                        },
+                        {
+                            "rank": 3,
                             "team": {
                                 "id": 1707,
                                 "name": "Ecuador",
                                 "logo": "https://media.api-sports.io/football/teams/1707.png"
                             },
                             "points": 0,
-                            "goalsDiff": 0,
+                            "goalsDiff": -1,
                             "group": "Group E",
-                            "form": "",
+                            "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
                                 "draw": 0,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
                                     "for": 0,
-                                    "against": 0
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
-                        },
-                        {
-                            "rank": 3,
-                            "team": {
-                                "id": 1723,
-                                "name": "Germany",
-                                "logo": "https://media.api-sports.io/football/teams/1723.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group E",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038970"
                         },
                         {
                             "rank": 4,
                             "team": {
-                                "id": 1075,
-                                "name": "Ivory Coast",
-                                "logo": "https://media.api-sports.io/football/teams/1075.png"
+                                "id": 1834,
+                                "name": "Cura\u00e7ao",
+                                "logo": "https://media.api-sports.io/football/teams/1834.png"
                             },
                             "points": 0,
-                            "goalsDiff": 0,
+                            "goalsDiff": -6,
                             "group": "Group E",
-                            "form": "",
+                            "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
                                 "draw": 0,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 7
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038963"
                         }
                     ],
                     [
                         {
                             "rank": 1,
                             "team": {
+                                "id": 1614,
+                                "name": "Sweden",
+                                "logo": "https://media.api-sports.io/football/teams/1614.png"
+                            },
+                            "points": 3,
+                            "goalsDiff": 4,
+                            "group": "Group F",
+                            "form": "W",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 1,
+                                "win": 1,
+                                "draw": 0,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 5,
+                                    "against": 1
+                                }
+                            },
+                            "update": "2026-06-15T10:41:26.038993"
+                        },
+                        {
+                            "rank": 2,
+                            "team": {
                                 "id": 1490,
                                 "name": "Japan",
                                 "logo": "https://media.api-sports.io/football/teams/1490.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": 0,
                             "group": "Group F",
-                            "form": "",
+                            "form": "D",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 2,
+                                    "against": 2
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038990"
                         },
                         {
-                            "rank": 2,
+                            "rank": 3,
                             "team": {
                                 "id": 1144,
                                 "name": "Netherlands",
                                 "logo": "https://media.api-sports.io/football/teams/1144.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": 0,
                             "group": "Group F",
-                            "form": "",
+                            "form": "D",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 2,
+                                    "against": 2
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
-                        },
-                        {
-                            "rank": 3,
-                            "team": {
-                                "id": 1614,
-                                "name": "Sweden",
-                                "logo": "https://media.api-sports.io/football/teams/1614.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group F",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038986"
                         },
                         {
                             "rank": 4,
@@ -603,22 +603,22 @@
                                 "logo": "https://media.api-sports.io/football/teams/1733.png"
                             },
                             "points": 0,
-                            "goalsDiff": 0,
+                            "goalsDiff": -4,
                             "group": "Group F",
-                            "form": "",
+                            "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
                                 "draw": 0,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 5
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.038996"
                         }
                     ],
                     [
@@ -645,7 +645,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039000"
                         },
                         {
                             "rank": 2,
@@ -670,7 +670,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039015"
                         },
                         {
                             "rank": 3,
@@ -695,7 +695,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039019"
                         },
                         {
                             "rank": 4,
@@ -720,7 +720,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039024"
                         }
                     ],
                     [
@@ -747,7 +747,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039030"
                         },
                         {
                             "rank": 2,
@@ -772,7 +772,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039033"
                         },
                         {
                             "rank": 3,
@@ -797,7 +797,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039027"
                         },
                         {
                             "rank": 4,
@@ -822,7 +822,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039035"
                         }
                     ],
                     [
@@ -849,7 +849,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039038"
                         },
                         {
                             "rank": 2,
@@ -874,7 +874,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039042"
                         },
                         {
                             "rank": 3,
@@ -899,7 +899,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039045"
                         },
                         {
                             "rank": 4,
@@ -924,7 +924,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039040"
                         }
                     ],
                     [
@@ -951,7 +951,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039049"
                         },
                         {
                             "rank": 2,
@@ -976,7 +976,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039047"
                         },
                         {
                             "rank": 3,
@@ -1001,7 +1001,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039052"
                         },
                         {
                             "rank": 4,
@@ -1026,7 +1026,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039054"
                         }
                     ],
                     [
@@ -1053,7 +1053,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039082"
                         },
                         {
                             "rank": 2,
@@ -1078,7 +1078,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039075"
                         },
                         {
                             "rank": 3,
@@ -1103,7 +1103,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039070"
                         },
                         {
                             "rank": 4,
@@ -1128,7 +1128,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039079"
                         }
                     ],
                     [
@@ -1155,7 +1155,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039102"
                         },
                         {
                             "rank": 2,
@@ -1180,7 +1180,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039097"
                         },
                         {
                             "rank": 3,
@@ -1205,7 +1205,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039105"
                         },
                         {
                             "rank": 4,
@@ -1230,7 +1230,7 @@
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-13T19:14:26.759710"
+                            "update": "2026-06-15T10:41:26.039108"
                         }
                     ]
                 ]

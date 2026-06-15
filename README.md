@@ -24,6 +24,7 @@ _Predict international football match outcomes (Home Win / Draw / Away Win) usin
 - [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
   - [Prerequisites](#prerequisites)
+  - [Quick Docker Start](#quick-docker-start)
   - [Installation](#installation)
   - [Environment Variables](#environment-variables)
   - [Data Setup](#data-setup)
@@ -186,6 +187,66 @@ wc2026-predictor/
 - **pip** (Python package manager)
 - **Git**
 - **Docker & Docker Compose** (Optional, for containerized deployment)
+
+### Quick Docker Start
+
+Use Docker if you want to start the web dashboard without creating a local Python environment.
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/veselinkalinov/wc2026-predictor.git
+   cd wc2026-predictor
+   ```
+
+2. **Create a `.env` file in the project root:**
+
+   ```env
+   RAPIDAPI_KEY=your_rapidapi_key_here
+   FOOTBALL_DATA_API_KEY=your_footballdata_api_key_here
+   RETRAINING_INTERVAL_HOURS=24
+   ```
+
+   If you do not have API keys yet, keep the file in place and leave the values as placeholders. Live data features require valid keys, but the local dashboard can still start when the required project data and models are present.
+
+3. **Make sure the required local files exist:**
+
+   - Raw CSV datasets must be placed in `data/raw/`.
+   - Trained model artifacts should be available in `models/registry/`.
+
+4. **Build and start the containers:**
+
+   ```bash
+   docker compose up --build
+   ```
+
+   If your machine uses the older Compose command, run:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+5. **Open the dashboard:**
+
+   Visit `http://127.0.0.1:5000/`.
+
+Useful Docker commands:
+
+```bash
+# Start in the background
+docker compose up --build -d
+
+# Follow web app logs
+docker compose logs -f web
+
+# Follow scheduler logs
+docker compose logs -f scheduler
+
+# Stop and remove the containers
+docker compose down
+```
+
+The Docker Compose setup starts two services: `web` for the Flask dashboard/API and `scheduler` for periodic live-data fetch and retraining jobs.
 
 ### Installation
 
