@@ -17,23 +17,23 @@
                                 "name": "Mexico",
                                 "logo": "https://media.api-sports.io/football/teams/1613.png"
                             },
-                            "points": 3,
-                            "goalsDiff": 2,
+                            "points": 6,
+                            "goalsDiff": 3,
                             "group": "Group A",
-                            "form": "W",
+                            "form": "WW",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 1,
-                                "win": 1,
+                                "played": 2,
+                                "win": 2,
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 2,
+                                    "for": 3,
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038790"
+                            "update": "2026-06-21T22:34:47.259686"
                         },
                         {
                             "rank": 2,
@@ -43,22 +43,22 @@
                                 "logo": "https://media.api-sports.io/football/teams/1061.png"
                             },
                             "points": 3,
-                            "goalsDiff": 1,
+                            "goalsDiff": 0,
                             "group": "Group A",
-                            "form": "W",
+                            "form": "WL",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 1,
+                                "played": 2,
                                 "win": 1,
                                 "draw": 0,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
                                     "for": 2,
-                                    "against": 1
+                                    "against": 2
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038836"
+                            "update": "2026-06-21T22:34:47.259807"
                         },
                         {
                             "rank": 3,
@@ -67,23 +67,23 @@
                                 "name": "Czech Republic",
                                 "logo": "https://media.api-sports.io/football/teams/1347.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": -1,
                             "group": "Group A",
-                            "form": "L",
+                            "form": "LD",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 1,
+                                "played": 2,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 1,
                                 "goals": {
-                                    "for": 1,
-                                    "against": 2
+                                    "for": 2,
+                                    "against": 3
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038840"
+                            "update": "2026-06-21T22:34:47.259812"
                         },
                         {
                             "rank": 4,
@@ -92,202 +92,202 @@
                                 "name": "South Africa",
                                 "logo": "https://media.api-sports.io/football/teams/1145.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": -2,
                             "group": "Group A",
-                            "form": "L",
+                            "form": "LD",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 1,
+                                "played": 2,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 1,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 2
+                                    "for": 1,
+                                    "against": 3
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038830"
+                            "update": "2026-06-21T22:34:47.259796"
                         }
                     ],
                     [
                         {
                             "rank": 1,
+                            "team": {
+                                "id": 1568,
+                                "name": "Canada",
+                                "logo": "https://media.api-sports.io/football/teams/1568.png"
+                            },
+                            "points": 4,
+                            "goalsDiff": 6,
+                            "group": "Group B",
+                            "form": "DW",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 1,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 7,
+                                    "against": 1
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.259844"
+                        },
+                        {
+                            "rank": 2,
+                            "team": {
+                                "id": 1175,
+                                "name": "Switzerland",
+                                "logo": "https://media.api-sports.io/football/teams/1175.png"
+                            },
+                            "points": 4,
+                            "goalsDiff": 3,
+                            "group": "Group B",
+                            "form": "DW",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 1,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 5,
+                                    "against": 2
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.259892"
+                        },
+                        {
+                            "rank": 3,
                             "team": {
                                 "id": 1129,
                                 "name": "Bosnia and Herzegovina",
                                 "logo": "https://media.api-sports.io/football/teams/1129.png"
                             },
                             "points": 1,
-                            "goalsDiff": 0,
+                            "goalsDiff": -3,
                             "group": "Group B",
-                            "form": "D",
+                            "form": "DL",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 1,
+                                "played": 2,
                                 "win": 0,
                                 "draw": 1,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
-                                    "for": 1,
-                                    "against": 1
+                                    "for": 2,
+                                    "against": 5
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038875"
+                            "update": "2026-06-21T22:34:47.259854"
                         },
                         {
-                            "rank": 2,
-                            "team": {
-                                "id": 1568,
-                                "name": "Canada",
-                                "logo": "https://media.api-sports.io/football/teams/1568.png"
-                            },
-                            "points": 1,
-                            "goalsDiff": 0,
-                            "group": "Group B",
-                            "form": "D",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 0,
-                                "draw": 1,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 1,
-                                    "against": 1
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038869"
-                        },
-                        {
-                            "rank": 3,
+                            "rank": 4,
                             "team": {
                                 "id": 1505,
                                 "name": "Qatar",
                                 "logo": "https://media.api-sports.io/football/teams/1505.png"
                             },
                             "points": 1,
-                            "goalsDiff": 0,
+                            "goalsDiff": -6,
                             "group": "Group B",
-                            "form": "D",
+                            "form": "DL",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 1,
+                                "played": 2,
                                 "win": 0,
                                 "draw": 1,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
                                     "for": 1,
-                                    "against": 1
+                                    "against": 7
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038878"
-                        },
-                        {
-                            "rank": 4,
-                            "team": {
-                                "id": 1175,
-                                "name": "Switzerland",
-                                "logo": "https://media.api-sports.io/football/teams/1175.png"
-                            },
-                            "points": 1,
-                            "goalsDiff": 0,
-                            "group": "Group B",
-                            "form": "D",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 0,
-                                "draw": 1,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 1,
-                                    "against": 1
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038882"
+                            "update": "2026-06-21T22:34:47.259859"
                         }
                     ],
                     [
                         {
                             "rank": 1,
                             "team": {
-                                "id": 1824,
-                                "name": "Scotland",
-                                "logo": "https://media.api-sports.io/football/teams/1824.png"
-                            },
-                            "points": 3,
-                            "goalsDiff": 1,
-                            "group": "Group C",
-                            "form": "W",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 1,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 1,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038925"
-                        },
-                        {
-                            "rank": 2,
-                            "team": {
                                 "id": 1612,
                                 "name": "Brazil",
                                 "logo": "https://media.api-sports.io/football/teams/1612.png"
                             },
-                            "points": 1,
-                            "goalsDiff": 0,
+                            "points": 4,
+                            "goalsDiff": 3,
                             "group": "Group C",
-                            "form": "D",
+                            "form": "DW",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 1,
-                                "win": 0,
+                                "played": 2,
+                                "win": 1,
                                 "draw": 1,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 1,
+                                    "for": 4,
                                     "against": 1
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038900"
+                            "update": "2026-06-21T22:34:47.260009"
                         },
                         {
-                            "rank": 3,
+                            "rank": 2,
                             "team": {
                                 "id": 1722,
                                 "name": "Morocco",
                                 "logo": "https://media.api-sports.io/football/teams/1722.png"
                             },
-                            "points": 1,
-                            "goalsDiff": 0,
+                            "points": 4,
+                            "goalsDiff": 1,
                             "group": "Group C",
-                            "form": "D",
+                            "form": "DW",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 1,
-                                "win": 0,
+                                "played": 2,
+                                "win": 1,
                                 "draw": 1,
                                 "lose": 0,
+                                "goals": {
+                                    "for": 2,
+                                    "against": 1
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260018"
+                        },
+                        {
+                            "rank": 3,
+                            "team": {
+                                "id": 1824,
+                                "name": "Scotland",
+                                "logo": "https://media.api-sports.io/football/teams/1824.png"
+                            },
+                            "points": 3,
+                            "goalsDiff": 0,
+                            "group": "Group C",
+                            "form": "WL",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 0,
+                                "lose": 1,
                                 "goals": {
                                     "for": 1,
                                     "against": 1
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038905"
+                            "update": "2026-06-21T22:34:47.260026"
                         },
                         {
                             "rank": 4,
@@ -297,22 +297,22 @@
                                 "logo": "https://media.api-sports.io/football/teams/1495.png"
                             },
                             "points": 0,
-                            "goalsDiff": -1,
+                            "goalsDiff": -4,
                             "group": "Group C",
-                            "form": "L",
+                            "form": "LL",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 1,
+                                "played": 2,
                                 "win": 0,
                                 "draw": 0,
-                                "lose": 1,
+                                "lose": 2,
                                 "goals": {
                                     "for": 0,
-                                    "against": 1
+                                    "against": 4
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038920"
+                            "update": "2026-06-21T22:34:47.260022"
                         }
                     ],
                     [
@@ -323,9 +323,519 @@
                                 "name": "United States",
                                 "logo": "https://media.api-sports.io/football/teams/1277.png"
                             },
+                            "points": 6,
+                            "goalsDiff": 5,
+                            "group": "Group D",
+                            "form": "WW",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 2,
+                                "draw": 0,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 6,
+                                    "against": 1
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260032"
+                        },
+                        {
+                            "rank": 2,
+                            "team": {
+                                "id": 1934,
+                                "name": "Australia",
+                                "logo": "https://media.api-sports.io/football/teams/1934.png"
+                            },
+                            "points": 3,
+                            "goalsDiff": 0,
+                            "group": "Group D",
+                            "form": "WL",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 0,
+                                "lose": 1,
+                                "goals": {
+                                    "for": 2,
+                                    "against": 2
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260040"
+                        },
+                        {
+                            "rank": 3,
+                            "team": {
+                                "id": 1826,
+                                "name": "Paraguay",
+                                "logo": "https://media.api-sports.io/football/teams/1826.png"
+                            },
+                            "points": 3,
+                            "goalsDiff": -2,
+                            "group": "Group D",
+                            "form": "LW",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 0,
+                                "lose": 1,
+                                "goals": {
+                                    "for": 2,
+                                    "against": 4
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260036"
+                        },
+                        {
+                            "rank": 4,
+                            "team": {
+                                "id": 1644,
+                                "name": "Turkey",
+                                "logo": "https://media.api-sports.io/football/teams/1644.png"
+                            },
+                            "points": 0,
+                            "goalsDiff": -3,
+                            "group": "Group D",
+                            "form": "LL",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 0,
+                                "draw": 0,
+                                "lose": 2,
+                                "goals": {
+                                    "for": 0,
+                                    "against": 3
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260094"
+                        }
+                    ],
+                    [
+                        {
+                            "rank": 1,
+                            "team": {
+                                "id": 1723,
+                                "name": "Germany",
+                                "logo": "https://media.api-sports.io/football/teams/1723.png"
+                            },
+                            "points": 6,
+                            "goalsDiff": 7,
+                            "group": "Group E",
+                            "form": "WW",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 2,
+                                "draw": 0,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 9,
+                                    "against": 2
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260131"
+                        },
+                        {
+                            "rank": 2,
+                            "team": {
+                                "id": 1075,
+                                "name": "Ivory Coast",
+                                "logo": "https://media.api-sports.io/football/teams/1075.png"
+                            },
+                            "points": 3,
+                            "goalsDiff": 0,
+                            "group": "Group E",
+                            "form": "WL",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 0,
+                                "lose": 1,
+                                "goals": {
+                                    "for": 2,
+                                    "against": 2
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260162"
+                        },
+                        {
+                            "rank": 3,
+                            "team": {
+                                "id": 1707,
+                                "name": "Ecuador",
+                                "logo": "https://media.api-sports.io/football/teams/1707.png"
+                            },
+                            "points": 1,
+                            "goalsDiff": -1,
+                            "group": "Group E",
+                            "form": "LD",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 0,
+                                "draw": 1,
+                                "lose": 1,
+                                "goals": {
+                                    "for": 0,
+                                    "against": 1
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260167"
+                        },
+                        {
+                            "rank": 4,
+                            "team": {
+                                "id": 1834,
+                                "name": "Cura\u00e7ao",
+                                "logo": "https://media.api-sports.io/football/teams/1834.png"
+                            },
+                            "points": 1,
+                            "goalsDiff": -6,
+                            "group": "Group E",
+                            "form": "LD",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 0,
+                                "draw": 1,
+                                "lose": 1,
+                                "goals": {
+                                    "for": 1,
+                                    "against": 7
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260141"
+                        }
+                    ],
+                    [
+                        {
+                            "rank": 1,
+                            "team": {
+                                "id": 1144,
+                                "name": "Netherlands",
+                                "logo": "https://media.api-sports.io/football/teams/1144.png"
+                            },
+                            "points": 4,
+                            "goalsDiff": 4,
+                            "group": "Group F",
+                            "form": "DW",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 1,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 7,
+                                    "against": 3
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260201"
+                        },
+                        {
+                            "rank": 2,
+                            "team": {
+                                "id": 1490,
+                                "name": "Japan",
+                                "logo": "https://media.api-sports.io/football/teams/1490.png"
+                            },
+                            "points": 4,
+                            "goalsDiff": 4,
+                            "group": "Group F",
+                            "form": "DW",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 1,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 6,
+                                    "against": 2
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260210"
+                        },
+                        {
+                            "rank": 3,
+                            "team": {
+                                "id": 1614,
+                                "name": "Sweden",
+                                "logo": "https://media.api-sports.io/football/teams/1614.png"
+                            },
+                            "points": 3,
+                            "goalsDiff": 0,
+                            "group": "Group F",
+                            "form": "WL",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 0,
+                                "lose": 1,
+                                "goals": {
+                                    "for": 6,
+                                    "against": 6
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260216"
+                        },
+                        {
+                            "rank": 4,
+                            "team": {
+                                "id": 1733,
+                                "name": "Tunisia",
+                                "logo": "https://media.api-sports.io/football/teams/1733.png"
+                            },
+                            "points": 0,
+                            "goalsDiff": -8,
+                            "group": "Group F",
+                            "form": "LL",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 0,
+                                "draw": 0,
+                                "lose": 2,
+                                "goals": {
+                                    "for": 1,
+                                    "against": 9
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260220"
+                        }
+                    ],
+                    [
+                        {
+                            "rank": 1,
+                            "team": {
+                                "id": 1394,
+                                "name": "Iran",
+                                "logo": "https://media.api-sports.io/football/teams/1394.png"
+                            },
+                            "points": 2,
+                            "goalsDiff": 0,
+                            "group": "Group G",
+                            "form": "DD",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 0,
+                                "draw": 2,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 2,
+                                    "against": 2
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.262306"
+                        },
+                        {
+                            "rank": 2,
+                            "team": {
+                                "id": 1709,
+                                "name": "Belgium",
+                                "logo": "https://media.api-sports.io/football/teams/1709.png"
+                            },
+                            "points": 2,
+                            "goalsDiff": 0,
+                            "group": "Group G",
+                            "form": "DD",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 0,
+                                "draw": 2,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 1,
+                                    "against": 1
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.260225"
+                        },
+                        {
+                            "rank": 3,
+                            "team": {
+                                "id": 1033,
+                                "name": "New Zealand",
+                                "logo": "https://media.api-sports.io/football/teams/1033.png"
+                            },
+                            "points": 1,
+                            "goalsDiff": 0,
+                            "group": "Group G",
+                            "form": "D",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 1,
+                                "win": 0,
+                                "draw": 1,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 2,
+                                    "against": 2
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.262313"
+                        },
+                        {
+                            "rank": 4,
+                            "team": {
+                                "id": 1521,
+                                "name": "Egypt",
+                                "logo": "https://media.api-sports.io/football/teams/1521.png"
+                            },
+                            "points": 1,
+                            "goalsDiff": 0,
+                            "group": "Group G",
+                            "form": "D",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 1,
+                                "win": 0,
+                                "draw": 1,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 1,
+                                    "against": 1
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.262289"
+                        }
+                    ],
+                    [
+                        {
+                            "rank": 1,
+                            "team": {
+                                "id": 1507,
+                                "name": "Spain",
+                                "logo": "https://media.api-sports.io/football/teams/1507.png"
+                            },
+                            "points": 4,
+                            "goalsDiff": 4,
+                            "group": "Group H",
+                            "form": "DW",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 1,
+                                "draw": 1,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 4,
+                                    "against": 0
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.262321"
+                        },
+                        {
+                            "rank": 2,
+                            "team": {
+                                "id": 1754,
+                                "name": "Uruguay",
+                                "logo": "https://media.api-sports.io/football/teams/1754.png"
+                            },
+                            "points": 1,
+                            "goalsDiff": 0,
+                            "group": "Group H",
+                            "form": "D",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 1,
+                                "win": 0,
+                                "draw": 1,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 1,
+                                    "against": 1
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.262335"
+                        },
+                        {
+                            "rank": 3,
+                            "team": {
+                                "id": 1911,
+                                "name": "Cape Verde",
+                                "logo": "https://media.api-sports.io/football/teams/1911.png"
+                            },
+                            "points": 1,
+                            "goalsDiff": 0,
+                            "group": "Group H",
+                            "form": "D",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 1,
+                                "win": 0,
+                                "draw": 1,
+                                "lose": 0,
+                                "goals": {
+                                    "for": 0,
+                                    "against": 0
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.262326"
+                        },
+                        {
+                            "rank": 4,
+                            "team": {
+                                "id": 1110,
+                                "name": "Saudi Arabia",
+                                "logo": "https://media.api-sports.io/football/teams/1110.png"
+                            },
+                            "points": 1,
+                            "goalsDiff": -4,
+                            "group": "Group H",
+                            "form": "DL",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 2,
+                                "win": 0,
+                                "draw": 1,
+                                "lose": 1,
+                                "goals": {
+                                    "for": 1,
+                                    "against": 5
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.262331"
+                        }
+                    ],
+                    [
+                        {
+                            "rank": 1,
+                            "team": {
+                                "id": 1640,
+                                "name": "Norway",
+                                "logo": "https://media.api-sports.io/football/teams/1640.png"
+                            },
                             "points": 3,
                             "goalsDiff": 3,
-                            "group": "Group D",
+                            "group": "Group I",
                             "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
@@ -339,18 +849,18 @@
                                     "against": 1
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038930"
+                            "update": "2026-06-21T22:34:47.262350"
                         },
                         {
                             "rank": 2,
                             "team": {
-                                "id": 1934,
-                                "name": "Australia",
-                                "logo": "https://media.api-sports.io/football/teams/1934.png"
+                                "id": 1591,
+                                "name": "France",
+                                "logo": "https://media.api-sports.io/football/teams/1591.png"
                             },
                             "points": 3,
                             "goalsDiff": 2,
-                            "group": "Group D",
+                            "group": "Group I",
                             "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
@@ -360,22 +870,22 @@
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 2,
-                                    "against": 0
+                                    "for": 3,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038937"
+                            "update": "2026-06-21T22:34:47.262339"
                         },
                         {
                             "rank": 3,
                             "team": {
-                                "id": 1644,
-                                "name": "Turkey",
-                                "logo": "https://media.api-sports.io/football/teams/1644.png"
+                                "id": 1703,
+                                "name": "Senegal",
+                                "logo": "https://media.api-sports.io/football/teams/1703.png"
                             },
                             "points": 0,
                             "goalsDiff": -2,
-                            "group": "Group D",
+                            "group": "Group I",
                             "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
@@ -385,22 +895,22 @@
                                 "draw": 0,
                                 "lose": 1,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 2
+                                    "for": 1,
+                                    "against": 3
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038953"
+                            "update": "2026-06-21T22:34:47.262343"
                         },
                         {
                             "rank": 4,
                             "team": {
-                                "id": 1826,
-                                "name": "Paraguay",
-                                "logo": "https://media.api-sports.io/football/teams/1826.png"
+                                "id": 1397,
+                                "name": "Iraq",
+                                "logo": "https://media.api-sports.io/football/teams/1397.png"
                             },
                             "points": 0,
                             "goalsDiff": -3,
-                            "group": "Group D",
+                            "group": "Group I",
                             "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
@@ -414,619 +924,109 @@
                                     "against": 4
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.038934"
+                            "update": "2026-06-21T22:34:47.262346"
                         }
                     ],
                     [
                         {
                             "rank": 1,
-                            "team": {
-                                "id": 1723,
-                                "name": "Germany",
-                                "logo": "https://media.api-sports.io/football/teams/1723.png"
-                            },
-                            "points": 3,
-                            "goalsDiff": 6,
-                            "group": "Group E",
-                            "form": "W",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 1,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 7,
-                                    "against": 1
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038959"
-                        },
-                        {
-                            "rank": 2,
-                            "team": {
-                                "id": 1075,
-                                "name": "Ivory Coast",
-                                "logo": "https://media.api-sports.io/football/teams/1075.png"
-                            },
-                            "points": 3,
-                            "goalsDiff": 1,
-                            "group": "Group E",
-                            "form": "W",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 1,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 1,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038967"
-                        },
-                        {
-                            "rank": 3,
-                            "team": {
-                                "id": 1707,
-                                "name": "Ecuador",
-                                "logo": "https://media.api-sports.io/football/teams/1707.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": -1,
-                            "group": "Group E",
-                            "form": "L",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 1,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 1
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038970"
-                        },
-                        {
-                            "rank": 4,
-                            "team": {
-                                "id": 1834,
-                                "name": "Cura\u00e7ao",
-                                "logo": "https://media.api-sports.io/football/teams/1834.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": -6,
-                            "group": "Group E",
-                            "form": "L",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 1,
-                                "goals": {
-                                    "for": 1,
-                                    "against": 7
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038963"
-                        }
-                    ],
-                    [
-                        {
-                            "rank": 1,
-                            "team": {
-                                "id": 1614,
-                                "name": "Sweden",
-                                "logo": "https://media.api-sports.io/football/teams/1614.png"
-                            },
-                            "points": 3,
-                            "goalsDiff": 4,
-                            "group": "Group F",
-                            "form": "W",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 1,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 5,
-                                    "against": 1
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038993"
-                        },
-                        {
-                            "rank": 2,
-                            "team": {
-                                "id": 1490,
-                                "name": "Japan",
-                                "logo": "https://media.api-sports.io/football/teams/1490.png"
-                            },
-                            "points": 1,
-                            "goalsDiff": 0,
-                            "group": "Group F",
-                            "form": "D",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 0,
-                                "draw": 1,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 2,
-                                    "against": 2
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038990"
-                        },
-                        {
-                            "rank": 3,
-                            "team": {
-                                "id": 1144,
-                                "name": "Netherlands",
-                                "logo": "https://media.api-sports.io/football/teams/1144.png"
-                            },
-                            "points": 1,
-                            "goalsDiff": 0,
-                            "group": "Group F",
-                            "form": "D",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 0,
-                                "draw": 1,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 2,
-                                    "against": 2
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038986"
-                        },
-                        {
-                            "rank": 4,
-                            "team": {
-                                "id": 1733,
-                                "name": "Tunisia",
-                                "logo": "https://media.api-sports.io/football/teams/1733.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": -4,
-                            "group": "Group F",
-                            "form": "L",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 1,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 1,
-                                "goals": {
-                                    "for": 1,
-                                    "against": 5
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.038996"
-                        }
-                    ],
-                    [
-                        {
-                            "rank": 1,
-                            "team": {
-                                "id": 1709,
-                                "name": "Belgium",
-                                "logo": "https://media.api-sports.io/football/teams/1709.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group G",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039000"
-                        },
-                        {
-                            "rank": 2,
-                            "team": {
-                                "id": 1521,
-                                "name": "Egypt",
-                                "logo": "https://media.api-sports.io/football/teams/1521.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group G",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039015"
-                        },
-                        {
-                            "rank": 3,
-                            "team": {
-                                "id": 1394,
-                                "name": "Iran",
-                                "logo": "https://media.api-sports.io/football/teams/1394.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group G",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039019"
-                        },
-                        {
-                            "rank": 4,
-                            "team": {
-                                "id": 1033,
-                                "name": "New Zealand",
-                                "logo": "https://media.api-sports.io/football/teams/1033.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group G",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039024"
-                        }
-                    ],
-                    [
-                        {
-                            "rank": 1,
-                            "team": {
-                                "id": 1911,
-                                "name": "Cape Verde",
-                                "logo": "https://media.api-sports.io/football/teams/1911.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group H",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039030"
-                        },
-                        {
-                            "rank": 2,
-                            "team": {
-                                "id": 1110,
-                                "name": "Saudi Arabia",
-                                "logo": "https://media.api-sports.io/football/teams/1110.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group H",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039033"
-                        },
-                        {
-                            "rank": 3,
-                            "team": {
-                                "id": 1507,
-                                "name": "Spain",
-                                "logo": "https://media.api-sports.io/football/teams/1507.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group H",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039027"
-                        },
-                        {
-                            "rank": 4,
-                            "team": {
-                                "id": 1754,
-                                "name": "Uruguay",
-                                "logo": "https://media.api-sports.io/football/teams/1754.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group H",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039035"
-                        }
-                    ],
-                    [
-                        {
-                            "rank": 1,
-                            "team": {
-                                "id": 1591,
-                                "name": "France",
-                                "logo": "https://media.api-sports.io/football/teams/1591.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group I",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039038"
-                        },
-                        {
-                            "rank": 2,
-                            "team": {
-                                "id": 1397,
-                                "name": "Iraq",
-                                "logo": "https://media.api-sports.io/football/teams/1397.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group I",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039042"
-                        },
-                        {
-                            "rank": 3,
-                            "team": {
-                                "id": 1640,
-                                "name": "Norway",
-                                "logo": "https://media.api-sports.io/football/teams/1640.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group I",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039045"
-                        },
-                        {
-                            "rank": 4,
-                            "team": {
-                                "id": 1703,
-                                "name": "Senegal",
-                                "logo": "https://media.api-sports.io/football/teams/1703.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group I",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039040"
-                        }
-                    ],
-                    [
-                        {
-                            "rank": 1,
-                            "team": {
-                                "id": 1693,
-                                "name": "Algeria",
-                                "logo": "https://media.api-sports.io/football/teams/1693.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group J",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039049"
-                        },
-                        {
-                            "rank": 2,
                             "team": {
                                 "id": 1921,
                                 "name": "Argentina",
                                 "logo": "https://media.api-sports.io/football/teams/1921.png"
                             },
-                            "points": 0,
-                            "goalsDiff": 0,
+                            "points": 3,
+                            "goalsDiff": 3,
                             "group": "Group J",
-                            "form": "",
+                            "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
-                                "win": 0,
+                                "played": 1,
+                                "win": 1,
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
+                                    "for": 3,
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039047"
+                            "update": "2026-06-21T22:34:47.262355"
                         },
                         {
-                            "rank": 3,
+                            "rank": 2,
                             "team": {
                                 "id": 1729,
                                 "name": "Austria",
                                 "logo": "https://media.api-sports.io/football/teams/1729.png"
                             },
-                            "points": 0,
-                            "goalsDiff": 0,
+                            "points": 3,
+                            "goalsDiff": 2,
                             "group": "Group J",
-                            "form": "",
+                            "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
-                                "win": 0,
+                                "played": 1,
+                                "win": 1,
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 3,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039052"
+                            "update": "2026-06-21T22:34:47.262363"
                         },
                         {
-                            "rank": 4,
+                            "rank": 3,
                             "team": {
                                 "id": 1606,
                                 "name": "Jordan",
                                 "logo": "https://media.api-sports.io/football/teams/1606.png"
                             },
                             "points": 0,
-                            "goalsDiff": 0,
+                            "goalsDiff": -2,
                             "group": "Group J",
-                            "form": "",
+                            "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
                                 "draw": 0,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 3
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039054"
+                            "update": "2026-06-21T22:34:47.262366"
+                        },
+                        {
+                            "rank": 4,
+                            "team": {
+                                "id": 1693,
+                                "name": "Algeria",
+                                "logo": "https://media.api-sports.io/football/teams/1693.png"
+                            },
+                            "points": 0,
+                            "goalsDiff": -3,
+                            "group": "Group J",
+                            "form": "L",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 1,
+                                "win": 0,
+                                "draw": 0,
+                                "lose": 1,
+                                "goals": {
+                                    "for": 0,
+                                    "against": 3
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.262359"
                         }
                     ],
                     [
@@ -1037,23 +1037,23 @@
                                 "name": "Colombia",
                                 "logo": "https://media.api-sports.io/football/teams/1806.png"
                             },
-                            "points": 0,
-                            "goalsDiff": 0,
+                            "points": 3,
+                            "goalsDiff": 2,
                             "group": "Group K",
-                            "form": "",
+                            "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
-                                "win": 0,
+                                "played": 1,
+                                "win": 1,
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 3,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039082"
+                            "update": "2026-06-21T22:34:47.262421"
                         },
                         {
                             "rank": 2,
@@ -1062,23 +1062,23 @@
                                 "name": "DR Congo",
                                 "logo": "https://media.api-sports.io/football/teams/1684.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": 0,
                             "group": "Group K",
-                            "form": "",
+                            "form": "D",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039075"
+                            "update": "2026-06-21T22:34:47.262410"
                         },
                         {
                             "rank": 3,
@@ -1087,23 +1087,23 @@
                                 "name": "Portugal",
                                 "logo": "https://media.api-sports.io/football/teams/1846.png"
                             },
-                            "points": 0,
+                            "points": 1,
                             "goalsDiff": 0,
                             "group": "Group K",
-                            "form": "",
+                            "form": "D",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
-                                "draw": 0,
+                                "draw": 1,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039070"
+                            "update": "2026-06-21T22:34:47.262401"
                         },
                         {
                             "rank": 4,
@@ -1113,124 +1113,124 @@
                                 "logo": "https://media.api-sports.io/football/teams/1056.png"
                             },
                             "points": 0,
-                            "goalsDiff": 0,
+                            "goalsDiff": -2,
                             "group": "Group K",
-                            "form": "",
+                            "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
                                 "draw": 0,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 1,
+                                    "against": 3
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039079"
+                            "update": "2026-06-21T22:34:47.262416"
                         }
                     ],
                     [
                         {
                             "rank": 1,
                             "team": {
-                                "id": 1707,
-                                "name": "Croatia",
-                                "logo": "https://media.api-sports.io/football/teams/1707.png"
-                            },
-                            "points": 0,
-                            "goalsDiff": 0,
-                            "group": "Group L",
-                            "form": "",
-                            "status": "same",
-                            "description": "Possible Qualification",
-                            "all": {
-                                "played": 0,
-                                "win": 0,
-                                "draw": 0,
-                                "lose": 0,
-                                "goals": {
-                                    "for": 0,
-                                    "against": 0
-                                }
-                            },
-                            "update": "2026-06-15T10:41:26.039102"
-                        },
-                        {
-                            "rank": 2,
-                            "team": {
                                 "id": 1697,
                                 "name": "England",
                                 "logo": "https://media.api-sports.io/football/teams/1697.png"
                             },
-                            "points": 0,
-                            "goalsDiff": 0,
+                            "points": 3,
+                            "goalsDiff": 2,
                             "group": "Group L",
-                            "form": "",
+                            "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
-                                "win": 0,
+                                "played": 1,
+                                "win": 1,
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
-                                    "against": 0
+                                    "for": 4,
+                                    "against": 2
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039097"
+                            "update": "2026-06-21T22:34:47.262475"
                         },
                         {
-                            "rank": 3,
+                            "rank": 2,
                             "team": {
                                 "id": 1479,
                                 "name": "Ghana",
                                 "logo": "https://media.api-sports.io/football/teams/1479.png"
                             },
-                            "points": 0,
-                            "goalsDiff": 0,
+                            "points": 3,
+                            "goalsDiff": 1,
                             "group": "Group L",
-                            "form": "",
+                            "form": "W",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
-                                "win": 0,
+                                "played": 1,
+                                "win": 1,
                                 "draw": 0,
                                 "lose": 0,
                                 "goals": {
-                                    "for": 0,
+                                    "for": 1,
                                     "against": 0
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039105"
+                            "update": "2026-06-21T22:34:47.262489"
                         },
                         {
-                            "rank": 4,
+                            "rank": 3,
                             "team": {
                                 "id": 1590,
                                 "name": "Panama",
                                 "logo": "https://media.api-sports.io/football/teams/1590.png"
                             },
                             "points": 0,
-                            "goalsDiff": 0,
+                            "goalsDiff": -1,
                             "group": "Group L",
-                            "form": "",
+                            "form": "L",
                             "status": "same",
                             "description": "Possible Qualification",
                             "all": {
-                                "played": 0,
+                                "played": 1,
                                 "win": 0,
                                 "draw": 0,
-                                "lose": 0,
+                                "lose": 1,
                                 "goals": {
                                     "for": 0,
-                                    "against": 0
+                                    "against": 1
                                 }
                             },
-                            "update": "2026-06-15T10:41:26.039108"
+                            "update": "2026-06-21T22:34:47.262493"
+                        },
+                        {
+                            "rank": 4,
+                            "team": {
+                                "id": 1707,
+                                "name": "Croatia",
+                                "logo": "https://media.api-sports.io/football/teams/1707.png"
+                            },
+                            "points": 0,
+                            "goalsDiff": -2,
+                            "group": "Group L",
+                            "form": "L",
+                            "status": "same",
+                            "description": "Possible Qualification",
+                            "all": {
+                                "played": 1,
+                                "win": 0,
+                                "draw": 0,
+                                "lose": 1,
+                                "goals": {
+                                    "for": 2,
+                                    "against": 4
+                                }
+                            },
+                            "update": "2026-06-21T22:34:47.262483"
                         }
                     ]
                 ]
