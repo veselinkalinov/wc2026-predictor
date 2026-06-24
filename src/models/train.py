@@ -12,11 +12,12 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import joblib
+from sklearn.base import clone
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier, StackingClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, log_loss, brier_score_loss, classification_report
-from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
+from sklearn.model_selection import GridSearchCV, TimeSeriesSplit, StratifiedKFold
 from sklearn.calibration import CalibratedClassifierCV
 from src.utils.config import config
 from src.utils.logger import get_logger
@@ -128,6 +129,55 @@ def predict_classes_with_threshold(y_probs: np.ndarray, theta: float) -> np.ndar
         else:
             preds.append(0 if p_home >= p_away else 2)
     return np.array(preds)
+
+
+def calibration_method_for_model(model_name: str) -> str:
+    """
+    Choose the probability calibration method used for each model family.
+    """
+    if model_name in ["Random Forest", "HistGradientBoosting", "LightGBM", "CatBoost", "XGBoost"]:
+        return "isotonic"
+    return "sigmoid"
+
+
+def fit_production_calibrated_model(
+    model_name: str,
+    estimator,
+    X_all_scaled: np.ndarray,
+    y_all: np.ndarray,
+) -> tuple[CalibratedClassifierCV, object, int]:
+    """
+    Refit a calibrated production artifact on all completed rows.
+
+    The final base estimator is trained on all rows. Calibration is learned from
+    out-of-fold predictions, so production probabilities do not come from a
+    calibrator fitted directly on the same in-sample predictions.
+    """
+    class_counts = np.bincount(y_all, minlength=3)
+    min_class_count = int(class_counts[class_counts > 0].min())
+    requested_splits = int(config["model"].get("production_cv_splits", 3))
+    n_splits = min(requested_splits, min_class_count)
+    if n_splits < 2:
+        raise ValueError(
+            "At least two samples from each present class are required for production calibration."
+        )
+
+    production_cv = StratifiedKFold(
+        n_splits=n_splits,
+        shuffle=True,
+        random_state=config["model"]["random_state"],
+    )
+    production_model = CalibratedClassifierCV(
+        estimator=clone(estimator),
+        method=calibration_method_for_model(model_name),
+        cv=production_cv,
+        n_jobs=-1,
+        ensemble=False,
+    )
+    production_model.fit(X_all_scaled, y_all)
+
+    production_base = production_model.calibrated_classifiers_[0].estimator
+    return production_model, production_base, n_splits
 
 
 def train_model() -> None:
@@ -346,7 +396,7 @@ def train_model() -> None:
     logger.info("Calibrating and evaluating models on Holdout Test Set...")
     for model_name, clf in trained_base_models.items():
         # Tree models use isotonic calibration, linear/stacking use sigmoid
-        method = "isotonic" if model_name in ["Random Forest", "HistGradientBoosting", "LightGBM", "CatBoost", "XGBoost"] else "sigmoid"
+        method = calibration_method_for_model(model_name)
 
         calibrated_clf = CalibratedClassifierCV(
             estimator=clf,
@@ -403,24 +453,62 @@ def train_model() -> None:
         f"log_loss={comparison_results[best_model_name]['log_loss']:.4f}, "
         f"brier={comparison_results[best_model_name]['brier_score']:.4f})")
 
-    winning_calibrated_model = calibrated_models[best_model_name]
-    winning_uncalibrated_base = trained_base_models[best_model_name]
+    winning_evaluation_model = calibrated_models[best_model_name]
+    winning_evaluation_base = trained_base_models[best_model_name]
     winning_threshold = draw_thresholds[best_model_name]
 
-    # 9. Serialise artifacts to models registry
-    logger.info("Serialising winning models to registry...")
-    joblib.dump(winning_calibrated_model, models_dir / "best_model.pkl")
-    joblib.dump(winning_uncalibrated_base, models_dir / "best_model_uncalibrated.pkl")
-    joblib.dump(poisson_model, models_dir / "score_model.pkl")
-    joblib.dump(scaler, models_dir / "scaler.pkl")
+    # 9. Refit production artifacts on all completed rows.
+    logger.info("Refitting selected production model on all completed feature rows...")
+    X_all = df[FEATURE_COLUMNS].values
+    y_all = df["target"].values
+    production_scaler = StandardScaler()
+    X_all_scaled = production_scaler.fit_transform(X_all)
 
-    # Save all individual calibrated models
-    for name, clf in calibrated_models.items():
+    production_models = {}
+    production_bases = {}
+    production_cv_splits = {}
+    for model_name, base_model in trained_base_models.items():
+        logger.info(f"Refitting production artifact for {model_name}...")
+        production_model, production_base, n_splits = fit_production_calibrated_model(
+            model_name,
+            base_model,
+            X_all_scaled,
+            y_all,
+        )
+        production_models[model_name] = production_model
+        production_bases[model_name] = production_base
+        production_cv_splits[model_name] = n_splits
+
+    production_score_model = PoissonGoalModel(
+        alpha=poisson_model.alpha,
+        rho=poisson_model.rho,
+        max_goals=poisson_model.max_goals,
+    )
+    y_all_goals = np.column_stack([df["home_score"].values, df["away_score"].values])
+    production_score_model.fit(X_all_scaled, y_all_goals)
+
+    winning_production_model = production_models[best_model_name]
+    winning_production_base = production_bases[best_model_name]
+
+    # 10. Serialise artifacts to models registry
+    logger.info("Serialising production and holdout evaluation artifacts to registry...")
+    joblib.dump(winning_production_model, models_dir / "best_model.pkl")
+    joblib.dump(winning_production_base, models_dir / "best_model_uncalibrated.pkl")
+    joblib.dump(production_score_model, models_dir / "score_model.pkl")
+    joblib.dump(production_scaler, models_dir / "scaler.pkl")
+
+    joblib.dump(winning_evaluation_model, models_dir / "evaluation_model.pkl")
+    joblib.dump(winning_evaluation_base, models_dir / "evaluation_model_uncalibrated.pkl")
+    joblib.dump(scaler, models_dir / "evaluation_scaler.pkl")
+    joblib.dump(poisson_model, models_dir / "evaluation_score_model.pkl")
+
+    # Save all individual production calibrated models.
+    for name, clf in production_models.items():
         clean_name = name.lower().replace(" ", "_")
         joblib.dump(clf, models_dir / f"{clean_name}.pkl")
 
-    # Save classification report for the winner
-    y_pred_probs = winning_calibrated_model.predict_proba(X_test_scaled)
+    # Save classification report for the holdout winner
+    y_pred_probs = winning_evaluation_model.predict_proba(X_test_scaled)
     y_preds = predict_classes_with_threshold(y_pred_probs, winning_threshold)
     class_names = ["H (Home)", "D (Draw)", "A (Away)"]
     report = classification_report(y_test, y_preds, target_names=class_names)
@@ -429,6 +517,7 @@ def train_model() -> None:
     meta = {
         "model_type": best_model_name,
         "selected_by": selection_metric,
+        "artifact_role": "production_refit",
         "features": FEATURE_COLUMNS,
         "best_params": best_params_dict[best_model_name] if best_model_name in best_params_dict else {},
         "draw_threshold": winning_threshold,
@@ -455,12 +544,40 @@ def train_model() -> None:
             } for name, res in comparison_results.items()
         },
         "all_best_params": best_params_dict,
+        "production_refit": {
+            "enabled": True,
+            "samples": int(len(df)),
+            "latest_match_date": df["date"].max().strftime("%Y-%m-%d"),
+            "cv_splits": int(production_cv_splits[best_model_name]),
+            "calibration": "CalibratedClassifierCV ensemble=False with StratifiedKFold out-of-fold calibration",
+            "note": "best_model.pkl and scaler.pkl are refit on all completed rows; holdout metrics come from evaluation_model.pkl.",
+        },
+        "artifacts": {
+            "production_model": "best_model.pkl",
+            "production_uncalibrated_model": "best_model_uncalibrated.pkl",
+            "production_scaler": "scaler.pkl",
+            "production_score_model": "score_model.pkl",
+            "evaluation_model": "evaluation_model.pkl",
+            "evaluation_uncalibrated_model": "evaluation_model_uncalibrated.pkl",
+            "evaluation_scaler": "evaluation_scaler.pkl",
+            "evaluation_score_model": "evaluation_score_model.pkl",
+        },
+        "temporal_split": {
+            "train_before": cutoff_train.strftime("%Y-%m-%d"),
+            "calibration_from": cutoff_train.strftime("%Y-%m-%d"),
+            "calibration_before": cutoff_cal.strftime("%Y-%m-%d"),
+            "test_from": cutoff_cal.strftime("%Y-%m-%d"),
+            "train_samples": int(len(train_df)),
+            "calibration_samples": int(len(cal_df)),
+            "test_samples": int(len(test_df)),
+        },
         "classes": ["H", "D", "A"],
         "evaluation": {
             "test_accuracy": float(comparison_results[best_model_name]["accuracy"]),
             "test_log_loss": float(comparison_results[best_model_name]["log_loss"]),
             "test_brier_score": float(comparison_results[best_model_name]["brier_score"]),
             "test_samples": int(len(y_test)),
+            "draw_threshold": float(winning_threshold),
             "classification_report": report
         }
     }

@@ -26,6 +26,7 @@ model:
   calibration_cutoff: '2023-07-01'
   selection_metric: log_loss
   draw_risk_threshold: 0.3
+  production_cv_splits: 3
   random_state: 42
   test_size: 0.2
   target_column: result

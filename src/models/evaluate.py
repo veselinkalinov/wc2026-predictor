@@ -57,13 +57,24 @@ def generate_evaluation_report() -> None:
 
     # 1. Load artifacts
     logger.info("Loading model artifacts for evaluation...")
-    model = joblib.load(models_dir / "best_model.pkl")
-    scaler = joblib.load(models_dir / "scaler.pkl")
-
     with open(models_dir / "meta.json", "r") as f:
         meta = json.load(f)
 
-    draw_threshold = meta.get("draw_threshold", 1.0)
+    artifacts = meta.get("artifacts", {})
+    model_path = models_dir / artifacts.get("evaluation_model", "evaluation_model.pkl")
+    scaler_path = models_dir / artifacts.get("evaluation_scaler", "evaluation_scaler.pkl")
+    if not model_path.exists():
+        logger.warning("evaluation_model.pkl not found. Falling back to best_model.pkl.")
+        model_path = models_dir / "best_model.pkl"
+    if not scaler_path.exists():
+        logger.warning("evaluation_scaler.pkl not found. Falling back to scaler.pkl.")
+        scaler_path = models_dir / "scaler.pkl"
+
+    model = joblib.load(model_path)
+    scaler = joblib.load(scaler_path)
+
+    draw_threshold = meta.get("evaluation", {}).get(
+        "draw_threshold", meta.get("draw_threshold", 1.0))
 
     # 2. Load feature matrix and split
     df = pd.read_csv(features_dir / "feature_matrix.csv")
@@ -242,10 +253,18 @@ def generate_evaluation_report() -> None:
         "test_log_loss": float(loss),
         "test_brier_score": float(avg_brier),
         "test_samples": int(len(y_test)),
+        "draw_threshold": float(draw_threshold),
+        "artifact": model_path.name,
+        "scaler": scaler_path.name,
         "classification_report": report
     }
 
     meta["evaluation"] = eval_summary
+    meta["test_metrics"] = {
+        "accuracy": float(acc),
+        "log_loss": float(loss),
+        "brier_score": float(avg_brier)
+    }
     with open(models_dir / "meta.json", "w") as f:
         json.dump(meta, f, indent=4)
 
