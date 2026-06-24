@@ -34,3 +34,13 @@ def test_dixon_coles_rho_tuning_returns_grid_value():
 
     assert rho in rho_grid
     assert nll > 0
+
+
+def test_scoreline_matrix_handles_extreme_lambdas_without_nan():
+    model = PoissonGoalModel(max_goals=10)
+
+    matrix = model.scoreline_matrix_for_lambdas(1e9, 1e9)
+
+    assert matrix.shape == (11, 11)
+    assert np.isfinite(matrix).all()
+    assert np.isclose(matrix.sum(), 1.0)

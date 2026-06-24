@@ -42,8 +42,11 @@ class PoissonGoalModel(BaseEstimator, ClassifierMixin):
     def predict_expected_goals(self, X) -> np.ndarray:
         lambda_h = self.home_regressor.predict(X)
         lambda_a = self.away_regressor.predict(X)
-        lambda_h = np.maximum(lambda_h, 0.1)
-        lambda_a = np.maximum(lambda_a, 0.1)
+        max_lambda = max(float(getattr(self, "max_goals", 10)), 1.0)
+        lambda_h = np.nan_to_num(lambda_h, nan=1.0, posinf=max_lambda, neginf=0.1)
+        lambda_a = np.nan_to_num(lambda_a, nan=1.0, posinf=max_lambda, neginf=0.1)
+        lambda_h = np.clip(lambda_h, 0.1, max_lambda)
+        lambda_a = np.clip(lambda_a, 0.1, max_lambda)
         return np.column_stack([lambda_h, lambda_a])
 
     def _dixon_coles_tau(self, home_goals: int, away_goals: int, lambda_h: float, lambda_a: float) -> float:
@@ -63,8 +66,18 @@ class PoissonGoalModel(BaseEstimator, ClassifierMixin):
         goals = np.arange(max_goals + 1)
         p_h = poisson.pmf(goals, lambda_h)
         p_a = poisson.pmf(goals, lambda_a)
-        p_h = p_h / p_h.sum()
-        p_a = p_a / p_a.sum()
+        p_h_sum = p_h.sum()
+        p_a_sum = p_a.sum()
+        if not np.isfinite(p_h_sum) or p_h_sum <= 0:
+            p_h = np.zeros_like(goals, dtype=float)
+            p_h[min(int(round(lambda_h)), max_goals)] = 1.0
+        else:
+            p_h = p_h / p_h_sum
+        if not np.isfinite(p_a_sum) or p_a_sum <= 0:
+            p_a = np.zeros_like(goals, dtype=float)
+            p_a[min(int(round(lambda_a)), max_goals)] = 1.0
+        else:
+            p_a = p_a / p_a_sum
 
         grid = np.outer(p_h, p_a)
         for h in (0, 1):

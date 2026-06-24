@@ -2145,8 +2145,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "In Play",
-                    "short": "LIVE",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -2174,13 +2174,13 @@
                 }
             },
             "goals": {
-                "home": 0,
-                "away": 1
+                "home": 2,
+                "away": 2
             },
             "score": {
                 "fulltime": {
-                    "home": 0,
-                    "away": 1
+                    "home": 2,
+                    "away": 2
                 }
             }
         },
@@ -2201,8 +2201,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -2230,13 +2230,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 1,
+                "away": 3
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 1,
+                    "away": 3
                 }
             }
         },
@@ -2257,8 +2257,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -2286,13 +2286,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 2,
+                "away": 0
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 2,
+                    "away": 0
                 }
             }
         },
@@ -2313,8 +2313,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -2342,13 +2342,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 3,
+                "away": 0
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 3,
+                    "away": 0
                 }
             }
         },
@@ -2369,8 +2369,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -2398,13 +2398,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 3,
+                "away": 2
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 3,
+                    "away": 2
                 }
             }
         },
@@ -2425,8 +2425,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -2454,13 +2454,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 1,
+                "away": 2
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 1,
+                    "away": 2
                 }
             }
         },
@@ -4177,9 +4177,9 @@
             },
             "teams": {
                 "home": {
-                    "id": null,
-                    "name": null,
-                    "logo": null,
+                    "id": 759,
+                    "name": "Germany",
+                    "logo": "https://crests.football-data.org/759.svg",
                     "winner": null
                 },
                 "away": {
@@ -4401,9 +4401,9 @@
             },
             "teams": {
                 "home": {
-                    "id": null,
-                    "name": null,
-                    "logo": null,
+                    "id": 769,
+                    "name": "Mexico",
+                    "logo": "https://crests.football-data.org/769.svg",
                     "winner": null
                 },
                 "away": {
@@ -4569,9 +4569,9 @@
             },
             "teams": {
                 "home": {
-                    "id": null,
-                    "name": null,
-                    "logo": null,
+                    "id": 771,
+                    "name": "United States",
+                    "logo": "https://crests.football-data.org/usa.svg",
                     "winner": null
                 },
                 "away": {

@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements.txt .
 
 # Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --default-timeout=120 --retries=10 -r requirements.txt
 
 # Copy the rest of the application code into the container
 COPY . .
@@ -34,4 +34,4 @@ RUN python -m pytest tests/ -v
 EXPOSE 5000
 
 # Start the Flask web application
-CMD ["python", "-m", "src.api.app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "--access-logfile", "-", "--error-logfile", "-", "wsgi:app"]

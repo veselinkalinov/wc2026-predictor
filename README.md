@@ -92,6 +92,7 @@ It processes international match history from Kaggle datasets, engineers domain-
 | **Auto-Retrain Scheduler**    | Automatic background scraper to fetch recent matches, append to the database, and trigger a pipeline retrain                                                                             |
 | **Interactive Dashboard**     | Complete Web UI with Predictor, Analytics, SVG radar polygon drawing, live standings, and Monte Carlo tournament runs (served via templates)                                             |
 | **REST API**                  | Flask API with 10 endpoints for health checks, team listings, match predictions, tournament simulations, live scores, and model metadata                                                 |
+| **Production WSGI Serving**   | Docker runs the Flask app through Gunicorn using the project-level `wsgi.py` entrypoint instead of Flask's development server                                                            |
 | **Data Validation**           | Structural checks on raw files — column presence, minimum row counts, known-team assertions                                                                                              |
 | **Centralised Config**        | Single `config.yaml` file as the source of truth for all parameters                                                                                                                      |
 | **Structured Logging**        | Dual-output logger (console + file) with timestamped, leveled log entries                                                                                                                |
@@ -111,8 +112,9 @@ wc2026-predictor/
 ├── .env                     # Environment variables (API keys, settings - git-ignored)
 ├── .gitignore               # Files excluded from version control
 ├── LICENSE                  # MIT License
-├── Dockerfile               # Container setup (installs dependencies, runs tests, serves app)
+├── Dockerfile               # Container setup (installs dependencies, runs tests, serves app with Gunicorn)
 ├── docker-compose.yaml      # Multi-container orchestration (web server and scheduler services)
+├── wsgi.py                  # WSGI entrypoint used by Gunicorn in Docker
 │
 ├── src/                     # Source code (importable Python package)
 │   ├── __init__.py
@@ -190,7 +192,7 @@ wc2026-predictor/
 
 ### Quick Docker Start
 
-Use Docker if you want to start the web dashboard without creating a local Python environment.
+Use Docker if you want to start the web dashboard without creating a local Python environment. The `web` container serves the Flask app with Gunicorn via `wsgi:app`.
 
 1. **Clone the repository:**
 
@@ -247,6 +249,8 @@ docker compose down
 ```
 
 The Docker Compose setup starts two services: `web` for the Flask dashboard/API and `scheduler` for periodic live-data fetch and retraining jobs.
+
+The Docker build installs dependencies with extended `pip` timeouts/retries because the ML stack includes large binary wheels. CatBoost is pinned to a Python 3.12-compatible release so Docker can install a Linux wheel instead of building from source.
 
 ### Installation
 
@@ -315,6 +319,14 @@ To spin up the entire application inside Docker containers (the Flask web dashbo
 ```bash
 docker-compose up --build
 ```
+
+The `web` service starts with:
+
+```bash
+gunicorn --bind 0.0.0.0:5000 --workers 2 --timeout 120 --access-logfile - --error-logfile - wsgi:app
+```
+
+The `scheduler` service uses the same image but overrides the command with `python -m scripts.scheduler`.
 
 ---
 
@@ -473,6 +485,8 @@ python -m src.api.app
 ```
 
 Then visit **`http://127.0.0.1:5000/`** to view the interactive dashboard.
+
+For Docker usage, run `docker compose up --build` instead. Docker uses Gunicorn and the `wsgi.py` entrypoint; `python -m src.api.app` is kept for local development.
 
 ### Dashboard Views
 
@@ -655,9 +669,9 @@ Jupyter notebooks for exploratory work are in `notebooks/`:
 ## 🛠️ Tech Stack
 
 - **Language**: Python 3.10+
-- **Data Science**: pandas 2.2, scikit-learn 1.5, joblib 1.4, numpy, lightgbm, catboost, xgboost
+- **Data Science**: pandas 2.2, scikit-learn 1.5, joblib 1.4, numpy, lightgbm, catboost 1.2.8, xgboost
 - **Visualisation**: matplotlib 3.10, seaborn 0.13
-- **Web App**: Flask 3.0, python-dotenv 1.0, requests 2.32
+- **Web App**: Flask 3.0, Gunicorn 23.0, python-dotenv 1.0, requests 2.32
 - **Configuration**: PyYAML 6.0
 - **Testing**: pytest 8.0+
 - **Containerisation**: Docker, Docker Compose
@@ -685,6 +699,7 @@ Jupyter notebooks for exploratory work are in `notebooks/`:
 - [x] Advanced Features (Auto-Inferred Rest Days, Travel Mismatch, Match Stake)
 - [x] Interactive web dashboard
 - [x] Docker and Docker Compose containerization
+- [x] Gunicorn WSGI serving for the Docker web service
 - [ ] Cloud deployment
 
 ---
