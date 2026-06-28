@@ -49263,29 +49263,29 @@ date,home_team,away_team,home_score,away_score,tournament,city,country,neutral
 2026-06-23,England,Ghana,0,0,FIFA World Cup,Foxborough,United States,True
 2026-06-23,Panama,Croatia,0,1,FIFA World Cup,Toronto,Canada,True
 2026-06-24,Mexico,Czech Republic,,,FIFA World Cup,Mexico City,Mexico,False
-2026-06-24,South Africa,South Korea,,,FIFA World Cup,Guadalupe,Mexico,True
+2026-06-24,South Africa,South Korea,1,0,FIFA World Cup,Guadalupe,Mexico,True
 2026-06-24,Canada,Switzerland,,,FIFA World Cup,Vancouver,Canada,False
-2026-06-24,Bosnia and Herzegovina,Qatar,,,FIFA World Cup,Seattle,United States,True
-2026-06-24,Scotland,Brazil,,,FIFA World Cup,Miami Gardens,United States,True
-2026-06-24,Morocco,Haiti,,,FIFA World Cup,Atlanta,United States,True
+2026-06-24,Bosnia and Herzegovina,Qatar,3,1,FIFA World Cup,Seattle,United States,True
+2026-06-24,Scotland,Brazil,0,3,FIFA World Cup,Miami Gardens,United States,True
+2026-06-24,Morocco,Haiti,4,2,FIFA World Cup,Atlanta,United States,True
 2026-06-25,United States,Turkey,,,FIFA World Cup,Inglewood,United States,False
-2026-06-25,Paraguay,Australia,,,FIFA World Cup,Santa Clara,United States,True
-2026-06-25,Curaçao,Ivory Coast,,,FIFA World Cup,Philadelphia,United States,True
-2026-06-25,Ecuador,Germany,,,FIFA World Cup,East Rutherford,United States,True
-2026-06-25,Japan,Sweden,,,FIFA World Cup,Arlington,United States,True
-2026-06-25,Tunisia,Netherlands,,,FIFA World Cup,Kansas City,United States,True
-2026-06-26,Egypt,Iran,,,FIFA World Cup,Seattle,United States,True
-2026-06-26,New Zealand,Belgium,,,FIFA World Cup,Vancouver,Canada,True
-2026-06-26,Cape Verde,Saudi Arabia,,,FIFA World Cup,Houston,United States,True
-2026-06-26,Uruguay,Spain,,,FIFA World Cup,Zapopan,Mexico,True
-2026-06-26,Norway,France,,,FIFA World Cup,Foxborough,United States,True
-2026-06-26,Senegal,Iraq,,,FIFA World Cup,Toronto,Canada,True
-2026-06-27,Algeria,Austria,,,FIFA World Cup,Kansas City,United States,True
-2026-06-27,Jordan,Argentina,,,FIFA World Cup,Arlington,United States,True
-2026-06-27,Colombia,Portugal,,,FIFA World Cup,Miami Gardens,United States,True
-2026-06-27,DR Congo,Uzbekistan,,,FIFA World Cup,Atlanta,United States,True
-2026-06-27,Panama,England,,,FIFA World Cup,East Rutherford,United States,True
-2026-06-27,Croatia,Ghana,,,FIFA World Cup,Philadelphia,United States,True
+2026-06-25,Paraguay,Australia,0,0,FIFA World Cup,Santa Clara,United States,True
+2026-06-25,Curaçao,Ivory Coast,0,2,FIFA World Cup,Philadelphia,United States,True
+2026-06-25,Ecuador,Germany,2,1,FIFA World Cup,East Rutherford,United States,True
+2026-06-25,Japan,Sweden,1,1,FIFA World Cup,Arlington,United States,True
+2026-06-25,Tunisia,Netherlands,1,3,FIFA World Cup,Kansas City,United States,True
+2026-06-26,Egypt,Iran,1,1,FIFA World Cup,Seattle,United States,True
+2026-06-26,New Zealand,Belgium,1,5,FIFA World Cup,Vancouver,Canada,True
+2026-06-26,Cape Verde,Saudi Arabia,0,0,FIFA World Cup,Houston,United States,True
+2026-06-26,Uruguay,Spain,0,1,FIFA World Cup,Zapopan,Mexico,True
+2026-06-26,Norway,France,1,4,FIFA World Cup,Foxborough,United States,True
+2026-06-26,Senegal,Iraq,5,0,FIFA World Cup,Toronto,Canada,True
+2026-06-27,Algeria,Austria,3,3,FIFA World Cup,Kansas City,United States,True
+2026-06-27,Jordan,Argentina,1,3,FIFA World Cup,Arlington,United States,True
+2026-06-27,Colombia,Portugal,0,0,FIFA World Cup,Miami Gardens,United States,True
+2026-06-27,DR Congo,Uzbekistan,3,1,FIFA World Cup,Atlanta,United States,True
+2026-06-27,Panama,England,0,2,FIFA World Cup,East Rutherford,United States,True
+2026-06-27,Croatia,Ghana,2,1,FIFA World Cup,Philadelphia,United States,True
 2026-04-01,Brazil,Croatia,3.0,1.0,Friendly,"Orlando, Florida",United States,True
 2026-04-01,Canada,Tunisia,0.0,0.0,Friendly,"Toronto, Ontario",Canada,False
 2026-04-01,Mexico,Belgium,1.0,1.0,Friendly,"Chicago, Illinois",United States,True
@@ -49429,3 +49429,6 @@ date,home_team,away_team,home_score,away_score,tournament,city,country,neutral
 2026-06-10,Portugal,Nigeria,2,1,Friendly,Lisbon,Portugal,FALSE
 2026-06-10,England,Costa Rica,3,0,Friendly,"Orlando, FL",United States,TRUE
 2026-06-11,Bolivia,Algeria,0,4,Friendly,"Kansas City, MO",United States,TRUE
+2026-06-24,Switzerland,Canada,2,1,FIFA World Cup,Unknown,World,TRUE
+2026-06-25,Czech Republic,Mexico,0,3,FIFA World Cup,Unknown,World,TRUE
+2026-06-26,Turkey,United States,3,2,FIFA World Cup,Unknown,World,TRUE
