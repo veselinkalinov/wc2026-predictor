@@ -9,35 +9,49 @@ Using a 3-way temporal split:
 
 import json
 from pathlib import Path
-import pandas as pd
-import numpy as np
+
 import joblib
+import numpy as np
+import pandas as pd
 from sklearn.base import clone
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier, StackingClassifier
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, log_loss, brier_score_loss, classification_report
-from sklearn.model_selection import GridSearchCV, TimeSeriesSplit, StratifiedKFold
 from sklearn.calibration import CalibratedClassifierCV
+from sklearn.ensemble import (
+    HistGradientBoostingClassifier,
+    RandomForestClassifier,
+    StackingClassifier,
+)
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import (
+    accuracy_score,
+    brier_score_loss,
+    classification_report,
+    log_loss,
+)
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, TimeSeriesSplit
+from sklearn.preprocessing import StandardScaler
+
+from src.models.poisson_model import PoissonGoalModel
 from src.utils.config import config
 from src.utils.logger import get_logger
-from src.models.poisson_model import PoissonGoalModel
 
 # Import boosters with fallback checks
 try:
     from lightgbm import LGBMClassifier
+
     LIGHTGBM_AVAILABLE = True
 except ImportError:
     LIGHTGBM_AVAILABLE = False
 
 try:
     from catboost import CatBoostClassifier
+
     CATBOOST_AVAILABLE = True
 except ImportError:
     CATBOOST_AVAILABLE = False
 
 try:
     import xgboost as xgb
+
     XGBOOST_AVAILABLE = True
 except ImportError:
     XGBOOST_AVAILABLE = False
@@ -46,20 +60,39 @@ logger = get_logger(__name__)
 
 # Feature columns used by the model (including the new features)
 FEATURE_COLUMNS = [
-    "home_elo", "away_elo", "elo_diff",
-    "home_form", "away_form", "form_diff",
-    "home_goals_scored_avg", "home_goals_conceded_avg", "home_goal_diff_avg",
-    "away_goals_scored_avg", "away_goals_conceded_avg", "away_goal_diff_avg",
-    "home_rank", "away_rank", "rank_diff",
-    "home_rank_points", "away_rank_points", "rank_points_diff",
-    "is_neutral", "is_competitive",
-    "home_rest_days", "away_rest_days", "rest_days_diff",
-    "home_is_home_continent", "away_is_home_continent", "continent_diff",
-    "match_stake"
+    "home_elo",
+    "away_elo",
+    "elo_diff",
+    "home_form",
+    "away_form",
+    "form_diff",
+    "home_goals_scored_avg",
+    "home_goals_conceded_avg",
+    "home_goal_diff_avg",
+    "away_goals_scored_avg",
+    "away_goals_conceded_avg",
+    "away_goal_diff_avg",
+    "home_rank",
+    "away_rank",
+    "rank_diff",
+    "home_rank_points",
+    "away_rank_points",
+    "rank_points_diff",
+    "is_neutral",
+    "is_competitive",
+    "home_rest_days",
+    "away_rest_days",
+    "rest_days_diff",
+    "home_is_home_continent",
+    "away_is_home_continent",
+    "continent_diff",
+    "match_stake",
 ]
 
 
-def select_best_model(comparison_results: dict, selection_metric: str = "log_loss") -> str:
+def select_best_model(
+    comparison_results: dict, selection_metric: str = "log_loss"
+) -> str:
     """
     Select the champion model using probability-first ranking.
 
@@ -73,7 +106,7 @@ def select_best_model(comparison_results: dict, selection_metric: str = "log_los
                 comparison_results[k]["accuracy"],
                 -comparison_results[k]["log_loss"],
                 -comparison_results[k]["brier_score"],
-            )
+            ),
         )
 
     return min(
@@ -82,7 +115,7 @@ def select_best_model(comparison_results: dict, selection_metric: str = "log_los
             comparison_results[k]["log_loss"],
             comparison_results[k]["brier_score"],
             -comparison_results[k]["accuracy"],
-        )
+        ),
     )
 
 
@@ -93,12 +126,12 @@ def find_optimal_draw_threshold(y_probs: np.ndarray, y_true: np.ndarray) -> floa
     """
     best_acc = 0.0
     best_theta = 1.0  # Default to 1.0 (equivalent to standard argmax)
-    
+
     # Baseline argmax accuracy
     baseline_preds = np.argmax(y_probs, axis=1)
     baseline_acc = accuracy_score(y_true, baseline_preds)
     best_acc = baseline_acc
-    
+
     # Search over possible thresholds
     for theta in np.arange(0.15, 0.45, 0.01):
         preds = []
@@ -108,12 +141,12 @@ def find_optimal_draw_threshold(y_probs: np.ndarray, y_true: np.ndarray) -> floa
                 preds.append(1)  # Draw
             else:
                 preds.append(0 if p_home >= p_away else 2)
-        
+
         acc = accuracy_score(y_true, np.array(preds))
         if acc > best_acc:
             best_acc = acc
             best_theta = theta
-            
+
     return float(best_theta)
 
 
@@ -135,7 +168,13 @@ def calibration_method_for_model(model_name: str) -> str:
     """
     Choose the probability calibration method used for each model family.
     """
-    if model_name in ["Random Forest", "HistGradientBoosting", "LightGBM", "CatBoost", "XGBoost"]:
+    if model_name in [
+        "Random Forest",
+        "HistGradientBoosting",
+        "LightGBM",
+        "CatBoost",
+        "XGBoost",
+    ]:
         return "isotonic"
     return "sigmoid"
 
@@ -205,17 +244,15 @@ def train_model() -> None:
     cutoff_cal = pd.to_datetime(config["model"]["calibration_cutoff"])
 
     train_df = df[df["date"] < cutoff_train].copy()
-    cal_df = df[(df["date"] >= cutoff_train) &
-                (df["date"] < cutoff_cal)].copy()
+    cal_df = df[(df["date"] >= cutoff_train) & (df["date"] < cutoff_cal)].copy()
     test_df = df[df["date"] >= cutoff_cal].copy()
 
-    logger.info(f"Split data:")
+    logger.info("Split data:")
+    logger.info(f"  Train matches:       {len(train_df)} (pre-{cutoff_train.date()})")
     logger.info(
-        f"  Train matches:       {len(train_df)} (pre-{cutoff_train.date()})")
-    logger.info(
-        f"  Calibration matches: {len(cal_df)} ({cutoff_train.date()} to {cutoff_cal.date()})")
-    logger.info(
-        f"  Test matches:        {len(test_df)} (post-{cutoff_cal.date()})")
+        f"  Calibration matches: {len(cal_df)} ({cutoff_train.date()} to {cutoff_cal.date()})"
+    )
+    logger.info(f"  Test matches:        {len(test_df)} (post-{cutoff_cal.date()})")
 
     X_train = train_df[FEATURE_COLUMNS].values
     y_train = train_df["target"].values
@@ -236,7 +273,6 @@ def train_model() -> None:
     # 4. Define base models and hyperparameter grids for tuning
     base_models = {
         "Logistic Regression": LogisticRegression(
-            multi_class="multinomial",
             solver="lbfgs",
             max_iter=1000,
             random_state=config["model"]["random_state"],
@@ -247,22 +283,20 @@ def train_model() -> None:
         ),
         "HistGradientBoosting": HistGradientBoostingClassifier(
             random_state=config["model"]["random_state"],
-        )
+        ),
     }
 
     grids = {
-        "Logistic Regression": {
-            "C": [0.01, 0.1, 1.0, 10.0]
-        },
+        "Logistic Regression": {"C": [0.01, 0.1, 1.0, 10.0]},
         "Random Forest": {
             "n_estimators": [100, 200, 300],
-            "max_depth": [5, 10, 15, 20]
+            "max_depth": [5, 10, 15, 20],
         },
         "HistGradientBoosting": {
             "max_iter": [100, 200, 300],
             "learning_rate": [0.01, 0.05, 0.1],
-            "max_depth": [3, 5, 7]
-        }
+            "max_depth": [3, 5, 7],
+        },
     }
 
     # Conditionally add LightGBM
@@ -272,12 +306,12 @@ def train_model() -> None:
             objective="multiclass",
             num_class=3,
             random_state=config["model"]["random_state"],
-            verbose=-1
+            verbose=-1,
         )
         grids["LightGBM"] = {
             "n_estimators": [100, 200, 300],
             "learning_rate": [0.01, 0.05, 0.1],
-            "max_depth": [3, 5, 7]
+            "max_depth": [3, 5, 7],
         }
 
     # Conditionally add CatBoost
@@ -286,12 +320,12 @@ def train_model() -> None:
         base_models["CatBoost"] = CatBoostClassifier(
             loss_function="MultiClass",
             random_state=config["model"]["random_state"],
-            verbose=0
+            verbose=0,
         )
         grids["CatBoost"] = {
             "iterations": [100, 200, 300],
             "learning_rate": [0.01, 0.05, 0.1],
-            "depth": [3, 5, 7]
+            "depth": [3, 5, 7],
         }
 
     # Conditionally add XGBoost
@@ -301,12 +335,12 @@ def train_model() -> None:
             objective="multi:softprob",
             num_class=3,
             random_state=config["model"]["random_state"],
-            eval_metric="mlogloss"
+            eval_metric="mlogloss",
         )
         grids["XGBoost"] = {
             "n_estimators": [100, 200, 300],
             "learning_rate": [0.01, 0.05, 0.1],
-            "max_depth": [3, 5, 7]
+            "max_depth": [3, 5, 7],
         }
 
     selection_metric = config["model"].get("selection_metric", "log_loss")
@@ -327,7 +361,7 @@ def train_model() -> None:
             param_grid=grids[model_name],
             cv=cv,
             scoring=grid_scoring,
-            n_jobs=-1
+            n_jobs=-1,
         )
         grid_search.fit(X_train_scaled, y_train)
 
@@ -344,14 +378,20 @@ def train_model() -> None:
         rho=score_model_config.get("rho", 0.0),
         max_goals=score_model_config.get("max_goals", 10),
     )
-    y_train_goals = np.column_stack([train_df["home_score"].values, train_df["away_score"].values])
+    y_train_goals = np.column_stack(
+        [train_df["home_score"].values, train_df["away_score"].values]
+    )
     poisson_model.fit(X_train_scaled, y_train_goals)
-    y_cal_goals = np.column_stack([cal_df["home_score"].values, cal_df["away_score"].values])
+    y_cal_goals = np.column_stack(
+        [cal_df["home_score"].values, cal_df["away_score"].values]
+    )
     rho_grid = score_model_config.get("rho_grid")
     tuned_rho, rho_cal_nll = poisson_model.tune_rho(
-        X_cal_scaled, y_cal_goals, rho_grid=rho_grid)
+        X_cal_scaled, y_cal_goals, rho_grid=rho_grid
+    )
     logger.info(
-        f"  Poisson Goal Model Dixon-Coles rho: {tuned_rho:.3f} | Calibration score NLL: {rho_cal_nll:.4f}")
+        f"  Poisson Goal Model Dixon-Coles rho: {tuned_rho:.3f} | Calibration score NLL: {rho_cal_nll:.4f}"
+    )
     trained_base_models["Poisson Goal Model"] = poisson_model
     best_params_dict["Poisson Goal Model"] = {
         "alpha": poisson_model.alpha,
@@ -373,10 +413,10 @@ def train_model() -> None:
                 multi_class="multinomial",
                 solver="lbfgs",
                 max_iter=1000,
-                random_state=config["model"]["random_state"]
+                random_state=config["model"]["random_state"],
             ),
             cv=3,
-            n_jobs=-1
+            n_jobs=-1,
         )
         logger.info("Fitting Stacking Classifier on training set...")
         stacking_clf.fit(X_train_scaled, y_train)
@@ -399,9 +439,7 @@ def train_model() -> None:
         method = calibration_method_for_model(model_name)
 
         calibrated_clf = CalibratedClassifierCV(
-            estimator=clf,
-            method=method,
-            cv="prefit"
+            estimator=clf, method=method, cv="prefit"
         )
 
         # Fit calibration mapping on calibration set
@@ -421,23 +459,28 @@ def train_model() -> None:
         loss = log_loss(y_test, y_pred_probs)
 
         # Calculate Brier Score
-        brier_scores = [brier_score_loss(
-            y_test_one_hot[:, c], y_pred_probs[:, c]) for c in range(3)]
+        brier_scores = [
+            brier_score_loss(y_test_one_hot[:, c], y_pred_probs[:, c]) for c in range(3)
+        ]
         avg_brier = np.mean(brier_scores)
 
         comparison_results[model_name] = {
             "accuracy": acc,
             "log_loss": loss,
             "brier_score": avg_brier,
-            "draw_threshold": opt_draw_threshold
+            "draw_threshold": opt_draw_threshold,
         }
         logger.info(
             f"  {model_name} (Calibrated) -> Accuracy: {acc:.4f}, Log Loss: {loss:.4f}, Brier: {avg_brier:.4f}, Draw Threshold: {opt_draw_threshold:.2f}"
         )
 
     # Log Comparison Table
-    logger.info("\n" + "=" * 80 +
-                f"\nTUNED & CALIBRATED MODEL HOLDOUT COMPARISON ({selection_metric.upper()} CRITERION)\n" + "=" * 80)
+    logger.info(
+        "\n"
+        + "=" * 80
+        + f"\nTUNED & CALIBRATED MODEL HOLDOUT COMPARISON ({selection_metric.upper()} CRITERION)\n"
+        + "=" * 80
+    )
     for model_name, res in comparison_results.items():
         logger.info(
             f"{model_name:<25} | Accuracy: {res['accuracy']:.4f} | Log Loss: {res['log_loss']:.4f} | Brier: {res['brier_score']:.4f} | Draw Thresh: {res['draw_threshold']:.2f}"
@@ -451,7 +494,8 @@ def train_model() -> None:
         f"Winning Model: {best_model_name} (selected by {selection_metric}: "
         f"accuracy={comparison_results[best_model_name]['accuracy']:.4f}, "
         f"log_loss={comparison_results[best_model_name]['log_loss']:.4f}, "
-        f"brier={comparison_results[best_model_name]['brier_score']:.4f})")
+        f"brier={comparison_results[best_model_name]['brier_score']:.4f})"
+    )
 
     winning_evaluation_model = calibrated_models[best_model_name]
     winning_evaluation_base = trained_base_models[best_model_name]
@@ -491,14 +535,18 @@ def train_model() -> None:
     winning_production_base = production_bases[best_model_name]
 
     # 10. Serialise artifacts to models registry
-    logger.info("Serialising production and holdout evaluation artifacts to registry...")
+    logger.info(
+        "Serialising production and holdout evaluation artifacts to registry..."
+    )
     joblib.dump(winning_production_model, models_dir / "best_model.pkl")
     joblib.dump(winning_production_base, models_dir / "best_model_uncalibrated.pkl")
     joblib.dump(production_score_model, models_dir / "score_model.pkl")
     joblib.dump(production_scaler, models_dir / "scaler.pkl")
 
     joblib.dump(winning_evaluation_model, models_dir / "evaluation_model.pkl")
-    joblib.dump(winning_evaluation_base, models_dir / "evaluation_model_uncalibrated.pkl")
+    joblib.dump(
+        winning_evaluation_base, models_dir / "evaluation_model_uncalibrated.pkl"
+    )
     joblib.dump(scaler, models_dir / "evaluation_scaler.pkl")
     joblib.dump(poisson_model, models_dir / "evaluation_score_model.pkl")
 
@@ -519,7 +567,9 @@ def train_model() -> None:
         "selected_by": selection_metric,
         "artifact_role": "production_refit",
         "features": FEATURE_COLUMNS,
-        "best_params": best_params_dict[best_model_name] if best_model_name in best_params_dict else {},
+        "best_params": best_params_dict[best_model_name]
+        if best_model_name in best_params_dict
+        else {},
         "draw_threshold": winning_threshold,
         "draw_risk_threshold": float(config["model"].get("draw_risk_threshold", 0.30)),
         "score_model": {
@@ -533,15 +583,16 @@ def train_model() -> None:
         "test_metrics": {
             "accuracy": float(comparison_results[best_model_name]["accuracy"]),
             "log_loss": float(comparison_results[best_model_name]["log_loss"]),
-            "brier_score": float(comparison_results[best_model_name]["brier_score"])
+            "brier_score": float(comparison_results[best_model_name]["brier_score"]),
         },
         "comparison": {
             name: {
                 "accuracy": float(res["accuracy"]),
                 "log_loss": float(res["log_loss"]),
                 "brier_score": float(res["brier_score"]),
-                "draw_threshold": float(res["draw_threshold"])
-            } for name, res in comparison_results.items()
+                "draw_threshold": float(res["draw_threshold"]),
+            }
+            for name, res in comparison_results.items()
         },
         "all_best_params": best_params_dict,
         "production_refit": {
@@ -575,11 +626,13 @@ def train_model() -> None:
         "evaluation": {
             "test_accuracy": float(comparison_results[best_model_name]["accuracy"]),
             "test_log_loss": float(comparison_results[best_model_name]["log_loss"]),
-            "test_brier_score": float(comparison_results[best_model_name]["brier_score"]),
+            "test_brier_score": float(
+                comparison_results[best_model_name]["brier_score"]
+            ),
             "test_samples": int(len(y_test)),
             "draw_threshold": float(winning_threshold),
-            "classification_report": report
-        }
+            "classification_report": report,
+        },
     }
 
     with open(models_dir / "meta.json", "w") as f:
