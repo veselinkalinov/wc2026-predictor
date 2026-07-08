@@ -1,5 +1,10 @@
 import os
 
+from flask import Flask
+
+from src.utils.config import config
+from src.utils.logger import get_logger
+
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
@@ -14,11 +19,6 @@ app.py
 Responsibility: Flask application factory. Configures extensions, CORS,
 and registers blueprints for routes.
 """
-
-from flask import Flask
-
-from src.utils.config import config
-from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
