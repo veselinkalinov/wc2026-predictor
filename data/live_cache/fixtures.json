@@ -5281,8 +5281,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -5310,13 +5310,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 3,
+                "away": 2
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 3,
+                    "away": 2
                 }
             }
         },
@@ -5337,8 +5337,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -5366,13 +5366,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 4,
+                "away": 3
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 4,
+                    "away": 3
                 }
             }
         },
@@ -5577,15 +5577,15 @@
             },
             "teams": {
                 "home": {
-                    "id": null,
-                    "name": null,
-                    "logo": null,
+                    "id": 762,
+                    "name": "Argentina",
+                    "logo": "https://crests.football-data.org/762.png",
                     "winner": null
                 },
                 "away": {
-                    "id": null,
-                    "name": null,
-                    "logo": null,
+                    "id": 788,
+                    "name": "Switzerland",
+                    "logo": "https://crests.football-data.org/788.svg",
                     "winner": null
                 }
             },
