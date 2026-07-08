@@ -1,4 +1,5 @@
 import os
+
 os.environ["OMP_NUM_THREADS"] = "1"
 os.environ["MKL_NUM_THREADS"] = "1"
 os.environ["OPENBLAS_NUM_THREADS"] = "1"
@@ -15,6 +16,7 @@ and registers blueprints for routes.
 """
 
 from flask import Flask
+
 from src.utils.config import config
 from src.utils.logger import get_logger
 
@@ -39,6 +41,7 @@ def create_app() -> Flask:
 
     # Register blueprints (routes will be defined in routes.py)
     from src.api.routes import api_bp, pages_bp
+
     app.register_blueprint(api_bp, url_prefix="/api")
     app.register_blueprint(pages_bp, url_prefix="")
 
