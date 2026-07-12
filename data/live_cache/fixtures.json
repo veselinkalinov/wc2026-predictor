@@ -5393,8 +5393,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -5422,13 +5422,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 2,
+                "away": 0
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 2,
+                    "away": 0
                 }
             }
         },
@@ -5449,8 +5449,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -5478,13 +5478,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 2,
+                "away": 1
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 2,
+                    "away": 1
                 }
             }
         },
@@ -5505,8 +5505,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -5534,13 +5534,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 1,
+                "away": 2
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 1,
+                    "away": 2
                 }
             }
         },
@@ -5561,8 +5561,8 @@
                     "city": "TBD"
                 },
                 "status": {
-                    "long": "Not Started",
-                    "short": "NS",
+                    "long": "Finished",
+                    "short": "FT",
                     "elapsed": 0
                 }
             },
@@ -5590,13 +5590,13 @@
                 }
             },
             "goals": {
-                "home": null,
-                "away": null
+                "home": 3,
+                "away": 1
             },
             "score": {
                 "fulltime": {
-                    "home": null,
-                    "away": null
+                    "home": 3,
+                    "away": 1
                 }
             }
         },
@@ -5633,15 +5633,15 @@
             },
             "teams": {
                 "home": {
-                    "id": null,
-                    "name": null,
-                    "logo": null,
+                    "id": 773,
+                    "name": "France",
+                    "logo": "https://crests.football-data.org/773.svg",
                     "winner": null
                 },
                 "away": {
-                    "id": null,
-                    "name": null,
-                    "logo": null,
+                    "id": 760,
+                    "name": "Spain",
+                    "logo": "https://crests.football-data.org/760.svg",
                     "winner": null
                 }
             },
@@ -5689,15 +5689,15 @@
             },
             "teams": {
                 "home": {
-                    "id": null,
-                    "name": null,
-                    "logo": null,
+                    "id": 770,
+                    "name": "England",
+                    "logo": "https://crests.football-data.org/770.svg",
                     "winner": null
                 },
                 "away": {
-                    "id": null,
-                    "name": null,
-                    "logo": null,
+                    "id": 762,
+                    "name": "Argentina",
+                    "logo": "https://crests.football-data.org/762.png",
                     "winner": null
                 }
             },
